@@ -2,6 +2,12 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
+import { client } from '@/src/api/generated/client.gen';
+
+// Change the base URL dynamically
+client.setConfig({
+  baseUrl: process.env.BACKEND_URL || 'http://localhost:3000', 
+});
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
