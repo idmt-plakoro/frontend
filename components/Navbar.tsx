@@ -2,7 +2,7 @@ import Link from 'next/link';
 
 export default function NavBar() {
   return (
-    <nav className="fixed top-0 left-0 right-0 flex items-center justify-between h-[50px] z-30 px-6 py-4 bg-[#111111] text-white">
+    <nav className="fixed top-0 left-0 right-0 flex items-center justify-between h-[50px] z-30 px-6 py-4 bg-[#111111] text-white font-salsa">
       {/* LEFT LOGO */}
       <div className="text-2xl font-bold tracking-wider">
         Plakoro
