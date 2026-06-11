@@ -1,6 +1,17 @@
-import React from 'react';
 
-export default function Dashboard() {
+import React from 'react';
+import getPokemonList from '@/libs/getPokemonList';
+import getPokemonData from '@/libs/getPokemonData';
+import PokemonProfile from './PokemonProfile';
+
+export default async function Dashboard() {
+  const response = await getPokemonData(6)
+  const pokemonInfo = response.data;
+  if(!pokemonInfo) {
+    console.log('no pokemonInfo')
+  }
+
+  console.log(pokemonInfo);
   return (
     // Background ลายลูกเต๋า (สมมติว่าเป็นสีเทาอ่อนไปก่อน)
     <div className="min-h-screen p-8 bg-gray-200 flex justify-center">
@@ -25,11 +36,15 @@ export default function Dashboard() {
 
         {/* Stats Components (Pokemon Profile, Dice, Elements) */}
         <div className="flex flex-col md:flex-row gap-4 items-start justify-between">
+        
           {/* Pokemon Profile */}
-          <div className="flex-1 min-h-[150px] bg-white border-2 border-gray-100 rounded-xl p-4 flex flex-col items-center justify-center">
-             {/* ใส่รูปลูกไฟ และกล่อง HP ตรงนี้ */}
-             <div className="text-red-500 text-4xl mb-4">🔥</div>
-             <div className="bg-black text-yellow-400 text-xs px-3 py-1 rounded">HP: 120 | Weakness: 💧</div>
+          <div className="flex-1 min-h-[150px] bg-white border-2 border-gray-100 rounded-xl p-2 flex flex-col items-center justify-center">
+             <PokemonProfile 
+                  ImgSrc={pokemonInfo.pokemonImage} 
+                  HP={pokemonInfo.hp} 
+                  Type={pokemonInfo.typeId} 
+                  WeaknessType={pokemonInfo.weaknessTypeId}
+                />
           </div>
 
           {/* Dice Customization */}
@@ -67,9 +82,13 @@ export default function Dashboard() {
         {/* Skill Cards List  */}
         <div className="flex flex-col gap-4">
           {/* ตัวอย่างการ Loop Card โล่งๆ รอไว้ 5 ใบ */}
-          {[1, 2, 3, 4, 5].map((item) => (
-            <EmptySkillCard key={item} />
-          ))}
+          {/* {pokemonInfo.skillCards.map((skill) => (
+             // สร้าง Component ใหม่ชื่อ SkillCardItem มารับค่า props ไปโชว์
+             // (อย่าลืมส่ง key ให้ React ด้วย)
+            //  <SkillCardItem key={skill.id} skillData={skill} />
+            
+          ))
+          } */}
           
           <div className="flex justify-center mt-4">
              <button className="bg-[#2a2a2a] text-white text-xs px-4 py-1 rounded-full">View more</button>
