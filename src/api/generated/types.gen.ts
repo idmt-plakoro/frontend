@@ -390,7 +390,7 @@ export type GetApiPokemonResponse = GetApiPokemonResponses[keyof GetApiPokemonRe
 export type GetApiPokemonByPokemonIdData = {
     body?: never;
     path: {
-        pokemonId: string;
+        pokemonId: number;
     };
     query?: never;
     url: '/api/pokemon/{pokemonId}';
