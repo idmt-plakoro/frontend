@@ -16,7 +16,7 @@ export type GetAuthGoogleErrors = {
      * Response for status 422
      */
     422: {
-        type: string;
+        type: 'validation';
         on: string;
         summary?: string;
         message?: string;
@@ -40,7 +40,7 @@ export type GetApiExampleTypesErrors = {
      * Response for status 422
      */
     422: {
-        type: string;
+        type: 'validation';
         on: string;
         summary?: string;
         message?: string;
@@ -67,9 +67,9 @@ export type GetApiExampleTypesResponses = {
         success: boolean;
         data: Array<{
             id: number;
-            enName: string | unknown;
-            thName: string | unknown;
-            typeImage: string | unknown;
+            enName?: string | null;
+            thName?: string | null;
+            typeImage?: string | null;
         }>;
     };
 };
@@ -88,7 +88,7 @@ export type GetApiExampleTypesNameErrors = {
      * Response for status 422
      */
     422: {
-        type: string;
+        type: 'validation';
         on: string;
         summary?: string;
         message?: string;
@@ -114,8 +114,8 @@ export type GetApiExampleTypesNameResponses = {
     200: {
         success: boolean;
         data: Array<{
-            enName: string | unknown;
-            thName: string | unknown;
+            enName?: string | null;
+            thName?: string | null;
         }>;
     };
 };
@@ -134,9 +134,9 @@ export type GetAuthAccountErrors = {
      * Response for status 401
      */
     401: {
-        error: string;
+        error: 'Authentication required: no token provided';
     } | {
-        error: string;
+        error: 'Authentication session expired or invalid';
     };
     /**
      * Response for status 404
@@ -149,7 +149,7 @@ export type GetAuthAccountErrors = {
      * Response for status 422
      */
     422: {
-        type: string;
+        type: 'validation';
         on: string;
         summary?: string;
         message?: string;
@@ -175,11 +175,11 @@ export type GetAuthAccountResponses = {
     200: {
         success: boolean;
         data: {
-            email: string | unknown;
-            displayName: string | unknown;
-            avatarUrl: string | unknown;
-            createdAt: unknown | string | string | number | unknown;
-            updatedAt: unknown | string | string | number | unknown;
+            email?: string | null;
+            displayName?: string | null;
+            avatarUrl?: string | null;
+            createdAt?: string | null;
+            updatedAt?: string | null;
         };
     };
 };
@@ -201,15 +201,15 @@ export type PutAuthAccountErrors = {
      * Response for status 401
      */
     401: {
-        error: string;
+        error: 'Authentication required: no token provided';
     } | {
-        error: string;
+        error: 'Authentication session expired or invalid';
     };
     /**
      * Response for status 422
      */
     422: {
-        type: string;
+        type: 'validation';
         on: string;
         summary?: string;
         message?: string;
@@ -235,11 +235,11 @@ export type PutAuthAccountResponses = {
     200: {
         success: boolean;
         data: {
-            email: string | unknown;
-            displayName: string | unknown;
-            avatarUrl: string | unknown;
-            createdAt: unknown | string | string | number | unknown;
-            updatedAt: unknown | string | string | number | unknown;
+            email?: string | null;
+            displayName?: string | null;
+            avatarUrl?: string | null;
+            createdAt?: string | null;
+            updatedAt?: string | null;
         };
     };
 };
@@ -258,7 +258,7 @@ export type GetApiFaceTypesErrors = {
      * Response for status 422
      */
     422: {
-        type: string;
+        type: 'validation';
         on: string;
         summary?: string;
         message?: string;
@@ -287,9 +287,9 @@ export type GetApiFaceTypesResponses = {
             faceTypesId: number;
             types: Array<{
                 id: number;
-                enName: string | unknown;
-                thName: string | unknown;
-                typeImage: string | unknown;
+                enName?: string | null;
+                thName?: string | null;
+                typeImage?: string | null;
             }>;
         }>;
     };
@@ -309,7 +309,7 @@ export type GetApiPokemonErrors = {
      * Response for status 422
      */
     422: {
-        type: string;
+        type: 'validation';
         on: string;
         summary?: string;
         message?: string;
@@ -337,48 +337,49 @@ export type GetApiPokemonResponses = {
         data: Array<{
             id: number;
             name: {
-                en: string | unknown;
-                th: string | unknown;
+                en?: string | null;
+                th?: string | null;
             };
-            hp: number | unknown;
-            typeId: number | unknown;
-            weaknessTypeId: number | unknown;
+            hp?: number | null;
+            typeId?: number | null;
+            weaknessTypeId?: number | null;
             description: {
-                en: string | unknown;
-                th: string | unknown;
+                en?: string | null;
+                th?: string | null;
             };
-            pokemonImage: string | unknown;
+            pokemonImage?: string | null;
             skillCards: Array<{
                 id: number;
                 name: {
-                    en: string | unknown;
-                    th: string | unknown;
+                    en?: string | null;
+                    th?: string | null;
                 };
-                typeId: number | unknown;
-                damage: number | unknown;
+                typeId?: number | null;
+                damage?: number | null;
+                imageUrl?: string | null;
                 fightingAbility?: {
-                    en: string | unknown;
-                    th: string | unknown;
+                    en?: string | null;
+                    th?: string | null;
                 };
                 energyCosts: Array<{
-                    typeId: number | unknown;
-                    quantity: number | unknown;
+                    typeId?: number | null;
+                    quantity?: number | null;
                 }>;
                 effects: Array<{
                     ability: {
-                        en: string | unknown;
-                        th: string | unknown;
+                        en?: string | null;
+                        th?: string | null;
                     };
-                    directions: Array<string> | unknown;
+                    directions?: Array<string> | null;
                 }>;
             }>;
             availableFaces: Array<{
-                faceTypeId: number | unknown;
-                quantity: number | unknown;
+                faceTypeId?: number | null;
+                quantity?: number | null;
             }>;
             fixedFaces: Array<{
-                faceTypeId: number | unknown;
-                quantity: number | unknown;
+                faceTypeId?: number | null;
+                quantity?: number | null;
             }>;
         }>;
     };
@@ -414,7 +415,7 @@ export type GetApiPokemonByPokemonIdErrors = {
      * Response for status 422
      */
     422: {
-        type: string;
+        type: 'validation';
         on: string;
         summary?: string;
         message?: string;
@@ -442,48 +443,49 @@ export type GetApiPokemonByPokemonIdResponses = {
         data: {
             id: number;
             name: {
-                en: string | unknown;
-                th: string | unknown;
+                en?: string | null;
+                th?: string | null;
             };
-            hp: number | unknown;
-            typeId: number | unknown;
-            weaknessTypeId: number | unknown;
+            hp?: number | null;
+            typeId?: number | null;
+            weaknessTypeId?: number | null;
             description: {
-                en: string | unknown;
-                th: string | unknown;
+                en?: string | null;
+                th?: string | null;
             };
-            pokemonImage: string | unknown;
+            pokemonImage?: string | null;
             skillCards: Array<{
                 id: number;
                 name: {
-                    en: string | unknown;
-                    th: string | unknown;
+                    en?: string | null;
+                    th?: string | null;
                 };
-                typeId: number | unknown;
-                damage: number | unknown;
+                typeId?: number | null;
+                damage?: number | null;
+                imageUrl?: string | null;
                 fightingAbility?: {
-                    en: string | unknown;
-                    th: string | unknown;
+                    en?: string | null;
+                    th?: string | null;
                 };
                 energyCosts: Array<{
-                    typeId: number | unknown;
-                    quantity: number | unknown;
+                    typeId?: number | null;
+                    quantity?: number | null;
                 }>;
                 effects: Array<{
                     ability: {
-                        en: string | unknown;
-                        th: string | unknown;
+                        en?: string | null;
+                        th?: string | null;
                     };
-                    directions: Array<string> | unknown;
+                    directions?: Array<string> | null;
                 }>;
             }>;
             availableFaces: Array<{
-                faceTypeId: number | unknown;
-                quantity: number | unknown;
+                faceTypeId?: number | null;
+                quantity?: number | null;
             }>;
             fixedFaces: Array<{
-                faceTypeId: number | unknown;
-                quantity: number | unknown;
+                faceTypeId?: number | null;
+                quantity?: number | null;
             }>;
         };
     };
@@ -503,7 +505,7 @@ export type GetApiPokemonListErrors = {
      * Response for status 422
      */
     422: {
-        type: string;
+        type: 'validation';
         on: string;
         summary?: string;
         message?: string;
@@ -530,14 +532,14 @@ export type GetApiPokemonListResponses = {
         success: boolean;
         data: Array<{
             id: number;
-            enPokemonName: string | unknown;
-            thPokemonName: string | unknown;
-            hp: number | unknown;
-            typeId: number | unknown;
-            weaknessTypeId: number | unknown;
-            enDescription: string | unknown;
-            thDescription: string | unknown;
-            pokemonImage: string | unknown;
+            enPokemonName?: string | null;
+            thPokemonName?: string | null;
+            hp?: number | null;
+            typeId?: number | null;
+            weaknessTypeId?: number | null;
+            enDescription?: string | null;
+            thDescription?: string | null;
+            pokemonImage?: string | null;
         }>;
     };
 };
@@ -573,14 +575,14 @@ export type GetApiSlotsResponses = {
             id: string;
             userId: string;
             slotNumber: number;
-            slotName: string | unknown;
+            slotName?: string | null;
             pokemonId: number;
-            createdAt: unknown | string | string | number | unknown;
-            updatedAt: unknown | string | string | number | unknown;
+            createdAt?: string | null;
+            updatedAt?: string | null;
             dice1: Array<number>;
             dice2: Array<number>;
             dice3: Array<number>;
-            skills: Array<number> | unknown;
+            skills?: Array<number> | null;
         }>;
     };
 };
@@ -624,14 +626,14 @@ export type PostApiSlotsResponses = {
             id: string;
             userId: string;
             slotNumber: number;
-            slotName: string | unknown;
+            slotName?: string | null;
             pokemonId: number;
-            createdAt: unknown | string | string | number | unknown;
-            updatedAt: unknown | string | string | number | unknown;
+            createdAt?: string | null;
+            updatedAt?: string | null;
             dice1: Array<number>;
             dice2: Array<number>;
             dice3: Array<number>;
-            skills: Array<number> | unknown;
+            skills?: Array<number> | null;
         };
     };
 };
@@ -661,9 +663,9 @@ export type DeleteApiSlotsBySlotNumberErrors = {
      * Response for status 401
      */
     401: {
-        error: string;
+        error: 'Authentication required: no token provided';
     } | {
-        error: string;
+        error: 'Authentication session expired or invalid';
     };
     /**
      * Response for status 404
@@ -676,7 +678,7 @@ export type DeleteApiSlotsBySlotNumberErrors = {
      * Response for status 422
      */
     422: {
-        type: string;
+        type: 'validation';
         on: string;
         summary?: string;
         message?: string;
@@ -752,14 +754,14 @@ export type GetApiSlotsBySlotNumberResponses = {
             id: string;
             userId: string;
             slotNumber: number;
-            slotName: string | unknown;
+            slotName?: string | null;
             pokemonId: number;
-            createdAt: unknown | string | string | number | unknown;
-            updatedAt: unknown | string | string | number | unknown;
+            createdAt?: string | null;
+            updatedAt?: string | null;
             dice1: Array<number>;
             dice2: Array<number>;
             dice3: Array<number>;
-            skills: Array<number> | unknown;
+            skills?: Array<number> | null;
         };
     };
 };
@@ -818,14 +820,14 @@ export type PutApiSlotsBySlotNumberResponses = {
             id: string;
             userId: string;
             slotNumber: number;
-            slotName: string | unknown;
+            slotName?: string | null;
             pokemonId: number;
-            createdAt: unknown | string | string | number | unknown;
-            updatedAt: unknown | string | string | number | unknown;
+            createdAt?: string | null;
+            updatedAt?: string | null;
             dice1: Array<number>;
             dice2: Array<number>;
             dice3: Array<number>;
-            skills: Array<number> | unknown;
+            skills?: Array<number> | null;
         };
     };
 };
@@ -862,9 +864,9 @@ export type GetApiPresetsByPokemonIdResponses = {
         data: Array<{
             dicePresetId: string;
             pokemonId: number;
-            enPresetName: string | unknown;
-            thPresetName: string | unknown;
-            skillCards: unknown | Array<{
+            enPresetName?: string | null;
+            thPresetName?: string | null;
+            skillCards?: null | Array<{
                 skillCardId: number;
             }>;
             dice1: Array<{
