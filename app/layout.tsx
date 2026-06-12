@@ -1,12 +1,13 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Geist, Geist_Mono, Poetsen_One, Salsa } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
-import { client } from '@/src/api/generated/client.gen';
+import DiceBackground from "@/components/DiceBackground";
+import { client } from "@/src/api/generated/client.gen";
 
 // Change the base URL dynamically
 client.setConfig({
-  baseUrl: process.env.BACKEND_URL || 'http://localhost:3000', 
+  baseUrl: process.env.BACKEND_URL || "http://localhost:3000",
 });
 
 const geistSans = Geist({
@@ -16,6 +17,18 @@ const geistSans = Geist({
 
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
+  subsets: ["latin"],
+});
+
+const poetsenOne = Poetsen_One({
+  weight: "400",
+  variable: "--font-poetsen-one",
+  subsets: ["latin"],
+});
+
+const salsa = Salsa({
+  weight: "400",
+  variable: "--font-salsa",
   subsets: ["latin"],
 });
 
@@ -32,11 +45,11 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      className={`${geistSans.variable} ${geistMono.variable} ${poetsenOne.variable} ${salsa.variable} h-full antialiased`}
     >
-      
       <body className="min-h-full flex flex-col">
-        <Navbar/>
+        <Navbar />
+        <DiceBackground />
         {children}
       </body>
     </html>
