@@ -1,6 +1,6 @@
-import { PokemonSet } from "../interface";
+import { ApiResponse,PokemonSet } from "../interface";
 
-export default async function getPokemonList(): Promise<PokemonSet[]> {
+export default async function getPokemonList(): Promise<ApiResponse<PokemonSet[]>> {
 
     const response = await fetch(`${process.env.BACKEND_URL}/api/pokemon/list`);
     const data = await response.json();

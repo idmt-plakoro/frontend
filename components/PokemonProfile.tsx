@@ -8,13 +8,13 @@ interface ProfileProps {
 }
 
 export default function PokemonProfile({ImgSrc,HP,Type,WeaknessType}:ProfileProps) {
-
+  ImgSrc='https://drive.google.com/uc?export=view&id=1pbx5qwulqgw7xpvfhU1BMu-003TautNO'
 return (
     <div className="relative w-full h-80 bg-white  rounded-2xl overflow-hidden flex flex-col ">
       
       {/* 🌟 เพิ่มเติม: รูปธาตุหลักที่มุมซ้ายบนของการ์ด */}
       {Type !== undefined && (
-        <div className="absolute top-2 left-2 z-20 w-9 h-9 drop-shadow-[0_2px_4px_rgba(0,0,0,0.3)] bg-white/80 p-1 rounded-full">
+        <div className="absolute top-2 left-2 z-20 w-9 h-9 bg-white/80 p-1 rounded-full">
           <div className="relative w-full h-full">
             <Image 
               src={`/img/Type/${Type}.png`} 
@@ -26,7 +26,7 @@ return (
         </div>
       )}
 
-      {/* 🖼️ โซนที่ 1: รูปโปเกมอน (ขนาดความสูงประมาณ 75% ของ card) */}
+      {/* 🖼️ โซนที่ 1: รูปโปเกมอน */}
       <div className="relative h-[75%] w-full bg-gradient-to-b from-gray-50 to-gray-150 flex items-center justify-center p-4">
         {ImgSrc ? (
           <div className="relative w-full h-full">
@@ -35,7 +35,7 @@ return (
               alt="Pokemon Image" 
               fill 
               className="object-contain transition-transform hover:scale-105"
-            //   priority // ช่วยให้โหลดรูปหลักของหน้าเว็บขึ้นมาทันที
+              priority // ช่วยให้โหลดรูปหลักของหน้าเว็บขึ้นมาทันที
             />
           </div>
         ) : (
@@ -43,11 +43,11 @@ return (
         )}
       </div>
 
-      {/* 📊 โซนที่ 2: โชว์ข้อมูล (ขนาดความสูงประมาณ 25% ของ card) */}
-      <div className="flex items-center justify-between bg-[#111111] text-xl text-white py-3 px-4 rounded-xl border border-neutral-800 select-none w-fit min-w-[240px]">
+      {/* 📊 โซนที่ 2: โชว์ข้อมูล  */}
+      <div className="flex items-center justify-between bg-[#121212] text-xl text-white py-3 px-4 rounded-xl select-none w-fit min-w-[240px]">
   
         {/* ฝั่งซ้าย: ข้อความ HP และ Weakness เรียงต่อกันแนวตั้ง */}
-        <div className="flex flex-col gap-1 font-black tracking-wider text-yellow-400">
+        <div className="flex flex-col gap-1 font-black tracking-wider text-[#FFE600]">
             <div>
             HP : {HP ?? 0}
             </div>
