@@ -1,11 +1,26 @@
 "use client";
+import { getAuthAccount, GetAuthAccountResponse } from "@/src/api/generated";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import { getAvatarUrl } from "@/libs/avatar";
 
 export default function NavBar() {
   const router = useRouter();
+  const [user, setUser] = useState<GetAuthAccountResponse["data"] | null>(null);
+  useEffect(() => {
+    try {
+      getAuthAccount().then((res) => {
+        if (res.data?.success) {
+          setUser(res.data.data);
+        }
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  }, []);
   return (
-    <nav className="fixed top-0 left-0 right-0 flex items-center justify-between h-[50px] z-30 px-6 py-4 bg-[#111111] text-white font-salsa">
+    <nav className="fixed top-0 left-0 right-0 flex items-center justify-between h-[50px] z-30 px-6 py-4 bg-[#111111] text-white font-salsa border-b-[3px] border-[#fdd835]">
       {/* LEFT LOGO */}
       <div
         className="text-2xl font-bold tracking-wider cursor-pointer"
@@ -93,27 +108,41 @@ export default function NavBar() {
           </svg>
           Collection
         </Link>
-        <Link
-          href="/login"
-          className="group flex items-center gap-2 hover:text-yellow-400"
-        >
-          <svg
-            width={20}
-            height={20}
-            viewBox="0 0 24 24"
-            fill="none"
-            className="stroke-white group-hover:stroke-yellow-400"
-            xmlns="http://www.w3.org/2000/svg"
+        {!user ? (
+          <Link
+            href="/login"
+            className="group flex items-center gap-2 hover:text-yellow-400"
           >
-            <path
-              d="M5 21C5 17.134 8.13401 14 12 14C15.866 14 19 17.134 19 21M16 7C16 9.20914 14.2091 11 12 11C9.79086 11 8 9.20914 8 7C8 4.79086 9.79086 3 12 3C14.2091 3 16 4.79086 16 7Z"
-              strokeWidth="2.4"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            ></path>{" "}
-          </svg>
-          Sign-up/Sign-in
-        </Link>
+            <svg
+              width={20}
+              height={20}
+              viewBox="0 0 24 24"
+              fill="none"
+              className="stroke-white group-hover:stroke-yellow-400"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M5 21C5 17.134 8.13401 14 12 14C15.866 14 19 17.134 19 21M16 7C16 9.20914 14.2091 11 12 11C9.79086 11 8 9.20914 8 7C8 4.79086 9.79086 3 12 3C14.2091 3 16 4.79086 16 7Z"
+                strokeWidth="2.4"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              ></path>{" "}
+            </svg>
+            Sign-up/Sign-in
+          </Link>
+        ) : (
+          <Link
+            href="/profile"
+            className="group flex items-center gap-2 hover:text-yellow-400"
+          >
+            <span>{user?.displayName}</span>
+            <img
+              src={getAvatarUrl(user?.avatarUrl)}
+              alt="Avatar"
+              className="w-7 h-7 rounded-full object-cover border border-white/20 group-hover:border-yellow-400"
+            />
+          </Link>
+        )}
       </div>
     </nav>
   );

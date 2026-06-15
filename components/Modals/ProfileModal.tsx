@@ -6,23 +6,17 @@ import {
   type GetAuthAccountResponse,
 } from "@/src/api/generated";
 import Button from "../Button";
+import { getAvatarUrl } from "@/libs/avatar";
 
-export default function ProfileModal() {
-  const [user, setUser] = useState<GetAuthAccountResponse["data"] | null>(null);
-  useEffect(() => {
-    try {
-      getAuthAccount().then((res) => {
-        if (res.data?.success) {
-          setUser(res.data.data);
-        }
-      });
-    } catch (error) {
-      console.log(error);
-    }
-  }, []);
-  console.log;
+export default function ProfileModal({
+  user,
+  onEdit,
+}: {
+  user: GetAuthAccountResponse["data"] | null;
+  onEdit?: () => void;
+}) {
   return (
-    <Modal isOpen={true} onClose={() => {}} noBackground={true}>
+    <Modal isOpen={true} onClose={() => { }} noBackground={true}>
       <p className="mt-4 self-center text-center text-2xl">Profile</p>
       <p className="self-center text-center text-md opacity-70">User Profile</p>
       <div className="flex items-center justify-center text-center m-2">
@@ -33,9 +27,9 @@ export default function ProfileModal() {
           Avatar
         </p>
         <img
-          src={user?.avatarUrl ?? "https://picsum.photos/200/200"}
+          src={getAvatarUrl(user?.avatarUrl)}
           alt="Avatar"
-          className="w-25 h-25 rounded-full"
+          className="w-25 h-25 rounded-full object-cover border border-white/20"
         />
         <div className="flex flex-col gap-1">
           <p className="self-center text-center text-md opacity-70">
@@ -71,7 +65,7 @@ export default function ProfileModal() {
 
       <div className="h-20" />
       <div className="flex justify-end items-center text-black font-bold gap-3 text-nowrap">
-        <Button text="Edit" func={() => {}} className="bg-yellow-200" />
+        <Button text="Edit" func={onEdit || (() => {})} className="bg-yellow-200" />
         <Button text="Log-out" func={() => {}} className="bg-yellow-300" />
       </div>
     </Modal>

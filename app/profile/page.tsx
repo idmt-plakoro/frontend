@@ -1,6 +1,6 @@
-import ProfileModal from "@/components/Modals/ProfileModal";
 import { redirect } from "next/navigation";
 import { cookies } from "next/headers";
+import UserData from "@/components/UserData";
 
 export default async function ProfilePage() {
   const cookieStore = await cookies();
@@ -8,5 +8,6 @@ export default async function ProfilePage() {
   if (!hasSession) {
     redirect("/login");
   }
-  return <ProfileModal />;
+
+  return <UserData />;
 }
