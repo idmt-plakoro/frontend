@@ -28,6 +28,30 @@ export type GetAuthGoogleErrors = {
 
 export type GetAuthGoogleError = GetAuthGoogleErrors[keyof GetAuthGoogleErrors];
 
+export type GetAuthLogoutData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/auth/logout';
+};
+
+export type GetAuthLogoutErrors = {
+    /**
+     * Response for status 422
+     */
+    422: {
+        type: 'validation';
+        on: string;
+        summary?: string;
+        message?: string;
+        found?: unknown;
+        property?: string;
+        expected?: string;
+    };
+};
+
+export type GetAuthLogoutError = GetAuthLogoutErrors[keyof GetAuthLogoutErrors];
+
 export type GetApiExampleTypesData = {
     body?: never;
     path?: never;
@@ -390,7 +414,7 @@ export type GetApiPokemonResponse = GetApiPokemonResponses[keyof GetApiPokemonRe
 export type GetApiPokemonByPokemonIdData = {
     body?: never;
     path: {
-        pokemonId: number;
+        pokemonId: string;
     };
     query?: never;
     url: '/api/pokemon/{pokemonId}';

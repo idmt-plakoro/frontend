@@ -3,20 +3,35 @@ import Modal from "./Modal";
 import { useEffect, useState } from "react";
 import {
   getAuthAccount,
+  getAuthLogout,
   type GetAuthAccountResponse,
 } from "@/src/api/generated";
 import Button from "../Button";
 import { getAvatarUrl } from "@/libs/avatar";
+import { useRouter } from "next/navigation";
 
 export default function ProfileModal({
   user,
+  setUser,
   onEdit,
 }: {
   user: GetAuthAccountResponse["data"] | null;
+  setUser: (user: GetAuthAccountResponse["data"] | null) => void;
   onEdit?: () => void;
 }) {
+  const router = useRouter();
+
+  const handleLogout = async () => {
+    try {
+      setUser(null);
+      await getAuthLogout();
+      window.location.href = "/login";
+    } catch (error) {
+      console.error("Failed to log out:", error);
+    }
+  };
   return (
-    <Modal isOpen={true} onClose={() => { }} noBackground={true}>
+    <Modal isOpen={true} onClose={() => {}} noBackground={true}>
       <p className="mt-4 self-center text-center text-2xl">Profile</p>
       <p className="self-center text-center text-md opacity-70">User Profile</p>
       <div className="flex items-center justify-center text-center m-2">
@@ -65,8 +80,12 @@ export default function ProfileModal({
 
       <div className="h-20" />
       <div className="flex justify-end items-center text-black font-bold gap-3 text-nowrap">
-        <Button text="Edit" func={onEdit || (() => {})} className="bg-yellow-200" />
-        <Button text="Log-out" func={() => {}} className="bg-yellow-300" />
+        <Button
+          text="Edit"
+          func={onEdit || (() => {})}
+          className="bg-yellow-200"
+        />
+        <Button text="Log-out" func={handleLogout} className="bg-yellow-300" />
       </div>
     </Modal>
   );

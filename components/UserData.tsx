@@ -28,7 +28,11 @@ export default function UserData() {
       {openEdit ? (
         <EditProfileModal user={user} onClose={() => setOpenEdit(false)} />
       ) : (
-        <ProfileModal user={user} onEdit={() => setOpenEdit(true)} />
+        <ProfileModal
+          user={user}
+          setUser={setUser}
+          onEdit={() => setOpenEdit(true)}
+        />
       )}
     </div>
   );
