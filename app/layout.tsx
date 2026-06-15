@@ -3,6 +3,7 @@ import { Geist, Geist_Mono, Poetsen_One, Salsa } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
 import DiceBackground from "@/components/DiceBackground";
+import ClientConfig from "@/components/ClientConfig";
 import { client } from "@/src/api/generated/client.gen";
 
 // Change the base URL dynamically
@@ -48,6 +49,7 @@ export default function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable} ${poetsenOne.variable} ${salsa.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
+        <ClientConfig />
         <Navbar />
         <DiceBackground />
         {children}
