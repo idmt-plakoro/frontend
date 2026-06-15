@@ -1,10 +1,18 @@
+"use client";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 export default function NavBar() {
+  const router = useRouter();
   return (
     <nav className="fixed top-0 left-0 right-0 flex items-center justify-between h-[50px] z-30 px-6 py-4 bg-[#111111] text-white font-salsa">
       {/* LEFT LOGO */}
-      <div className="text-2xl font-bold tracking-wider">Plakoro</div>
+      <div
+        className="text-2xl font-bold tracking-wider cursor-pointer"
+        onClick={() => router.push("/")}
+      >
+        Plakoro
+      </div>
 
       {/* RIGHT MENU */}
       <div className="flex items-center space-x-6 text-sm font-medium">

@@ -9,6 +9,7 @@ import { client } from "@/src/api/generated/client.gen";
 // Change the base URL dynamically
 client.setConfig({
   baseUrl: process.env.BACKEND_URL || "http://localhost:3000",
+  credentials: "include",
 });
 
 const geistSans = Geist({

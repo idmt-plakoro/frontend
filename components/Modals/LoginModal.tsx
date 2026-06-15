@@ -19,7 +19,12 @@ export default function LoginModal({ isOpen }: LoginModalProps) {
         <div className="bg-white opacity-60 w-[95%] h-px" />
       </div>
       <div className="flex flex-col items-center justify-center m-8 gap-3">
-        <button className="flex flex-row items-center self-center justify-center bg-white rounded-full w-4/5 h-10 text-black cursor-pointer">
+        <button
+          className="flex flex-row items-center self-center justify-center bg-white rounded-full w-4/5 h-10 text-black cursor-pointer"
+          onClick={() => {
+            router.push(process.env.BACKEND_URL + "/auth/google");
+          }}
+        >
           <img
             className="w-6 h-6 m-2 rounded-l-full"
             src="/google-color.svg"
