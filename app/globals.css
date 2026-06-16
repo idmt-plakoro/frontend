@@ -25,3 +25,37 @@ body {
   font-family: var(--font-geist-sans), sans-serif;
   margin-top: 50px;
 }
+
+@utility no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+@utility mask-fade {
+  mask-image: linear-gradient(to right, black, black calc(100% - 24px), transparent);
+  -webkit-mask-image: linear-gradient(to right, black, black calc(100% - 24px), transparent);
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes slideIn {
+  from { transform: translateY(100px) scale(0.9); opacity: 0; }
+  to { transform: translateY(0) scale(1); opacity: 1; }
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.2s ease-out forwards;
+}
+
+.animate-slideIn {
+  animation: slideIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+
+
