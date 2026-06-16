@@ -19,6 +19,9 @@ import {
 import ErrorModal from "./Modals/ErrorModal";
 import { validateDiceConfig, calculateDiceProbability } from "@/libs/calculate";
 import SkillModal from "./Modals/SkillModal";
+import ShareModal from "./Modals/ShareModal";
+import { canShare, encodeConfig } from "@/libs/share";
+
 
 client.setConfig({
   baseUrl: "http://localhost:3000",
@@ -75,6 +78,11 @@ export default function Dashboard({
   // Probability Calculation State
   const [calculationResults, setCalculationResults] = useState<any[] | null>(null);
 
+  // Share Modal State
+  const [isShareModalOpen, setIsShareModalOpen] = useState<boolean>(false);
+  const [shareUrl, setShareUrl] = useState<string>("");
+
+
   useEffect(() => {
     async function fetchNewPokemon() {
       setLoading(true);
@@ -110,21 +118,62 @@ export default function Dashboard({
     fetchFaceTypes();
   }, []);
 
-  // Load diceData from localStorage after hydration
+  // Load all configurations from localStorage after hydration
   useEffect(() => {
-    const saved = getLocalStorageItem(STORAGE_KEYS.DICE_DATA, null);
-    if (saved) {
-      setDiceData(saved);
+    const savedDice = getLocalStorageItem(STORAGE_KEYS.DICE_DATA, null);
+    if (savedDice) {
+      setDiceData(savedDice);
+    }
+    const savedPokemonId = getLocalStorageItem(STORAGE_KEYS.POKEMON_ID, null);
+    if (savedPokemonId) {
+      setPokemonId(savedPokemonId);
+    }
+    const savedSkills = getLocalStorageItem(STORAGE_KEYS.CURRENT_SKILL, null);
+    if (savedSkills) {
+      setSavedSkillIds(savedSkills);
+    }
+    const savedFirstTurn = getLocalStorageItem("plakoro_first_turn", null);
+    if (savedFirstTurn !== null) {
+      setFirstTurn(savedFirstTurn);
+    }
+    const savedBanDice = getLocalStorageItem("plakoro_ban_dice", null);
+    if (savedBanDice) {
+      setBanDice(savedBanDice);
     }
     setIsDiceLoaded(true);
   }, []);
 
-  // Save diceData only after initial load from localStorage is complete
+  // Save changes only after initial load from localStorage is complete
   useEffect(() => {
     if (isDiceLoaded) {
       setLocalStorageItem(STORAGE_KEYS.DICE_DATA, diceData);
     }
   }, [diceData, isDiceLoaded]);
+
+  useEffect(() => {
+    if (isDiceLoaded) {
+      setLocalStorageItem(STORAGE_KEYS.POKEMON_ID, pokemonId);
+    }
+  }, [pokemonId, isDiceLoaded]);
+
+  useEffect(() => {
+    if (isDiceLoaded) {
+      setLocalStorageItem(STORAGE_KEYS.CURRENT_SKILL, savedSkillIds);
+    }
+  }, [savedSkillIds, isDiceLoaded]);
+
+  useEffect(() => {
+    if (isDiceLoaded) {
+      setLocalStorageItem("plakoro_first_turn", firstTurn);
+    }
+  }, [firstTurn, isDiceLoaded]);
+
+  useEffect(() => {
+    if (isDiceLoaded) {
+      setLocalStorageItem("plakoro_ban_dice", banDice);
+    }
+  }, [banDice, isDiceLoaded]);
+
 
   const handleChangePokemon = (newId: number) => {
     setPokemonId(newId); // พอสั่งเปลี่ยน ID ปุ๊บ useEffect ข้างบนจะทำงานอัตโนมัติทันที!
@@ -174,6 +223,28 @@ export default function Dashboard({
     setCalculationResults(results);
   };
 
+  const handleShare = () => {
+    const check = canShare(diceData);
+    if (!check.canShare) {
+      setErrorTitle("Cannot Share");
+      setErrorMessage(check.reason || "Please complete configuration before sharing.");
+      setIsErrorOpen(true);
+      return;
+    }
+
+    const shareData = {
+      pokemonId,
+      diceData,
+      savedSkillIds,
+      firstTurn,
+      banDice,
+    };
+    const base64Data = encodeConfig(shareData);
+    const url = `${window.location.origin}/share?data=${base64Data}`;
+    setShareUrl(url);
+    setIsShareModalOpen(true);
+  };
+
   return (
     // Background ลายลูกเต๋า (สมมติว่าเป็นสีเทาอ่อนไปก่อน)
     <div className="min-h-screen p-8 bg-gray-200 flex justify-center">
@@ -185,7 +256,10 @@ export default function Dashboard({
             Plakoro First Dice set ({pokemonInfo?.name?.en})
           </h1>
           <div className="flex gap-4">
-            <button className="bg-yellow-300 font-bold px-6 py-2 rounded-lg hover:bg-yellow-400 transition">
+            <button
+              onClick={handleShare}
+              className="bg-yellow-300 font-bold px-6 py-2 rounded-lg hover:bg-yellow-400 transition"
+            >
               Share
             </button>
             <button className="bg-yellow-400 font-bold px-6 py-2 rounded-lg hover:bg-yellow-500 transition">
@@ -255,7 +329,13 @@ export default function Dashboard({
             oldSkillSave={savedSkillIds} // ส่ง array ID ที่จำไว้กลับเข้าไป
             onConfirm={handleConfirmSkills} // รอรับ array ID อันใหม่
           />
+          <ShareModal
+            isOpen={isShareModalOpen}
+            onClose={() => setIsShareModalOpen(false)}
+            shareUrl={shareUrl}
+          />
         </div>
+
 
         {/* Controls (Add Skill, First Turn Toggle, Calculate) */}
         <div className="flex items-center justify-between border-t border-b border-gray-200 py-4">
