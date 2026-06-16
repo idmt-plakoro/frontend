@@ -8,23 +8,42 @@ import { getApiPokemonList, GetApiPokemonListResponse } from '@/src/api/generate
 interface SidebarProps {
   isOpen: boolean;
   onClose: () => void;
-  onSelectPokemon: (id: number) => void;
+  currentPokemonId: number;
+  onSelectPokemon: (id: number, shouldResetDice?: boolean) => void;
 }
 
-export default function PokemonSidebar({ isOpen, onClose, onSelectPokemon }: SidebarProps) {
+// ปรับคู่สี (พื้นหลังแถบชื่อ และ สีตัวอักษร) ให้ตรงตามการ์ดในภาพ image_65da0a.png
+const TYPE_STYLES: Record<number, { label: string; bg: string; text: string; cardLabelBg: string }> = {
+  1: { label: 'Grass', bg: 'bg-[#22c55e]', text: 'text-[#14532d]', cardLabelBg: 'bg-[#4ade80]' },       // หญ้า (Bulbasaur)
+  2: { label: 'Fire', bg: 'bg-[#ef4444]', text: 'text-[#7c2d12]', cardLabelBg: 'bg-[#f97316]' },        // ไฟ (Charizard)
+  3: { label: 'Water', bg: 'bg-[#00c2ff]', text: 'text-white', cardLabelBg: 'bg-[#3b82f6]' },           // น้ำ
+  4: { label: 'Electric', bg: 'bg-[#ffcc00]', text: 'text-[#422006]', cardLabelBg: 'bg-[#fef08a]' },    // สายฟ้า (Pikachu)
+  5: { label: 'Psychic', bg: 'bg-[#ec4899]', text: 'text-white', cardLabelBg: 'bg-[#f472b6]' },         // พลังจิต
+  6: { label: 'Fighting', bg: 'bg-[#b45309]', text: 'text-white', cardLabelBg: 'bg-[#b45309]' },        // ต่อสู้
+  7: { label: 'Dark', bg: 'bg-[#007598]', text: 'text-white', cardLabelBg: 'bg-[#1e3a8a]' },            // ความมืด
+  8: { label: 'Steel', bg: 'bg-[#6b7280]', text: 'text-white', cardLabelBg: 'bg-[#9ca3af]' },           // โลหะ
+  9: { label: 'Dragon', bg: 'bg-[#78716c]', text: 'text-white', cardLabelBg: 'bg-[#d97706]' },          // มังกร
+  10: { label: 'Flying', bg: 'bg-[#38bdf8]', text: 'text-white', cardLabelBg: 'bg-[#06b6d4]' },         // บิน
+  11: { label: 'Normal', bg: 'bg-[#a3a3a3]', text: 'text-white', cardLabelBg: 'bg-[#cbd5e1]' },         // ไร้สี
+};
+
+export default function PokemonSidebar({ isOpen, onClose, currentPokemonId, onSelectPokemon }: SidebarProps) {
   const [allPokemon, setAllPokemon] = useState<GetApiPokemonListResponse>();
   const [loading, setLoading] = useState<boolean>(true);
-  
-  // State สำหรับการค้นหาและตัวกรอง
   const [searchTerm, setSearchTerm] = useState<string>('');
   const [selectedType, setSelectedType] = useState<number | null>(null);
 
-  // 1. ดึงข้อมูลรายการโปเกมอนทั้งหมดตอนเปิด Component
+  const [hoveredPokemon, setHoveredPokemon] = useState<any | null>(null); 
+  const [tempSelectedId, setTempSelectedId] = useState<number | null>(null); 
+  const [showWarningModal, setShowWarningModal] = useState<boolean>(false); 
+
+  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
+
   useEffect(() => {
     async function fetchList() {
       try {
         const response = await getApiPokemonList();
-        const list: GetApiPokemonListResponse = response.data || {success: false, data: []}; 
+        const list: GetApiPokemonListResponse = response.data || { success: false, data: [] }; 
         setAllPokemon(list);
       } catch (error) {
         console.error("Failed to fetch pokemon list:", error);
@@ -35,12 +54,20 @@ export default function PokemonSidebar({ isOpen, onClose, onSelectPokemon }: Sid
     fetchList();
   }, []);
 
-  // 🌟 2. ดึง Array ออกมาแล้วครอบ `as any[]` เพื่อแปลงข้อมูลกลุ่ม unknown ให้พร้อมใช้งาน
+  useEffect(() => {
+    if (isOpen) {
+      setTempSelectedId(currentPokemonId);
+      setHoveredPokemon(null);
+    }
+  }, [isOpen, currentPokemonId]);
+
+  const handleMouseMove = (e: React.MouseEvent) => {
+    setMousePos({ x: e.clientX + 15, y: e.clientY - 40 }); 
+  };
+
   const pokemonList = (allPokemon?.data || []) as any[];
 
-  // 3. Logic สำหรับค้นหาและกรองประเภทธาตุ
   const filteredPokemon = pokemonList.filter((pokemon) => {
-    // ใช้ String() ครอบเผื่อไว้ และใช้ค่า Default เป็นข้อความว่าง เพื่อป้องกันกรณีข้อมูลหลุดเป็น null/undefined
     const enName = String(pokemon.enPokemonName || '');
     const thName = String(pokemon.thPokemonName || '');
 
@@ -53,103 +80,233 @@ export default function PokemonSidebar({ isOpen, onClose, onSelectPokemon }: Sid
     return matchesSearch && matchesType;
   });
 
-  // รายชื่อธาตุจำลองสำหรับทำปุ่ม Filter
-  const typeIds = [1, 2, 3, 4, 5, 6,7,8,9,10,11];
+  // เรียงลำดับ ID ธาตุตามปุ่มในภาพเป๊ะๆ: Steel(8), Flying(10), Dragon(9), Water(3), Fire(2), Normal(11), Grass(1), Electric(4), Psychic(5), Dark(7)
+  const typeIds = [8, 10, 9, 3, 2, 11, 1, 4, 5, 7]; 
+
+  const handleConfirmSelection = () => {
+    if (!tempSelectedId) return;
+
+    if (tempSelectedId === currentPokemonId) {
+      setShowWarningModal(true);
+    } else {
+      onSelectPokemon(tempSelectedId, false);
+    }
+  };
+
+  const getImageSrc = (val: any) => {
+    const s = String(val ?? '').trim();
+    return s.length > 0 ? s : '/img/Unknown_Pokemon.png';
+  };
 
   return (
     <>
       {/* Background Overlay */}
       <div 
         onClick={onClose}
-        className={`fixed inset-0 bg-black/40 z-40 transition-opacity duration-300 ${
+        className={`fixed inset-0 bg-black/60 z-40 transition-opacity duration-300 backdrop-blur-xs ${
           isOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
         }`}
       />
 
-      {/* แถบสไลด์ด้านซ้าย */}
-      <div className={`fixed inset-y-0 left-0 w-80 sm:w-96 bg-[#1a1a1a]/50 border-r-4 border-black text-white z-50 flex flex-col p-4 shadow-[4px_0_0_0_rgba(0,0,0,1)] transition-transform duration-300 ease-in-out transform ${
+      {/* แถบสไลด์ด้านซ้าย - เปลี่ยนเป็นสีดำสนิทลื่นไหลตามภาพ */}
+      <div className={`fixed inset-y-0 left-0 w-full max-w-[440px] bg-[#121212]/50 border-r border-neutral-900 text-white z-50 flex flex-col p-6 shadow-2xl transition-transform duration-300 ease-in-out transform ${
         isOpen ? 'translate-x-0' : '-translate-x-full'
       }`}>
         
-        {/* หัวข้อแถบเมนู */}
-        <div className="flex items-center justify-between mb-4 pb-2 border-b-2 border-gray-800">
-          <h2 className="text-lg font-black text-yellow-400 uppercase tracking-wider">Select Pokemon</h2>
-          <button onClick={onClose} className="text-gray-400 hover:text-white font-bold text-xl">✕</button>
+        {/* ปุ่มกากบาทปิด (✕) ย้ายไปมุมขวาบนสุด ไม่มี Text หัวข้อกวนใจ */}
+        <div className="flex justify-end mb-4 pt-[40px]">
+          <button onClick={onClose} className="text-white/90 hover:text-white transition-colors p-1 text-2xl font-light">✕</button>
         </div>
 
-        {/* 🔍 ส่วนบน: Search และ Filter Type */}
-        <div className="flex flex-col gap-3 mb-4">
-          <input 
-            type="text"
-            placeholder="Search Name"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full bg-[#ffffff] border-2 text-black border-black p-2 rounded-lg text-sm focus:outline-none focus:border-yellow-400 font-bold placeholder-gray-500"
-          />
+        {/* 🔍 ส่วนค้นหาและฟิลเตอร์เม็ดยา */}
+        <div className="flex flex-col gap-4 mb-6">
+          {/* Input ค้นหาใช้สีม่วง/เทาพาสเทลอ่อนตามต้นฉบับ */}
+          <div className="relative w-full">
+            <input 
+              type="text"
+              placeholder="Hinted search text"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="w-full bg-[#e9e6ed] text-neutral-800 placeholder-neutral-500 pl-5 pr-12 py-3 rounded-full text-sm font-medium focus:outline-none transition-all"
+            />
+            <div className="absolute right-4 top-1/2 -translate-y-1/2 text-neutral-600 pointer-events-none">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              </svg>
+            </div>
+          </div>
 
-          <div className="flex flex-col gap-1">
-            <span className="text-[10px] uppercase font-black text-gray-400 tracking-wider">Filter by Type:</span>
-            <div className="flex gap-1.5 overflow-x-auto pb-1 scrollbar-thin">
-              <button
-                onClick={() => setSelectedType(null)}
-                className={`px-2.5 py-1 rounded text-xs font-black transition-all border border-black ${
-                  selectedType === null ? 'bg-yellow-400 text-black shadow-[2px_2px_0_0_rgba(0,0,0,1)]' : 'bg-[#2a2a2a] text-gray-400'
-                }`}
-              >
-                ALL
-              </button>
-              {typeIds.map((typeId) => (
+          {/* แถบฟิลเตอร์เม็ดยาหลากสี (ลบปุ่ม ALL ออกตามภาพ) */}
+          <div className="flex flex-wrap gap-x-2 gap-y-2 max-h-[104px] overflow-y-auto pr-1 scrollbar-none pl-1 pt-1">
+            {typeIds.map((typeId) => {
+              const style = TYPE_STYLES[typeId] || { label: `Type ${typeId}`, bg: 'bg-neutral-500' };
+              const isSelected = selectedType === typeId;
+              return (
                 <button
                   key={typeId}
-                  onClick={() => setSelectedType(typeId)}
-                  className={`relative p-1 w-7 h-7 rounded transition-all border border-black flex items-center justify-center ${
-                    selectedType === typeId ? 'bg-white scale-110 shadow-[2px_2px_0_0_rgba(0,0,0,1)]' : 'bg-[#2a2a2a]'
+                  onClick={() => setSelectedType(selectedType === typeId ? null : typeId)} // คลิกซ้ำเพื่อเคลียร์ฟิลเตอร์
+                  className={`px-4 py-1.5 rounded-full text-xs font-black tracking-wide italic transition-all ${
+                    isSelected 
+                      ? `${style.bg} text-white ring-2 ring-white scale-105 shadow-md` 
+                      : `${style.bg} text-white opacity-90 hover:opacity-100`
                   }`}
                 >
-                  <div className="relative w-5 h-5">
-                    <Image src={`/img/Type/${typeId}.png`} alt={`Type ${typeId}`} fill className="object-contain" />
-                  </div>
+                  {style.label}
                 </button>
-              ))}
-            </div>
+              );
+            })}
           </div>
         </div>
 
-        {/* 📱 ส่วนล่าง: รายชื่อโปเกมอนบรรทัดละ 3 แถว */}
-        <div className="flex-1 overflow-y-auto pr-1 flex flex-col gap-2 scrollbar-thin">
+        {/* 📱 รายชื่อโปเกมอน Grid 3 คอลัมน์ ดีไซน์กล่องมนขอบขาวคลีน */}
+        <div className="flex-1 overflow-y-auto pt-2 pr-3 pb-24 [&::-webkit-scrollbar]:w-1.5 
+          [&::-webkit-scrollbar-track]:bg-transparent 
+          [&::-webkit-scrollbar-thumb]:bg-[#007AFF]
+          [&::-webkit-scrollbar-thumb]:rounded-full 
+          hover:[&::-webkit-scrollbar-thumb]:bg-[#0059BE]">
           {loading ? (
-            <div className="text-center text-xs font-bold text-gray-500 py-10 animate-pulse">Loading list...</div>
-          ) : filteredPokemon.length === 0 ? (
-            <div className="text-center text-xs text-gray-500 py-10">No Pokemon found</div>
-          ) : (
-            <div className="grid grid-cols-3 gap-2">
-              {filteredPokemon.map((pokemon) => (
-                <div 
-                  key={pokemon.id}
-                  onClick={() => pokemon.id !== undefined && onSelectPokemon(Number(pokemon.id))}
-                  className="bg-[#2a2a2a] border-2 border-black rounded-xl p-2 flex flex-col items-center justify-between text-center cursor-pointer hover:bg-yellow-400 hover:text-black hover:-translate-y-1 transition-all group shadow-[2px_2px_0_0_rgba(0,0,0,0.5)] hover:shadow-[3px_3px_0_0_rgba(0,0,0,1)]"
-                >
-                  <div className="relative w-14 h-14 mb-1">
-                    {pokemon.pokemonImage && (
-                      <Image 
-                        src={String(pokemon.pokemonImage)} // 🌟 บังคับมองเป็น String ป้องกัน Error รูปภาพ
-                        alt={String(pokemon.enPokemonName || 'pokemon')} 
-                        fill 
-                        className="object-contain group-hover:scale-110 transition-transform"
-                      />
-                    )}
-                  </div>
-                  {/* 🌟 แสดงผลชื่อได้อย่างปลอดภัย ไม่ติดปัญหา ReactNode อีกต่อไป */}
-                  <span className="text-[10px] font-black line-clamp-1 truncate w-full">
-                    {String(pokemon.enPokemonName || '')}
-                  </span>
-                </div>
+            <div className="grid grid-cols-3 gap-4">
+              {[1, 2, 3, 4, 5, 6].map((i) => (
+                <div key={i} className="bg-[#d9d9d9] rounded-2xl aspect-[3/4] w-full animate-pulse" />
               ))}
+            </div>
+          ) : filteredPokemon.length === 0 ? (
+            <div className="text-center text-sm text-neutral-500 py-12">No Pokemon found</div>
+          ) : (
+            <div className="grid grid-cols-3 gap-4">
+              {filteredPokemon.map((pokemon) => {
+                const cardStyle = TYPE_STYLES[pokemon.typeId] || { text: 'text-black', cardLabelBg: 'bg-neutral-300' };
+                const isSelected = tempSelectedId === pokemon.id;
+
+                return (
+                  <div 
+                    key={pokemon.id}
+                    onClick={() => pokemon.id !== undefined && setTempSelectedId(Number(pokemon.id))} 
+                    onMouseEnter={() => setHoveredPokemon(pokemon)} 
+                    onMouseLeave={() => setHoveredPokemon(null)}
+                    onMouseMove={handleMouseMove}
+                    // การ์ดพื้นหลังขาวล้วน มนกว้าง `rounded-2xl` ตามภาพต้นฉบับ
+                    className={`bg-white rounded-2xl overflow-hidden flex flex-col items-center justify-between text-center aspect-[3/4] w-full cursor-pointer transition-all group ${
+                      isSelected 
+                        ? 'ring-4 ring-yellow-400 scale-[1.03]' 
+                        : 'hover:scale-[1.02] border border-transparent'
+                    }`}
+                  >
+                    {/* พื้นที่โชว์รูปภาพสีขาวสะอาดตา */}
+                    <div className="relative w-full flex-1 flex items-center justify-center p-3">
+                        <div className="relative w-full h-full max-h-[75px]">
+                          <Image 
+                            src={getImageSrc(pokemon.pokemonImage)} 
+                            alt={String(pokemon.enPokemonName || 'pokemon')} 
+                            fill 
+                            className="object-contain group-hover:scale-105 transition-transform duration-200"
+                          />
+                        </div>
+                    </div>
+                    
+                    {/* แถบป้ายชื่อด้านล่างมนตามขอบด้านล่างและใช้สีพาสเทลเฉพาะตัวตามภาพ */}
+                    <div className={`w-full ${cardStyle.cardLabelBg} py-2 px-1 flex items-center justify-center`}>
+                      <span className={`text-[11px] font-bold ${cardStyle.text} truncate w-full px-0.5 tracking-tight`}>
+                        {String(pokemon.enPokemonName || 'Unknown')}
+                      </span>
+                    </div>
+                  </div>
+                );
+              })}
+
+              {/* กรณีที่ข้อมูลในแถวนั้นมีไม่ครบ 3 ใบ ให้โชว์กล่องเปล่าสีเทา `bg-[#d9d9d9]` ตกแต่งท้ายตารางเหมือนในภาพ */}
+              {filteredPokemon.length > 0 && filteredPokemon.length < 6 && (
+                Array.from({ length: 6 - filteredPokemon.length }).map((_, idx) => (
+                  <div key={`empty-${idx}`} className="bg-[#d9d9d9] rounded-2xl aspect-[3/4] w-full" />
+                ))
+              )}
             </div>
           )}
         </div>
 
+        {/* 🟡 ปุ่มกดบันทึกยืนยันข้อมูล */}
+        <div className="absolute bottom-0 left-0 right-0 p-5 bg-gradient-to-t from-[#111111] via-[#111111]/95 to-transparent pt-8">
+          <button
+            onClick={handleConfirmSelection}
+            disabled={!tempSelectedId}
+            className="w-[200px] bg-[#facc15] hover:bg-[#eab308] active:scale-[0.99] disabled:bg-neutral-700 disabled:text-neutral-500 text-black font-black text-sm py-3 rounded-xl shadow-lg transition-all border-b-4 border-yellow-700 tracking-wider uppercase"
+          >
+            Confirm
+          </button>
+        </div>
+
       </div>
+
+      {/* [FLOATING HOVER PREVIEW PANEL] เหมือนเดิม */}
+      {hoveredPokemon && (
+        <div 
+          style={{ top: mousePos.y, left: mousePos.x }}
+          className="fixed pointer-events-none z-[100] bg-neutral-900/95 border border-neutral-700 rounded-xl p-3 shadow-2xl flex flex-col justify-center min-w-[240px] max-w-[280px] animate-fadeIn"
+        >
+          {/* ข้อมูลเนื้อหาด้านใน Preview คงเดิม */}
+          <div className="flex items-center gap-3">
+            <div className="bg-white/10 p-1 rounded-lg border border-white/10 flex-shrink-0">
+              <div className="relative w-11 h-11">
+                <Image src={getImageSrc(hoveredPokemon?.pokemonImage)} alt="Preview" fill className="object-contain"/>
+              </div>
+            </div>
+            <div className="flex-1 flex flex-col gap-0.5 text-xs">
+              <div className="font-black text-xs text-yellow-400 uppercase tracking-wide truncate max-w-[160px]">
+                {hoveredPokemon.enPokemonName}
+              </div>
+              <div className="text-neutral-400 text-[10px] truncate max-w-[160px]">
+                {hoveredPokemon.thPokemonName || 'ไม่มีชื่อไทย'}
+              </div>
+              <div className="flex gap-2 mt-1">
+                <div><span className="text-neutral-400 font-bold">HP:</span> <span className="font-extrabold text-white">{hoveredPokemon.hp ?? 'N/A'}</span></div>
+                <div>
+                  <span className="text-neutral-400 font-bold">Element:</span>{' '}
+                  <span className={`px-1.5 py-0.2 rounded font-black text-[9px] ${TYPE_STYLES[hoveredPokemon.typeId]?.bg || 'bg-neutral-500'} text-white`}>
+                    {TYPE_STYLES[hoveredPokemon.typeId]?.label || 'Unknown'}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ⚠️ [WARNING RESET MODAL] ปรับดีไซน์ตามภาพใหม่เป๊ะๆ */}
+      {showWarningModal && (
+        <div className="fixed inset-0 bg-black/75 z-[60] flex items-center justify-center p-4 backdrop-blur-xs animate-fadeIn">
+          {/* ตัวกล่องหลัก: สีเทาเข้ม, ขอบมนมนมาก, ขอบเส้นสีเหลืองทองบาง */}
+          <div className="bg-[#444444] rounded-[32px] max-w-md w-full border border-yellow-400 p-8 shadow-2xl flex flex-col items-center justify-center">
+            
+            {/* ข้อความแจ้งเตือน: ตัวอักษรสีขาวนวล ฟอนต์หนาปานกลาง จัดกึ่งกลาง */}
+            <p className="text-white/90 text-lg sm:text-xl font-medium tracking-wide text-center leading-relaxed mb-6 select-none max-w-xs sm:max-w-sm">
+              Select same pokemon will reset your dice set are you sure?
+            </p>
+
+            {/* โซนปุ่มกดแบบคู่ในแนวนอน */}
+            <div className="flex gap-5 items-center justify-center w-full">
+              {/* ปุ่ม Cancel */}
+              <button 
+                onClick={() => setShowWarningModal(false)}
+                className="bg-[#222222] hover:bg-[#2c2c2c] active:scale-95 text-white font-black text-sm sm:text-base px-6 py-2 rounded-xl border border-neutral-800 shadow-md transition-all tracking-wider"
+              >
+                Cancel
+              </button>
+              
+              {/* ปุ่ม Continue */}
+              <button 
+                onClick={() => {
+                  setShowWarningModal(false);
+                  if (tempSelectedId) onSelectPokemon(tempSelectedId, true);
+                }}
+                className="bg-[#222222] hover:bg-[#2c2c2c] active:scale-95 text-white font-black text-sm sm:text-base px-6 py-2 rounded-xl border border-neutral-800 shadow-md transition-all tracking-wider"
+              >
+                Continue
+              </button>
+            </div>
+
+          </div>
+        </div>
+      )}
     </>
   );
 }

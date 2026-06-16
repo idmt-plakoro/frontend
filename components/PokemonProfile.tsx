@@ -8,19 +8,19 @@ interface ProfileProps {
 }
 
 export default function PokemonProfile({ImgSrc,HP,Type,WeaknessType}:ProfileProps) {
-  ImgSrc='https://drive.google.com/uc?export=view&id=1pbx5qwulqgw7xpvfhU1BMu-003TautNO'
+
 return (
     <div className="relative w-full h-80 bg-white  rounded-2xl overflow-hidden flex flex-col ">
       
       {/* 🌟 เพิ่มเติม: รูปธาตุหลักที่มุมซ้ายบนของการ์ด */}
       {Type !== undefined && (
-        <div className="absolute top-2 left-2 z-20 w-9 h-9 bg-white/80 p-1 rounded-full">
-          <div className="relative w-full h-full">
+        <div className="absolute top-0 left-0 z-20 w-15 h-15 bg-white/80 rounded-full">
+          <div className="relative w-full h-full ">
             <Image 
               src={`/img/Type/${Type}.png`} 
               alt={`Type ${Type}`} 
               fill
-              className="object-contain"
+              className="object-contain rounded-br-full"
             />
           </div>
         </div>
@@ -56,8 +56,8 @@ return (
             </div>
         </div>
 
-        {/* ฝั่งขวา: ไอคอนธาตุ (ดันไปขวาสุดด้วย ml-auto หรือใช้ justify-between จากตัวแม่) */}
-        <div className="ml-6 flex items-center justify-center">
+        {/* ฝั่งขวา: ไอคอนธาตุ */}
+        <div className="mr-7 mt-7 flex items-center justify-center">
             {WeaknessType !== undefined ? (
             <div className="relative w-12 h-12 p-2 ">
                 <Image 

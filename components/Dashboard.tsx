@@ -1,17 +1,21 @@
 "use client";
 
 import React, { useEffect, useState } from 'react';
-import getPokemonData from '@/libs/getPokemonData';
 import PokemonProfile from './PokemonProfile';
 import DiceDisplayRow from './DiceDisplayRow';
 import PokemonSidebar from './PokemonSidebar';
 import { getApiPokemonByPokemonId } from '@/src/api/generated/sdk.gen';
 import ElementCount from './ElementCount';
+import { client } from '@/src/api/generated/client.gen';
+
+client.setConfig({
+  baseUrl: 'http://localhost:3000',
+});
 
 
 export default function Dashboard() {
 
-  const [pokemonId, setPokemonId] = useState<number>(6);
+  const [pokemonId, setPokemonId] = useState<number>(1);
   
   const [pokemonInfo, setPokemonInfo] = useState<any>(null);
   const [loading, setLoading] = useState<boolean>(true);
@@ -43,12 +47,12 @@ export default function Dashboard() {
     async function fetchNewPokemon() {
       setLoading(true);
       try {
-        console.log("กำลังFetching data for Pokemon ID:", pokemonId);
+        console.log("Fetching data for Pokemon ID:", pokemonId);
         const response = await getApiPokemonByPokemonId({  path: {
             pokemonId: pokemonId,
           },
         });
-        setPokemonInfo(response.data); // เซ็ตข้อมูลเข้า State
+        setPokemonInfo(response.data?.data);
       } catch (error) {
         console.error("Failed to fetch pokemon data:", error);
       } finally {
@@ -117,7 +121,7 @@ export default function Dashboard() {
           {/* Pokemon Profile */}
           <div className="w-full md:w-[220px] max-w-[250px] rounded-xl p-2 
           flex flex-col items-center justify-center cursor-pointer"
-           onClick={() => setIsSidebarOpen(true)} >
+           onClick={(e) => {e.stopPropagation(); setIsSidebarOpen(true);}} >
              <PokemonProfile 
                   ImgSrc={pokemonInfo?.pokemonImage} 
                   HP={pokemonInfo?.hp} 
@@ -169,8 +173,45 @@ export default function Dashboard() {
               <div className="h-[2px] bg-white w-full opacity-90"></div>
             </div>
 
+            {/* 🛠️ ส่วนแสดงผลลูกเต๋า 3 แถว พร้อมส่ง Props ส่องสถานะเปิด Ban คัดกรองตามเงื่อนไข */}
+            <div className="flex flex-col gap-3">
+              {['dice1', 'dice2', 'dice3'].map((rowKey, rowIndex) => {
+                const currentFaces = diceData[rowKey as 'dice1' | 'dice2' | 'dice3'];
+                return (
+                  <div key={rowKey} className="relative flex items-center w-full">
+                    <DiceDisplayRow 
+                      rowLabel={`Dice ${String.fromCharCode(65 + rowIndex)}`}
+                      diceFaces={currentFaces} 
+                      onEditClick={() => handleOpenModal(rowKey)} 
+                    />
+                    
+                    {/* ส่วนตรวจจับ Layer ปุ่มจิ้มเพื่อ Ban ครอบด้านบนเมื่อสวิตช์เปิดอยู่ */}
+                    {firstTurn && (
+                      <div className="absolute right-0 top-0 bottom-0 left-[85px] grid grid-cols-6 gap-1 px-1 py-1 pointer-events-auto">
+                        {currentFaces.map((_, faceIdx) => {
+                          const isBanned = banDice.row === rowKey && banDice.index === faceIdx;
+                          return (
+                            <button
+                              key={faceIdx}
+                              onClick={() => setBanDice({ row: rowKey, index: faceIdx })}
+                              className={`w-full h-full rounded-md transition-all duration-200 ${
+                                isBanned 
+                                  ? 'border-4 border-white scale-105 shadow-[0_0_12px_rgba(255,255,255,1)] bg-black/10' 
+                                  : 'border-2 border-transparent hover:border-white/50 bg-transparent'
+                              }`}
+                              title="Click to ban this dice"
+                            />
+                          );
+                        })}
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+              
+            </div>
             {/* วางเรียงกัน 3 แถว ส่ง Array 6 ตำแหน่ง และส่งฟังก์ชันเปิด Modal เข้าไป */}
-            <DiceDisplayRow 
+            {/* <DiceDisplayRow 
               rowLabel="Dice A"
               diceFaces={diceData.dice1} 
               onEditClick={() => handleOpenModal('dice1')} 
@@ -185,57 +226,62 @@ export default function Dashboard() {
               diceFaces={diceData.dice3} 
               onEditClick={() => handleOpenModal('dice3')} 
             />
-            
+             */}
           </div>
 
           {/* Element Count */}
           <ElementCount diceData={diceData} />
           {/* 🛠️ ส่วนของ Modal (เขียนโค้ดดักไว้ท้ายไฟล์) */}
-        {isModalOpen && (
-          <div className="fixed inset-0 bg-black/75 z-50 flex items-center justify-center p-4 animate-fadeIn">
-            <div className="bg-white text-black p-6 rounded-2xl max-w-md w-full border-4 border-black shadow-[8px_8px_0_0_rgba(250,204,21,1)]">
-              <h2 className="text-xl font-black mb-4">Editing {selectedDiceRow}</h2>
-              <p className="text-sm text-gray-600 mb-6">คุณสามารถเปลี่ยนข้อมูลธาตุในลูกเต๋าแถวนี้ได้ที่นี่...</p>
-              
-              {/* ปุ่มปิด Modal ชั่วคราว */}
-              <button 
-                onClick={() => setIsModalOpen(false)}
-                className="w-full bg-black text-white py-2 rounded-xl font-bold hover:bg-gray-800"
-              >
-                Close / Save Changes
-              </button>
+          {isModalOpen && (
+            <div className="fixed inset-0 bg-black/75 z-50 flex items-center justify-center p-4">
+              <div className="bg-white text-black p-6 rounded-2xl max-w-md w-full border-4 border-black">
+                <h2 className="text-xl font-black mb-4">Editing {selectedDiceRow}</h2>
+                <button onClick={() => setIsModalOpen(false)} className="w-full bg-black text-white py-2 rounded-xl font-bold">Close / Save Changes</button>
+              </div>
             </div>
-          </div>
-        )}
+          )}
         </div>
 
         {/* Controls (Add Skill, First Turn Toggle, Calculate) */}
         <div className="flex items-center justify-between border-t border-b border-gray-200 py-4">
-          <button className="bg-[#1e1e1e] text-white text-sm px-6 py-2 rounded-full hover:bg-black transition">
+          <button 
+            onClick={() => setIsSkillModalOpen(true)}
+            className="bg-black text-white text-xs font-black px-6 py-2 rounded-full border border-black hover:bg-neutral-800 transition active:scale-95 shadow-md"
+          >
             Add Skill +
           </button>
 
           {/* First Turn Toggle (ทำแบบง่ายๆ ด้วย Checkbox + CSS ไปก่อน) */}
-          <label className="flex items-center gap-2 cursor-pointer bg-[#1e1e1e] text-white text-sm px-4 py-2 rounded-full">
-            <span>First Turn</span>
-            <input type="checkbox" className="toggle-checkbox" />
-          </label>
+          <div className="bg-black text-white px-5 py-1.5 rounded-full flex items-center gap-3 shadow-md border border-black select-none">
+            <span className="text-xs font-black italic tracking-wide">First Turn</span>
+            
+            {/* สวิตช์แอนิเมชันเปิด-ปิดแบบเลื่อนสมูท */}
+            <button 
+              onClick={() => setFirstTurn(!firstTurn)}
+              className={`w-11 h-5.5 rounded-full p-0.5 transition-colors duration-300 flex items-center ${
+                firstTurn ? 'bg-[#500E5C]' : 'bg-[#939393]'
+              }`}
+            >
+              <div className={`bg-white w-4.5 h-4.5 rounded-full shadow-md transform transition-transform duration-300 ${
+                firstTurn ? 'translate-x-5.5' : 'translate-x-0.5'
+              }`} />
+            </button>
+          </div>
 
-          <button className="bg-[#1e1e1e] text-white text-sm px-6 py-2 rounded-full hover:bg-black transition">
+          <button 
+            onClick={handleCalculate}
+            className="bg-black text-white text-xs font-black px-7 py-2 rounded-full border border-black hover:bg-neutral-800 transition active:scale-95 shadow-md uppercase tracking-wider"
+          >
             Calculate
           </button>
         </div>
 
+        
+
         {/* Skill Cards List  */}
         <div className="flex flex-col gap-4">
           {/* ตัวอย่างการ Loop Card โล่งๆ รอไว้ 5 ใบ */}
-          {/* {pokemonInfo.skillCards.map((skill) => (
-             // สร้าง Component ใหม่ชื่อ SkillCardItem มารับค่า props ไปโชว์
-             // (อย่าลืมส่ง key ให้ React ด้วย)
-            //  <SkillCardItem key={skill.id} skillData={skill} />
-            
-          ))
-          } */}
+          
           
           <div className="flex justify-center mt-4">
              <button className="bg-[#1e1e1e] text-white text-xs px-4 py-1 rounded-full">View more</button>
@@ -245,27 +291,24 @@ export default function Dashboard() {
         <PokemonSidebar 
           isOpen={isSidebarOpen} 
           onClose={() => setIsSidebarOpen(false)} 
-          onSelectPokemon={(newId) => {
-            setPokemonId(newId);      // เปลี่ยน ID โปเกมอนหน้า Dashboard แม่
-            setIsSidebarOpen(false);  // ปิด Sidebar ทันทีที่เลือกเสร็จ
+          currentPokemonId={pokemonId} // 🌟 ส่ง ID ปัจจุบันไปตรวจสอบความซ้ำซ้อน
+          onSelectPokemon={(newId, shouldResetDice) => {
+            setPokemonId(newId);
+            
+            // 🌟 เงื่อนไขถ้าสั่งรีเซ็ตลูกเต๋า (กรณีเลือกตัวละครเดิมซ้ำแล้วกด Continue)
+            if (shouldResetDice) {
+              setDiceData({
+                dice1: [1, 2, 3, 4, 5, 6],
+                dice2: [1, 2, 3, 4, 5, 6],
+                dice3: [1, 2, 3, 4, 5, 6],
+              });
+              console.log("Dice set has been reset to default due to same pokemon re-selection.");
+            }
+            setIsSidebarOpen(false);
           }} 
         />
 
       </div>
-    </div>
-  );
-}
-
-// Component Card โล่งๆ ตัวอย่าง
-function EmptySkillCard() {
-  return (
-    <div className="w-full h-24 bg-gray-50 border border-gray-200 rounded-xl flex items-center p-4 shadow-sm hover:shadow-md transition">
-      <div className="w-16 h-16 bg-gray-300 rounded-lg mr-4 animate-pulse"></div>
-      <div className="flex-1">
-        <div className="h-4 bg-gray-300 rounded w-1/4 mb-2 animate-pulse"></div>
-        <div className="h-3 bg-gray-200 rounded w-1/2 animate-pulse"></div>
-      </div>
-      <div className="w-24 h-12 bg-gray-300 rounded-lg animate-pulse"></div>
     </div>
   );
 }
