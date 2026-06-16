@@ -1,4 +1,7 @@
 import Image from 'next/image';
+import Face from './Face'; // 🌟 อย่าลืม import Face component เข้ามาด้วยนะครับ
+import { useEffect, useState } from 'react';
+import { getApiFaceTypes } from '@/src/api/generated';
 
 interface ProfileProps {
   ImgSrc: string;
@@ -7,22 +10,29 @@ interface ProfileProps {
   WeaknessType: number | undefined;
 }
 
+const getTypeName = (id: number): string => {
+  const typeNames: Record<number, string> = {
+    1: 'Grass', 2: 'Fire', 3: 'Water', 4: 'Electric', 5: 'Psychic',
+    6: 'Fighting', 7: 'Dark', 8: 'Steel', 9: 'Dragon', 10: 'Flying', 11: 'Normal',
+  };
+  return typeNames[id] || 'Normal';
+};
+
 export default function PokemonProfile({ImgSrc,HP,Type,WeaknessType}:ProfileProps) {
 
 return (
     <div className="relative w-full h-80 bg-white  rounded-2xl overflow-hidden flex flex-col ">
       
-      {/* 🌟 เพิ่มเติม: รูปธาตุหลักที่มุมซ้ายบนของการ์ด */}
+      
+
+      {/* 🌟 โซนไอคอนธาตุหลัก มุมซ้ายบนของการ์ด */}
       {Type !== undefined && (
-        <div className="absolute top-0 left-0 z-20 w-15 h-15 bg-white/80 rounded-full">
-          <div className="relative w-full h-full ">
-            <Image 
-              src={`/img/Type/${Type}.png`} 
-              alt={`Type ${Type}`} 
-              fill
-              className="object-contain rounded-br-full"
-            />
-          </div>
+        <div className="absolute top-0 left-0 z-20 w-11 h-11 shadow-lg rounded-2xl rounded-br-full overflow-hidden backdrop-blur-sm p-0.5">
+          <Face 
+            imageUrl1={`/img/Type/${Type}.png`}
+            name1={getTypeName(Type)}
+            className="w-full h-full border-none shadow-sm rounded-br-full !p-0"
+          />
         </div>
       )}
 
@@ -56,19 +66,19 @@ return (
             </div>
         </div>
 
-        {/* ฝั่งขวา: ไอคอนธาตุ */}
-        <div className="mr-7 mt-7 flex items-center justify-center">
+        {/* ฝั่งขวา: ไอคอนธาตุจุดอ่อน */}
+        <div className="pr-2 mr-7 mt-7 flex items-center justify-center">
             {WeaknessType !== undefined ? (
-            <div className="relative w-12 h-12 p-2 ">
-                <Image 
-                src={`/img/Type/${WeaknessType}.png`} 
-                alt={`Weakness ${WeaknessType}`}
-                fill
-                className="object-contain p-1"
+              <div className="relative w-10 h-10">
+                {/* เรียกใช้งาน Face แทน Image */}
+                <Face 
+                  imageUrl1={`/img/Type/${WeaknessType}.png`} 
+                  name1={getTypeName(WeaknessType)} // ส่งชื่อธาตุไปเพื่อดึงสี
+                  className="w-full h-full border-none shadow-md"
                 />
-            </div>
+              </div>
             ) : (
-            <span className="text-gray-500 text-xs font-bold">None</span>
+              <span className="text-gray-500 text-xs font-bold mt-[-20px] ml-5">None</span>
             )}
         </div>
 

@@ -4,6 +4,7 @@
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { getApiPokemonList, GetApiPokemonListResponse } from '@/src/api/generated';
+import Face from './Face';
 
 interface SidebarProps {
   isOpen: boolean;
@@ -237,34 +238,71 @@ export default function PokemonSidebar({ isOpen, onClose, currentPokemonId, onSe
 
       </div>
 
-      {/* [FLOATING HOVER PREVIEW PANEL] เหมือนเดิม */}
+      {/* [FLOATING HOVER PREVIEW PANEL] ปรับใช้ Face Component */}
       {hoveredPokemon && (
         <div 
           style={{ top: mousePos.y, left: mousePos.x }}
-          className="fixed pointer-events-none z-[100] bg-neutral-900/95 border border-neutral-700 rounded-xl p-3 shadow-2xl flex flex-col justify-center min-w-[240px] max-w-[280px] animate-fadeIn"
+          className="fixed pointer-events-none z-[100] bg-neutral-900/60 border border-neutral-700 rounded-xl p-3 shadow-2xl flex flex-col justify-center min-w-[220px] max-w-[280px] animate-fadeIn"
         >
-          {/* ข้อมูลเนื้อหาด้านใน Preview คงเดิม */}
-          <div className="flex items-center gap-3">
-            <div className="bg-white/10 p-1 rounded-lg border border-white/10 flex-shrink-0">
-              <div className="relative w-11 h-11">
+          <div className="flex items-start gap-4">
+            {/* โซนรูปภาพโปเกมอน */}
+            <div className="bg-white/10 p-1.5 rounded-lg border border-white/10 flex-shrink-0 mt-1">
+              <div className="relative w-12 h-12">
                 <Image src={getImageSrc(hoveredPokemon?.pokemonImage)} alt="Preview" fill className="object-contain"/>
               </div>
             </div>
+
+            {/* โซนข้อมูลตัวละคร */}
             <div className="flex-1 flex flex-col gap-0.5 text-xs">
-              <div className="font-black text-xs text-yellow-400 uppercase tracking-wide truncate max-w-[160px]">
+              <div className="font-black text-sm text-yellow-400 uppercase tracking-wide truncate max-w-[150px]">
                 {hoveredPokemon.enPokemonName}
               </div>
-              <div className="text-neutral-400 text-[10px] truncate max-w-[160px]">
+              <div className="text-neutral-400 text-[10px] truncate max-w-[150px] mb-2">
                 {hoveredPokemon.thPokemonName || 'ไม่มีชื่อไทย'}
               </div>
-              <div className="flex gap-2 mt-1">
-                <div><span className="text-neutral-400 font-bold">HP:</span> <span className="font-extrabold text-white">{hoveredPokemon.hp ?? 'N/A'}</span></div>
-                <div>
-                  <span className="text-neutral-400 font-bold">Element:</span>{' '}
-                  <span className={`px-1.5 py-0.2 rounded font-black text-[9px] ${TYPE_STYLES[hoveredPokemon.typeId]?.bg || 'bg-neutral-500'} text-white`}>
-                    {TYPE_STYLES[hoveredPokemon.typeId]?.label || 'Unknown'}
-                  </span>
+
+              {/* เรียงข้อมูล ธาตุ -> HP -> จุดอ่อน แบบแนวตั้ง */}
+              <div className="flex flex-col gap-1.5 mt-1 ">
+                
+                {/* 1. ธาตุ (Element) */}
+                <div className="flex items-center gap-1.5">
+                  <span className="text-neutral-400 font-bold whitespace-nowrap">Element :</span>
+                  {hoveredPokemon.typeId ? (
+                    <div className="w-5 h-5 ml-1">
+                      <Face 
+                        imageUrl1={`/img/Type/${hoveredPokemon.typeId}.png`}
+                        name1={TYPE_STYLES[hoveredPokemon.typeId]?.label || 'Normal'}
+                        className="w-full h-full border-none shadow-sm rounded-md !p-0"
+                      />
+                    </div>
+                  ) : (
+                    <span className="text-gray-500 font-bold">-</span>
+                  )}
                 </div>
+
+                {/* 2. HP */}
+                <div className="flex items-center gap-1.5">
+                  <span className="text-neutral-400 font-bold whitespace-nowrap">HP :</span>
+                  <span className="font-extrabold text-white text-sm">{hoveredPokemon.hp ?? 'N/A'}</span>
+                </div>
+
+                {/* 3. จุดอ่อน (Weakness) */}
+                <div className="flex items-center gap-1.5">
+                  <span className="text-neutral-400 font-bold whitespace-nowrap">Weakness :</span>
+                  {/* รองรับทั้ง weaknessType หรือ weaknessId เผื่อ API ส่งมาชื่อต่างกัน */}
+                  {hoveredPokemon.weaknessTypeId ? (
+                    <div className="w-5 h-5 ml-1">
+                      <Face 
+                        imageUrl1={`/img/Type/${hoveredPokemon.weaknessTypeId}.png`}
+                        name1={TYPE_STYLES[hoveredPokemon.weaknessTypeId]?.label || 'Normal'}
+                        className="w-full h-full border-none shadow-sm rounded-md !p-0"
+                      />
+                    </div>
+                  ) : (
+                    <span className="text-gray-500 font-bold text-[10px]">None</span>
+                  )}
+                </div>
+
               </div>
             </div>
           </div>
