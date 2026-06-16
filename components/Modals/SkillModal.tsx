@@ -38,6 +38,10 @@ export interface SkillCard {
     en: string;
     th: string;
   };
+  fightingAbility:{
+    en: string;
+    th: string;
+  };
   energyCosts: energyCost[];
   effects: effect[];
   imageUrl?: string | null;
@@ -61,6 +65,8 @@ export default function SkillModal({
   const [selectedSkills, setSelectedSkills] = useState<number[]>([]);
   const [hoveredSkill, setHoveredSkill] = useState<SkillCard | null>(null);
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
+
+  console.log('ข้อมูลใน skillCards :', skillCards);
 
   useEffect(() => {
     if (isOpen) {
@@ -98,7 +104,6 @@ export default function SkillModal({
             </div>
             <div>
               <h2 className="text-xl font-bold tracking-wide">Select Skill</h2>
-              {/* เปลี่ยนสีตัวเลขจำนวนให้ไฮไลท์ชัดๆ ตอนครบ 5/5 */}
               <p className="text-xs font-medium text-zinc-500">
                 Select 5 skills (
                 <span className={isSelectionComplete ? "text-green-400 font-bold" : "text-yellow-400"}>
@@ -150,7 +155,6 @@ export default function SkillModal({
         <div className="flex justify-center gap-4 pt-2">
           <button onClick={() => setSelectedSkills([])} className="px-8 py-2 bg-zinc-800 text-white font-black rounded-lg text-sm border border-zinc-700 hover:bg-zinc-700">Clear</button>
           
-          {/* 🌟 🔄 ปรับปรุง: บังคับล็อกปุ่ม Confirm จนกว่าจะเลือกครบ 5 อัน */}
           <button 
             disabled={!isSelectionComplete}
             onClick={() => { 
@@ -175,28 +179,53 @@ export default function SkillModal({
         const typeName = typeIdToName[hoveredSkill.typeId as keyof typeof typeIdToName] || 'Normal';
         const currentTypeColor = typecolor[typeName as keyof typeof typecolor] || "#ffffff";
         
+        // 🌟 🔄 ระบบคำนวณพื้นที่หน้าจอ Real-time ป้องกันกล่องข้อมูลตกจอ
+        const isClient = typeof window !== 'undefined';
+        const screenWidth = isClient ? window.innerWidth : 1920;
+        const screenHeight = isClient ? window.innerHeight : 1080;
+
+        // เช็คว่าเมาส์อยู่ครึ่งล่างของจอ หรือชิดขอบขวาเกินไปหรือไม่
+        const shouldFlipY = mousePos.y > screenHeight * 0.55;
+        const shouldFlipX = mousePos.x > screenWidth - 360; // 360 คือขนาดความกว้างกล่อง + ระยะเผื่อปลอดภัย
+
+        // กำหนดตำแหน่งพิกัดและ transform พลิกด้านกล่องข้อมูลอัตโนมัติ
+        const topPosition = shouldFlipY ? mousePos.y - 15 : mousePos.y + 15;
+        const leftPosition = shouldFlipX ? mousePos.x - 15 : mousePos.x + 15;
+        const transformStyle = `${shouldFlipY ? "translateY(-100%)" : ""} ${shouldFlipX ? "translateX(-100%)" : ""}`.trim();
+
         return (
           <div
-            className="fixed pointer-events-none z-[110] bg-[#000000]/60 backdrop-blur-md border border-zinc-700 p-4 shadow-2xl rounded-lg min-w-[280px] max-w-[340px] text-xs flex flex-col gap-2.5 text-zinc-200"
-            style={{ top: mousePos.y + 15, left: mousePos.x + 15 }}
+            className="fixed pointer-events-none z-[110] bg-[#000000]/60 backdrop-blur-md border border-zinc-700 p-4 shadow-2xl rounded-lg min-w-[280px] max-w-[340px] text-xs flex flex-col gap-2.5 text-zinc-200 transition-transform duration-75"
+            style={{ 
+              top: topPosition, 
+              left: leftPosition,
+              transform: transformStyle || undefined 
+            }}
           >
             <h3 className="text-sm font-bold text-white border-b border-zinc-700 pb-1.5">
-              ชื่อท่า : {hoveredSkill.name?.en || 'Unknown'} ({hoveredSkill.name?.th || '-'})
+              Skill Name : {hoveredSkill.name?.en || 'Unknown'} 
             </h3>
             <p>
-              <span className="text-zinc-400 font-medium">ธาตุ : </span>
+              <span className="text-zinc-400 font-medium">Element : </span>
               <span className="font-bold uppercase tracking-wider" style={{ color: currentTypeColor }}>
                 {typeName}
               </span>
             </p>
             <p>
-              <span className="text-zinc-400 font-medium">ดาเมจ : </span>
-              <span className="text-white font-bold">{hoveredSkill.damage} หน่วย</span>
+              <span className="text-zinc-400 font-medium">Damage : </span>
+              <span className="text-white font-bold">{hoveredSkill.damage} unit </span>
             </p>
+            
+            {(hoveredSkill.fightingAbility?.en || hoveredSkill?.fightingAbility?.th) ? (
+              <p>
+                <span className="text-zinc-400 font-medium">Ability : </span>
+                <span className="text-white font-bold">{(hoveredSkill?.fightingAbility.en || hoveredSkill?.fightingAbility.th)}</span>
+              </p>
+            ) : null}
             
             {/* วนลูปแยกการแสดงผลตามก้อนบรรทัดของ Effect */}
             <div className="flex flex-col gap-2 border-t border-zinc-800 pt-2">
-              <span className="text-zinc-400 font-medium">เอฟเฟคความสามารถ :</span>
+              <span className="text-zinc-400 font-medium">Ability Effect :</span>
               {hoveredSkill.effects?.map((eff, index) => (
                 <div key={index} className="bg-zinc-900/60 border border-zinc-800 p-2 rounded-md flex flex-col gap-1.5">
                   <div className="flex flex-wrap gap-1">
@@ -222,7 +251,7 @@ export default function SkillModal({
                     })}
                   </div>
                   <p className="text-zinc-300 leading-normal font-light">
-                    {eff.ability?.th || eff.ability?.en || "-"}
+                    {eff.ability?.en || eff.ability?.th || "-"}
                   </p>
                 </div>
               ))}
@@ -230,7 +259,7 @@ export default function SkillModal({
             
             {/* ค่าคอสพลังงาน */}
             <div className="flex items-center gap-2 border-t border-zinc-700/80 pt-2 mt-0.5">
-              <span className="text-zinc-400 font-medium">ค่าคอสพลังงาน :</span>
+              <span className="text-zinc-400 font-medium">Energy Cost :</span>
               <div className="flex flex-wrap gap-1">
                 {hoveredSkill.energyCosts?.map((cost, idx) => {
                   const costTypeName = typeIdToName[cost.typeId as keyof typeof typeIdToName] || 'Normal';
