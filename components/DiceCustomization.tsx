@@ -79,31 +79,10 @@ export default function DiceCustomization({
                 diceFaces={currentFaces}
                 onEditClick={() => onEditClick(rowKey)}
                 faceTypesList={faceTypesList}
+                isFaded={firstTurn && banDice.row === rowKey}
+                isFirstTurn={firstTurn}
+                onBanClick={() => setBanDice({ row: rowKey, index: 0 })}
               />
-
-              {/* ส่วนตรวจจับ Layer ปุ่มจิ้มเพื่อ Ban ครอบด้านบนเมื่อสวิตช์เปิดอยู่ */}
-              {firstTurn && (
-                <div className="absolute right-0 top-0 bottom-0 left-21.25 grid grid-cols-6 gap-1 px-1 py-1 pointer-events-auto">
-                  {currentFaces.map((_, faceIdx) => {
-                    const isBanned =
-                      banDice.row === rowKey && banDice.index === faceIdx;
-                    return (
-                      <button
-                        key={faceIdx}
-                        onClick={() =>
-                          setBanDice({ row: rowKey, index: faceIdx })
-                        }
-                        className={`w-full h-full rounded-md transition-all duration-200 ${
-                          isBanned
-                            ? "border-4 border-white scale-105 shadow-[0_0_12px_rgba(255,255,255,1)] bg-black/10"
-                            : "border-2 border-transparent hover:border-white/50 bg-transparent"
-                        }`}
-                        title="Click to ban this dice"
-                      />
-                    );
-                  })}
-                </div>
-              )}
             </div>
           );
         })}

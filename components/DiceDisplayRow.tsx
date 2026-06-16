@@ -7,6 +7,9 @@ interface DiceDisplayRowProps {
   onEditClick: () => void; // ฟังก์ชันที่จะทำงานเมื่อกดปุ่มเปิด Modal
   rowLabel?: string; // ป้ายกำกับแถว (เผื่ออยากใส่เช่น Dice 1, Dice 2)
   faceTypesList?: any[]; // ข้อมูลประเภทหน้าเต๋า
+  isFaded?: boolean;
+  isFirstTurn?: boolean;
+  onBanClick?: () => void;
 }
 
 export default function DiceDisplayRow({
@@ -14,6 +17,9 @@ export default function DiceDisplayRow({
   onEditClick,
   rowLabel,
   faceTypesList = [],
+  isFaded = false,
+  isFirstTurn = false,
+  onBanClick,
 }: DiceDisplayRowProps) {
   const getFaceInfo = (faceTypeId: number | null) => {
     const faceType = faceTypesList?.find((ft) => ft.faceTypesId === faceTypeId);
@@ -53,7 +59,12 @@ export default function DiceDisplayRow({
         title="Edit Dice"
       >
         <div className="relative w-full h-full group-hover:scale-105 transition-transform">
-          <Image src="/Dice.png" alt="Edit" fill className="object-contain" />
+          <Image
+            src="/Dice.png"
+            alt="Edit"
+            fill
+            className="object-contain p-2"
+          />
         </div>
       </button>
 
@@ -63,30 +74,43 @@ export default function DiceDisplayRow({
       )} */}
 
       {/* 2. โซนแสดงผลธาตุ 6 ด้านจาก Array */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2 grow">
-        {diceFaces.map((faceTypeId, index) => {
-          if (faceTypeId === null || faceTypeId === 0) {
+      <div className="relative grow">
+        <div
+          className={`grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2 transition-opacity duration-200 ${isFaded ? "opacity-30" : "opacity-100"}`}
+        >
+          {diceFaces.map((faceTypeId, index) => {
+            if (faceTypeId === null || faceTypeId === 0) {
+              return (
+                <div
+                  key={index}
+                  className="w-full min-w-10 max-w-13.75 aspect-square bg-[#222]/30 border border-dashed border-white/20 rounded-md"
+                />
+              );
+            }
+            const faceInfo = getFaceInfo(faceTypeId);
+
             return (
-              <div
+              <Face
                 key={index}
-                className="w-full min-w-10 max-w-13.75 aspect-square bg-[#222]/30 border border-dashed border-white/20 rounded-md"
+                imageUrl1={faceInfo.imageUrl1}
+                name1={faceInfo.name1}
+                imageUrl2={faceInfo.imageUrl2}
+                name2={faceInfo.name2}
+                mixed={faceInfo.mixed}
+                className="w-full min-w-10 max-w-13.75 shadow-[inset_0_2px_4px_rgba(255,255,255,0.3),0_4px_6px_rgba(0,0,0,0.2)] border border-slate-100"
               />
             );
-          }
-          const faceInfo = getFaceInfo(faceTypeId);
+          })}
+        </div>
 
-          return (
-            <Face
-              key={index}
-              imageUrl1={faceInfo.imageUrl1}
-              name1={faceInfo.name1}
-              imageUrl2={faceInfo.imageUrl2}
-              name2={faceInfo.name2}
-              mixed={faceInfo.mixed}
-              className="w-full min-w-10 max-w-13.75 shadow-[inset_0_2px_4px_rgba(255,255,255,0.3),0_4px_6px_rgba(0,0,0,0.2)] border border-slate-100"
-            />
-          );
-        })}
+        {/* Ban overlay */}
+        {isFirstTurn && onBanClick && (
+          <button
+            onClick={onBanClick}
+            className="border-none absolute inset-0 rounded-lg transition-all duration-200 pointer-events-auto flex items-center justify-center z-10"
+            title="Click to ban this dice"
+          ></button>
+        )}
       </div>
     </div>
   );

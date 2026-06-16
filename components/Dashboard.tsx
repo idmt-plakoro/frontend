@@ -16,6 +16,8 @@ import {
   setLocalStorageItem,
   STORAGE_KEYS,
 } from "@/libs/storage";
+import ErrorModal from "./Modals/ErrorModal";
+import { validateDiceConfig, calculateDiceProbability } from "@/libs/calculate";
 
 client.setConfig({
   baseUrl: "http://localhost:3000",
@@ -34,17 +36,16 @@ export default function Dashboard({
 
   const [isSidebarOpen, setIsSidebarOpen] = useState<boolean>(false);
 
+  const [isDiceLoaded, setIsDiceLoaded] = useState(false);
   const [diceData, setDiceData] = useState<{
     dice1: (number | null)[];
     dice2: (number | null)[];
     dice3: (number | null)[];
-  }>(() =>
-    getLocalStorageItem(STORAGE_KEYS.DICE_DATA, {
-      dice1: [null, null, null, null, null, null],
-      dice2: [null, null, null, null, null, null],
-      dice3: [null, null, null, null, null, null],
-    }),
-  );
+  }>({
+    dice1: [null, null, null, null, null, null],
+    dice2: [null, null, null, null, null, null],
+    dice3: [null, null, null, null, null, null],
+  });
 
   // State สำหรับควบคุมการเปิด/ปิด Modal
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -63,6 +64,14 @@ export default function Dashboard({
     row: "dice3",
     index: 0,
   });
+
+  // Error Modal State
+  const [isErrorOpen, setIsErrorOpen] = useState<boolean>(false);
+  const [errorTitle, setErrorTitle] = useState<string>("");
+  const [errorMessage, setErrorMessage] = useState<string>("");
+
+  // Probability Calculation State
+  const [calculationResults, setCalculationResults] = useState<any[] | null>(null);
 
   useEffect(() => {
     async function fetchNewPokemon() {
@@ -99,9 +108,21 @@ export default function Dashboard({
     fetchFaceTypes();
   }, []);
 
+  // Load diceData from localStorage after hydration
   useEffect(() => {
-    setLocalStorageItem(STORAGE_KEYS.DICE_DATA, diceData);
-  }, [diceData]);
+    const saved = getLocalStorageItem(STORAGE_KEYS.DICE_DATA, null);
+    if (saved) {
+      setDiceData(saved);
+    }
+    setIsDiceLoaded(true);
+  }, []);
+
+  // Save diceData only after initial load from localStorage is complete
+  useEffect(() => {
+    if (isDiceLoaded) {
+      setLocalStorageItem(STORAGE_KEYS.DICE_DATA, diceData);
+    }
+  }, [diceData, isDiceLoaded]);
 
   const handleChangePokemon = (newId: number) => {
     setPokemonId(newId); // พอสั่งเปลี่ยน ID ปุ๊บ useEffect ข้างบนจะทำงานอัตโนมัติทันที!
@@ -131,15 +152,21 @@ export default function Dashboard({
   // 🌟 ฟังก์ชันคำนวณหลังกดปุ่ม Calculate
   const handleCalculate = () => {
     console.log("--- Starting Calculation Process ---");
-    console.log("Target Skill:", currentSkill);
-    console.log("Active Dice Set:", diceData);
-    console.log("First Turn Active?:", firstTurn);
-    if (firstTurn) {
-      console.log(
-        `Banned Target: ${banDice.row} at element index [${banDice.index}]`,
-      );
+    const isValid = validateDiceConfig(diceData);
+    if (!isValid) {
+      setErrorTitle("Incomplete Dice Configuration");
+      setErrorMessage("Please make sure all 3 dice have 6 faces configured before calculating.");
+      setIsErrorOpen(true);
+      return;
     }
-    alert("Calculating results! Check console for transmitted datasets.");
+
+    const results = calculateDiceProbability(
+      diceData,
+      firstTurn,
+      banDice.row,
+      faceTypesList
+    );
+    setCalculationResults(results);
   };
 
   return (
@@ -207,6 +234,12 @@ export default function Dashboard({
             pokemonInfo={pokemonInfo}
             faceTypesList={faceTypesList}
             onSave={handleSaveDice}
+          />
+          <ErrorModal
+            title={errorTitle}
+            content={errorMessage}
+            isOpen={isErrorOpen}
+            onClose={() => setIsErrorOpen(false)}
           />
         </div>
 
