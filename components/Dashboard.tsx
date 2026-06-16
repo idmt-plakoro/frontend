@@ -18,6 +18,7 @@ import {
 } from "@/libs/storage";
 import ErrorModal from "./Modals/ErrorModal";
 import { validateDiceConfig, calculateDiceProbability } from "@/libs/calculate";
+import SkillModal from "./Modals/SkillModal";
 
 client.setConfig({
   baseUrl: "http://localhost:3000",
@@ -52,11 +53,10 @@ export default function Dashboard({
   // State สำหรับจำว่ากำลังกดแก้ไขลูกเต๋าแถวไหนอยู่ (dice1, dice2, หรือ dice3)
   const [selectedDiceRow, setSelectedDiceRow] = useState<string | null>(null);
 
+// 🌟 State สำหรับ Skill Modal
   const [isSkillModalOpen, setIsSkillModalOpen] = useState<boolean>(false);
-  const [currentSkill, setCurrentSkill] = useState<any>({
-    name: "Fire Blast",
-    damage: 40,
-  });
+  const [savedSkillIds, setSavedSkillIds] = useState<number[]>([]); // เก็บ int array 5 ช่อง
+
   const [firstTurn, setFirstTurn] = useState<boolean>(false);
 
   // โครงสร้างเก็บข้อมูลลูกเต๋าที่โดนแบน บังคับ Default เป็น แถวที่ 3 ลูกแรก (index: 0)
@@ -69,6 +69,8 @@ export default function Dashboard({
   const [isErrorOpen, setIsErrorOpen] = useState<boolean>(false);
   const [errorTitle, setErrorTitle] = useState<string>("");
   const [errorMessage, setErrorMessage] = useState<string>("");
+
+  
 
   // Probability Calculation State
   const [calculationResults, setCalculationResults] = useState<any[] | null>(null);
@@ -126,6 +128,7 @@ export default function Dashboard({
 
   const handleChangePokemon = (newId: number) => {
     setPokemonId(newId); // พอสั่งเปลี่ยน ID ปุ๊บ useEffect ข้างบนจะทำงานอัตโนมัติทันที!
+    setSavedSkillIds([]);
   };
 
   const handleOpenModal = (rowName: string) => {
@@ -144,10 +147,12 @@ export default function Dashboard({
   };
 
   // 🌟 ฟังก์ชันบันทึกข้อมูลหลังจากกดเซฟใน SkillModal
-  const handleSaveSkill = (updatedSkill: any) => {
-    setCurrentSkill(updatedSkill);
-    console.log("Updated Current Skill Data:", updatedSkill);
+  const handleConfirmSkills = (newSkillSave: number[]) => {
+    setSavedSkillIds(newSkillSave); // รับค่า Array ID มาแทนที่อันเดิม
+    console.log("Skills saved to array:", newSkillSave);
   };
+
+  
 
   // 🌟 ฟังก์ชันคำนวณหลังกดปุ่ม Calculate
   const handleCalculate = () => {
@@ -241,6 +246,15 @@ export default function Dashboard({
             isOpen={isErrorOpen}
             onClose={() => setIsErrorOpen(false)}
           />
+
+          {/* 🌟 เรียกใช้ SkillModal ตรงนี้ */}
+          <SkillModal
+            isOpen={isSkillModalOpen}
+            onClose={() => setIsSkillModalOpen(false)}
+            skillCards={pokemonInfo?.skillCards}
+            oldSkillSave={savedSkillIds} // ส่ง array ID ที่จำไว้กลับเข้าไป
+            onConfirm={handleConfirmSkills} // รอรับ array ID อันใหม่
+          />
         </div>
 
         {/* Controls (Add Skill, First Turn Toggle, Calculate) */}
@@ -288,20 +302,20 @@ export default function Dashboard({
           isOpen={isSidebarOpen}
           onClose={() => setIsSidebarOpen(false)}
           currentPokemonId={pokemonId} // 🌟 ส่ง ID ปัจจุบันไปตรวจสอบความซ้ำซ้อน
-          onSelectPokemon={(newId, shouldResetDice) => {
+          onSelectPokemon={(newId, shouldReset) => {
             setPokemonId(newId);
-
+            setSavedSkillIds([]);
             // 🌟 เงื่อนไขถ้าสั่งรีเซ็ตลูกเต๋า (กรณีเลือกตัวละครเดิมซ้ำแล้วกด Continue)
-            if (shouldResetDice) {
+
               setDiceData({
-                dice1: [1, 2, 3, 4, 5, 6],
-                dice2: [1, 2, 3, 4, 5, 6],
-                dice3: [1, 2, 3, 4, 5, 6],
+                dice1: [null, null, null, null, null, null],
+                dice2: [null, null, null, null, null, null],
+                dice3: [null, null, null, null, null, null],
               });
               console.log(
                 "Dice set has been reset to default due to same pokemon re-selection.",
               );
-            }
+            
             setIsSidebarOpen(false);
           }}
         />

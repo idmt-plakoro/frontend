@@ -15,7 +15,7 @@ const nextConfig: NextConfig = {
             },
             {
                 protocol: "https",
-                hostname: "bandai-hobby.net",
+                hostname: "picsum.photos",
             },
         ],
     },

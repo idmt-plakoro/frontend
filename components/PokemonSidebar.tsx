@@ -10,7 +10,7 @@ interface SidebarProps {
   isOpen: boolean;
   onClose: () => void;
   currentPokemonId: number;
-  onSelectPokemon: (id: number, shouldResetDice?: boolean) => void;
+  onSelectPokemon: (id: number, shouldReset?: boolean) => void;
 }
 
 // ปรับคู่สี (พื้นหลังแถบชื่อ และ สีตัวอักษร) ให้ตรงตามการ์ดในภาพ image_65da0a.png
