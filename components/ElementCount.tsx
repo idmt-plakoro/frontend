@@ -5,9 +5,9 @@ import Face from "./Face";
 
 interface ElementCountProps {
   diceData: {
-    dice1: number[];
-    dice2: number[];
-    dice3: number[];
+    dice1: (number | null)[];
+    dice2: (number | null)[];
+    dice3: (number | null)[];
   };
 }
 
@@ -32,6 +32,7 @@ export default function ElementCount({ diceData }: ElementCountProps) {
     {};
 
   allFaceTypeIds.forEach((faceTypeId) => {
+    if (!faceTypeId) return;
     const foundFaceType = faceTypesList.find(
       (ft) => ft.faceTypesId === faceTypeId,
     );
@@ -105,7 +106,7 @@ export default function ElementCount({ diceData }: ElementCountProps) {
       </h3>
 
       {/* เส้นแบ่งเลเยอร์ตามดีไซน์ */}
-      <hr className="border-gray-600 my-2.5" />
+      <hr className="bg-white/70 h-0.5 m-2.5" />
 
       {/* รายการแสดงผล Top 3 */}
       <div className="flex-1 flex flex-col justify-center gap-4 py-2">

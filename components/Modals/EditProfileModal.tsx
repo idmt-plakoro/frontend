@@ -93,7 +93,7 @@ export default function EditProfileModal({
         </p>
 
         {/* Divider */}
-        <div className="w-[95%] h-[1px] bg-white/20 my-4" />
+        <div className="w-[95%] h-px bg-white/20 my-4" />
 
         {/* Choose Avatar Header */}
         <p className="text-lg italic text-gray-300 mb-6 mt-2">
@@ -131,7 +131,7 @@ export default function EditProfileModal({
 
           {/* Center Avatar (Selected) */}
           <div
-            className="w-24 h-24 rounded-full overflow-hidden border-[4px] border-[#2c3e50] shadow-lg flex items-center justify-center transform scale-110 transition duration-300"
+            className="w-24 h-24 rounded-full overflow-hidden border-4 border-[#2c3e50] shadow-lg flex items-center justify-center transform scale-110 transition duration-300"
             style={{ backgroundColor: AVATARS[currentIndex].bgColor }}
           >
             <img
