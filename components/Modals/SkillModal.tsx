@@ -7,6 +7,7 @@ import { typeIdToName } from "@/constants/TypeIdToName";
 import Face from "../Face";
 import { directions } from "@/constants/directions";
 import { SkillCard } from "../CardBox";
+import { useTranslation } from "react-i18next";
 
 // --- Interfaces & Enums ---
 export enum Direction {
@@ -33,6 +34,9 @@ export default function SkillModal({
   oldSkillSave = [],
   onConfirm,
 }: SkillModalProps) {
+
+  const {t,i18n} = useTranslation();
+
   const [selectedSkills, setSelectedSkills] = useState<number[]>([]);
   const [hoveredSkill, setHoveredSkill] = useState<SkillCard | null>(null);
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
@@ -58,7 +62,17 @@ export default function SkillModal({
     setMousePos({ x: e.clientX, y: e.clientY });
   };
 
-  // 🌟 เช็คว่าเลือกครบ 5 อันแล้วหรือยัง
+  const getLocalizedText = (
+    enText?: string | null,
+    thText?: string | null,
+    fallback: string = ""
+  ) => {
+    if (i18n.language === "th") {
+      return thText || enText || fallback;
+    }
+    return enText || thText || fallback;
+  };
+
   const isSelectionComplete = selectedSkills.length === 5;
 
   return (
@@ -71,9 +85,9 @@ export default function SkillModal({
               <span className="text-sm">🎲</span>
             </div>
             <div>
-              <h2 className="text-xl font-bold tracking-wide">Select Skill</h2>
+              <h2 className="text-xl font-bold tracking-wide">{t("skill.modal.title")}</h2>
               <p className="text-xs font-medium text-zinc-500">
-                Select 5 skills (
+                {t("skill.modal.subtitle")} (
                 <span
                   className={
                     isSelectionComplete
@@ -128,10 +142,7 @@ export default function SkillModal({
                     ) : (
                       <div className="text-center w-full h-full flex flex-col justify-center bg-gradient-to-br from-zinc-700 to-zinc-900 rounded">
                         <p className="font-bold text-sm text-yellow-400 tracking-wide px-2 line-clamp-1">
-                          {skill.name?.en}
-                        </p>
-                        <p className="text-[10px] text-zinc-400 mt-1">
-                          {skill.name?.th}
+                          {getLocalizedText(skill.name?.en, skill.name?.th, "Unknown")}
                         </p>
                       </div>
                     )}
@@ -154,7 +165,7 @@ export default function SkillModal({
             onClick={() => setSelectedSkills([])}
             className="px-8 py-2 bg-zinc-800 text-white font-black rounded-lg text-sm border border-zinc-700 hover:bg-zinc-700"
           >
-            Clear
+            {t("button.clear")}
           </button>
 
           <button
@@ -171,7 +182,7 @@ export default function SkillModal({
                 : "bg-zinc-800 text-zinc-500 border border-zinc-700/60 cursor-not-allowed opacity-50"
             }`}
           >
-            Confirm
+            {t("button.confirm")}
           </button>
         </div>
       </div>
@@ -185,7 +196,7 @@ export default function SkillModal({
           const currentTypeColor =
             typecolor[typeName as keyof typeof typecolor] || "#ffffff";
 
-          // 🌟 🔄 ระบบคำนวณพื้นที่หน้าจอ Real-time ป้องกันกล่องข้อมูลตกจอ
+          // ระบบคำนวณพื้นที่หน้าจอ Real-time ป้องกันกล่องข้อมูลตกจอ
           const isClient = typeof window !== "undefined";
           const screenWidth = isClient ? window.innerWidth : 1920;
           const screenHeight = isClient ? window.innerHeight : 1080;
@@ -202,7 +213,7 @@ export default function SkillModal({
 
           return (
             <div
-              className="fixed pointer-events-none z-[110] bg-[#000000]/60 backdrop-blur-md border border-zinc-700 p-4 shadow-2xl rounded-lg min-w-[280px] max-w-[340px] text-xs flex flex-col gap-2.5 text-zinc-200 transition-transform duration-75"
+              className="fixed pointer-events-none z-[110] bg-[#000000]/60 backdrop-blur-xs border border-zinc-700 p-4 shadow-2xl rounded-lg min-w-[280px] max-w-[340px] text-xs flex flex-col gap-2.5 text-zinc-200 transition-transform duration-75"
               style={{
                 top: topPosition,
                 left: leftPosition,
@@ -210,31 +221,30 @@ export default function SkillModal({
               }}
             >
               <h3 className="text-sm font-bold text-white border-b border-zinc-700 pb-1.5">
-                Skill Name : {hoveredSkill.name?.en || "Unknown"}
+                {t("skill.skillName")} : {getLocalizedText(hoveredSkill.name?.en, hoveredSkill.name?.th, t("skill.modal.unknown"))}
               </h3>
               <p>
-                <span className="text-zinc-400 font-medium">Element : </span>
+                <span className="text-zinc-400 font-medium">{t("pokemonInfo.element")} : </span>
                 <span
                   className="font-bold uppercase tracking-wider"
                   style={{ color: currentTypeColor }}
                 >
-                  {typeName}
+                  {t(`type.${typeName}`)}
                 </span>
               </p>
               <p>
-                <span className="text-zinc-400 font-medium">Damage : </span>
+                <span className="text-zinc-400 font-medium">{t("pokemonInfo.damage")} : </span>
                 <span className="text-white font-bold">
-                  {hoveredSkill.damage} unit{" "}
+                  {hoveredSkill.damage} {t("pokemonInfo.unit")}{" "}
                 </span>
               </p>
 
               {hoveredSkill.fightingAbility?.en ||
               hoveredSkill?.fightingAbility?.th ? (
                 <p>
-                  <span className="text-zinc-400 font-medium">Ability : </span>
+                  <span className="text-zinc-400 font-medium">{t("skill.ability")} : </span>
                   <span className="text-white font-bold">
-                    {hoveredSkill?.fightingAbility.en ||
-                      hoveredSkill?.fightingAbility.th}
+                    {getLocalizedText(hoveredSkill.fightingAbility?.en, hoveredSkill.fightingAbility?.th)}
                   </span>
                 </p>
               ) : null}
@@ -242,7 +252,7 @@ export default function SkillModal({
               {/* วนลูปแยกการแสดงผลตามก้อนบรรทัดของ Effect */}
               <div className="flex flex-col gap-2 border-t border-zinc-800 pt-2">
                 <span className="text-zinc-400 font-medium">
-                  Ability Effect :
+                  {t("skill.abilityEffect")} :
                 </span>
                 {hoveredSkill.effects?.map((eff, index) => (
                   <div
@@ -276,7 +286,7 @@ export default function SkillModal({
                       })}
                     </div>
                     <p className="text-zinc-300 leading-normal font-light">
-                      {eff.ability?.en || eff.ability?.th || "-"}
+                      {getLocalizedText(eff.ability?.en, eff.ability?.th, "-")}
                     </p>
                   </div>
                 ))}
@@ -284,7 +294,7 @@ export default function SkillModal({
 
               {/* ค่าคอสพลังงาน */}
               <div className="flex items-center gap-2 border-t border-zinc-700/80 pt-2 mt-0.5">
-                <span className="text-zinc-400 font-medium">Energy Cost :</span>
+                <span className="text-zinc-400 font-medium">{t("skill.energyCost")} :</span>
                 <div className="flex flex-wrap gap-1">
                   {hoveredSkill.energyCosts?.map((cost, idx) => {
                     const costTypeName =

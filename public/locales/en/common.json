@@ -21,7 +21,9 @@
     "hp":"HP",
     "element":"Element",
     "weakness":"Weakness",
-    "loading":"Loading Image..."
+    "loading":"Loading Image...",
+    "damage": "Damage",
+    "unit": "unit"
   },
   "type": {
     "Grass": "Grass",
@@ -65,5 +67,16 @@
         "noCards": "No skill cards found",
         "back": "Back to home"
     }
+  },
+  "skill":{
+    "modal": {
+      "title": "Select Skill",
+      "subtitle": "Select 5 skills",
+      "unknown": "Unknown"
+    },
+    "skillName": "Skill Name",
+    "ability": "Ability",
+    "abilityEffect": "Ability Effect",
+    "energyCost": "Energy Cost" 
   }
 }
