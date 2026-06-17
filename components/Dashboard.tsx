@@ -28,8 +28,10 @@ import {
   GetAuthAccountResponse,
 } from "@/src/api/generated";
 import SaveModal from "./Modals/SaveModal";
+import ViewMoreModal from "./Modals/ViewMoreModal";
 import { getAuthAccountCached } from "@/libs/authCache";
 import { useTranslation } from "react-i18next";
+import Button from "./Button";
 
 client.setConfig({
   baseUrl: "http://localhost:3000",
@@ -43,7 +45,6 @@ export default function Dashboard({
   const [user, setUser] = useState<GetAuthAccountResponse["data"] | null>(null);
   const { t } = useTranslation();
 
-  
   const [pokemonId, setPokemonId] = useState<number>(1);
 
   const [pokemonInfo, setPokemonInfo] = useState<any>(null);
@@ -97,6 +98,7 @@ export default function Dashboard({
   const [types, setTypes] = useState<GetApiExampleTypesResponse["data"]>([]);
 
   const [isSaveModalOpen, setIsSaveModalOpen] = useState(false);
+  const [isViewMoreOpen, setIsViewMoreOpen] = useState(false);
 
   useEffect(() => {
     getApiExampleTypes().then((resType) => {
@@ -233,11 +235,11 @@ export default function Dashboard({
     }
   }, [pokemonInfo, pokemonId, savedSkillIds]);
 
-  const handleChangePokemon = (newId: number) => {
-    setPokemonId(newId); // พอสั่งเปลี่ยน ID ปุ๊บ useEffect ข้างบนจะทำงานอัตโนมัติทันที!
-    setSavedSkillIds([]);
-    setCardChances({});
-  };
+  // const handleChangePokemon = (newId: number) => {
+  //   setPokemonId(newId); // พอสั่งเปลี่ยน ID ปุ๊บ useEffect ข้างบนจะทำงานอัตโนมัติทันที!
+  //   setSavedSkillIds([]);
+  //   setCardChances({});
+  // };
 
   const handleOpenModal = (rowName: string) => {
     setSelectedDiceRow(rowName);
@@ -289,18 +291,16 @@ export default function Dashboard({
     const normalTypeId = normalType?.id ?? 11;
 
     const chances: Record<number, number> = {};
-    savedSkillIds.forEach((id) => {
-      const card = cards.find((c) => c.id === id);
-      if (card) {
-        chances[id] = calculateCardProbability(
-          card,
-          diceData,
-          firstTurn,
-          banDice.row,
-          faceTypesList,
-          normalTypeId,
-        );
-      }
+    // Calculate for ALL cards so ViewMoreModal shows probabilities for unselected cards too
+    cards.forEach((card) => {
+      chances[card.id] = calculateCardProbability(
+        card,
+        diceData,
+        firstTurn,
+        banDice.row,
+        faceTypesList,
+        normalTypeId,
+      );
     });
     setCardChances(chances);
   };
@@ -351,8 +351,8 @@ export default function Dashboard({
   };
 
   return (
-    // Background ลายลูกเต๋า (สมมติว่าเป็นสีเทาอ่อนไปก่อน)
-    <div className="min-h-screen p-8 bg-gray-200 flex justify-center">
+    // Background ลายลูกเต๋า (เป็นสีขาว)
+    <div className="min-h-screen p-8 bg-white flex justify-center">
       {/* กล่อง Container สีขาวหลัก */}
       <div className="z-2 bg-white w-full max-w-6xl rounded-3xl shadow-2xl p-8 flex flex-col gap-8">
         {/* Header (Title + Share/Save Button) */}
@@ -500,6 +500,21 @@ export default function Dashboard({
           const chance = cardChances[id] ?? 0;
           return <CardBox key={id} card={card} type={types} chance={chance} />;
         })}
+
+        <Button
+          func={() => setIsViewMoreOpen(true)}
+          text="View more"
+          className="text-nowrap w-fit self-center font-salsa text-white bg-black font-bold px-6 py-2 rounded-lg drop-shadow-md/30 text-lg"
+        />
+
+        <ViewMoreModal
+          isOpen={isViewMoreOpen}
+          onClose={() => setIsViewMoreOpen(false)}
+          cards={cards}
+          cardChances={cardChances}
+          types={types ?? []}
+          pokemonName={pokemonInfo?.name?.en}
+        />
 
         {children}
 

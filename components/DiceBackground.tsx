@@ -4,7 +4,7 @@ import React from "react";
 
 export default function DiceBackground() {
   return (
-    <div className="fixed w-[240vw] h-[240vh] -top-[50vh] -left-[57vw] rotate-45 z-0 overflow-hidden pointer-events-none opacity-75">
+    <div className="fixed w-[240vw] h-[240vh] top-[-50vh] left-[-57vw] rotate-45 z-0 overflow-hidden pointer-events-none opacity-75">
       <div
         className="w-full h-full grid justify-center content-center"
         style={{
