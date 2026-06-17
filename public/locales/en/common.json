@@ -15,9 +15,13 @@
     "cancel":"Cancel",
     "continue":"Continue",
     "clear":"Clear",
-    "viewMore":"View more"
+    "viewMore":"View more",
+    "close":"Close",
+    "copy":"Copy",
+    "copied":"Copied!"
   },
   "pokemonInfo":{
+    "pokemon":"Pokémon",
     "hp":"HP",
     "element":"Element",
     "weakness":"Weakness",
@@ -36,7 +40,8 @@
     "Steel": "Steel",
     "Dragon": "Dragon",
     "Flying": "Flying",
-    "Normal": "Normal"
+    "Normal": "Normal",
+    "None":"None"
   },
   "sidebar":{
     "searchHint":"Hinted search text",
@@ -78,5 +83,21 @@
     "ability": "Ability",
     "abilityEffect": "Ability Effect",
     "energyCost": "Energy Cost" 
+  },
+  "slot":{
+    "empty":"Empty",
+    "title":"Save This Customization"
+  },
+  "error":{
+    "title":{
+      "share":"Cannot Share",
+      "loginBeforeSave":"Please login first",
+      "dice":"Incomplete Dice Configuration"      
+    },
+    "message":{
+      "share":"Please complete configuration before sharing.",
+      "loginBeforeSave":"Please login before saving your dice configuration.",
+      "dice":"Please make sure all 3 dice have 6 faces configured before calculating." 
+    }
   }
 }

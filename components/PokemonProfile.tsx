@@ -79,7 +79,7 @@ return (
                 />
               </div>
             ) : (
-              <span className="text-gray-500 text-xs font-bold mt-[-20px] ml-5">None</span>
+              <span className="text-gray-500 text-xs font-bold mt-[-20px] ml-5">{t("type.None")}</span>
             )}
         </div>
 

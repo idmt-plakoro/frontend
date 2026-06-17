@@ -33,7 +33,6 @@ export default function ViewMoreModal({
   const hasCalculated = Object.keys(cardChances).length > 0;
 
   const {t,i18n} = useTranslation();
-  console.log('this',pokemonName)
   return (
     <div
       className="fixed inset-0 bg-black/50 z-[100] flex items-center justify-center p-4"

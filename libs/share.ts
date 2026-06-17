@@ -18,11 +18,11 @@ export interface ShareData {
 /**
  * Checks if the current configuration is valid to be shared.
  */
-export function canShare(diceData: any): { canShare: boolean; reason?: string } {
+export function canShare(diceData: any, t: any): { canShare: boolean; reason?: string } {
   if (!validateDiceConfig(diceData)) {
     return {
       canShare: false,
-      reason: "Please make sure all 3 dice have 6 faces configured before sharing.",
+      reason: `${t("error.message.dice")}`,
     };
   }
   return { canShare: true };

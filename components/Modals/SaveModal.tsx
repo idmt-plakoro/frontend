@@ -11,6 +11,7 @@ import {
 import { getAuthAccountCached } from "@/libs/authCache";
 import Button from "../Button";
 import { setLocalStorageItem, STORAGE_KEYS } from "@/libs/storage";
+import { useTranslation } from "react-i18next";
 
 export default function SaveModal({
   isOpen,
@@ -34,6 +35,8 @@ export default function SaveModal({
     savedSkillIds: number[];
   };
 }) {
+  const {t} = useTranslation();
+
   const [savedData, setSavedData] = useState<
     GetApiSlotsBySlotNumberResponse["data"][] | null
   >(null);
@@ -131,10 +134,10 @@ export default function SaveModal({
       </button>
       <div className="flex flex-col gap-3">
         <p className="self-center text-center text-xl">
-          Save This Customization
+          {t("slot.title")}
         </p>
         <div className="flex gap-2">
-          <p className="self-center text-start text-md"> Pokemon </p>
+          <p className="self-center text-start text-md"> {t("pokemonInfo.pokemon")} </p>
           <p className="bg-white rounded-full text-black px-2">
             {data?.pokemonName}
           </p>
@@ -153,7 +156,7 @@ export default function SaveModal({
           {Array.from({ length: 5 }, (_, i) => {
             const slotNumber = i + 1;
             const slot = savedData?.find((s) => s.slotNumber === slotNumber);
-            const displayNumber = slot?.slotName || "Empty";
+            const displayNumber = slot?.slotName || `${t("slot.empty")}`;
             const isSelected = numberSlot === slotNumber;
 
             return (
@@ -169,7 +172,7 @@ export default function SaveModal({
         </div>
         <Button
           func={handleSaveSlot}
-          text="Save"
+          text={t("button.save")}
           className="bg-yellow-300 drop-shadow-md/50 text-black self-end"
         />
       </div>

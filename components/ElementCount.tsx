@@ -145,7 +145,6 @@ export default function ElementCount({ diceData }: ElementCountProps) {
         {topElements.length === 0 && (
           <div className="text-center text-xs text-gray-500 py-6 font-bold">
             {t("elementCount.noElements")}
-            No elements selected
           </div>
         )}
       </div>

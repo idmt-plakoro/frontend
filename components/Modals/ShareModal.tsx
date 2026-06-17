@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import { useTranslation } from "react-i18next";
 
 interface ShareModalProps {
   isOpen: boolean;
@@ -13,6 +14,7 @@ export default function ShareModal({
   onClose,
   shareUrl,
 }: ShareModalProps) {
+  const {t} = useTranslation();
   const [copied, setCopied] = useState(false);
 
   const handleCopy = async () => {
@@ -83,7 +85,7 @@ export default function ShareModal({
             onClick={handleCopy}
             className="bg-[#1a1a1a] text-white hover:bg-neutral-800 active:scale-95 text-[11px] md:text-xs font-black tracking-wider px-6 py-2.5 rounded-full transition-all shrink-0 min-w-20 text-center uppercase cursor-pointer drop-shadow-md/20"
           >
-            {copied ? "Copied!" : "Copy"}
+            {copied ? `${t("button.copied")}` : `${t("button.copy")}`}
           </button>
         </div>
       </div>

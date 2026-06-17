@@ -276,9 +276,9 @@ export default function Dashboard({
     console.log("--- Starting Calculation Process ---");
     const isValid = validateDiceConfig(diceData);
     if (!isValid) {
-      setErrorTitle("Incomplete Dice Configuration");
+      setErrorTitle(`${t("error.title.dice")}`);
       setErrorMessage(
-        "Please make sure all 3 dice have 6 faces configured before calculating.",
+        `${t("error.message.dice")}`,
       );
       setIsErrorOpen(true);
       return;
@@ -306,11 +306,11 @@ export default function Dashboard({
   };
 
   const handleShare = () => {
-    const check = canShare(diceData);
+    const check = canShare(diceData,t);
     if (!check.canShare) {
-      setErrorTitle("Cannot Share");
+      setErrorTitle(`${t("error.title.share")}`);
       setErrorMessage(
-        check.reason || "Please complete configuration before sharing.",
+        check.reason || `${t("error.message.share")}`,
       );
       setIsErrorOpen(true);
       return;
@@ -331,17 +331,17 @@ export default function Dashboard({
 
   const handleSave = () => {
     if (user == null) {
-      setErrorTitle("Please login first");
-      setErrorMessage("Please login before saving your dice configuration.");
+      setErrorTitle(`${t("error.title.loginBeforeSave")}`);
+      setErrorMessage(`${t("error.message.loginBeforeSave")}`);
       setIsErrorOpen(true);
       return;
     }
 
     const isValid = validateDiceConfig(diceData);
     if (!isValid) {
-      setErrorTitle("Incomplete Dice Configuration");
+      setErrorTitle(`${t("error.title.dice")}`);
       setErrorMessage(
-        "Please make sure all 3 dice have 6 faces configured before calculating.",
+        `${t("error.message.dice")}`,
       );
       setIsErrorOpen(true);
       return;
