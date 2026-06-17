@@ -368,12 +368,12 @@ export default function DiceCustomizationModal({
         <div className="flex justify-end gap-3 border-t border-white/10 pt-4">
           <Button
             func={handleClear}
-            text="Clear"
+            text={t("button.clear")}
             className="text-black font-bold bg-yellow-200 hover:bg-yellow-300"
           />
           <Button
             func={handleSave}
-            text="Save"
+            text={t("button.save")}
             className="text-black font-bold bg-yellow-300 hover:bg-yellow-400"
           />
         </div>

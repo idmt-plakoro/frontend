@@ -13,7 +13,8 @@
     "calculate":"Calculate",
     "confirm":"Confirm",
     "cancel":"Cancel",
-    "continue":"Continue"
+    "continue":"Continue",
+    "clear":"Clear"
   },
   "pokemonInfo":{
     "hp":"HP",

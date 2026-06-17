@@ -13,7 +13,8 @@
     "calculate":"คำนวณ",
     "confirm":"ยืนยัน",
     "cancel":"ยกเลิก",
-    "continue":"ดำเนินการต่อ"
+    "continue":"ดำเนินการต่อ",
+    "clear":"เคลียร์"
   },
   "pokemonInfo":{
     "hp":"HP",
