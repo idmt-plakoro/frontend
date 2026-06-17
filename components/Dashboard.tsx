@@ -457,7 +457,7 @@ export default function Dashboard({
         </div>
 
         {/* Controls (Add Skill, First Turn Toggle, Calculate) */}
-        <div className="flex items-center justify-between border-t border-b border-gray-200 py-4 mx-10 font-salsa text-md">
+        <div className="flex items-center justify-between py-4 mx-10 font-salsa text-md">
           <button
             onClick={() => setIsSkillModalOpen(true)}
             className="bg-black text-white text-md font-black px-6 py-2 rounded-full border border-black hover:bg-neutral-800 transition active:scale-95 drop-shadow-md/30"
@@ -467,7 +467,7 @@ export default function Dashboard({
 
           {/* First Turn Toggle (ทำแบบง่ายๆ ด้วย Checkbox + CSS ไปก่อน) */}
           <div className="bg-black text-white px-5 py-1.5 rounded-full flex items-center gap-3 shadow-md border border-black select-none">
-            <span className="text-xs font-black italic tracking-wide">
+            <span className="text-xs font-black tracking-wide">
               {t("button.firstTurn")}
             </span>
 

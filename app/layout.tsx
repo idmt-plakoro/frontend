@@ -1,11 +1,12 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono, Poetsen_One, Salsa } from "next/font/google";
 import "./globals.css";
-import Navbar from "@/components/Navbar";
+// import Navbar from "@/components/Navbar";
 import DiceBackground from "@/components/DiceBackground";
 import ClientConfig from "@/components/ClientConfig";
 import { client } from "@/src/api/generated/client.gen";
 import { Prompt } from 'next/font/google';
+import ClientOnlyNavbar from "@/components/ClientOnlyNavbar";
 
 // Change the base URL dynamically
 client.setConfig({
@@ -54,12 +55,12 @@ export default function RootLayout({
 }>) {
   return (
     <html
-      lang="en"
+      lang="th"
       className={`${geistSans.variable} ${geistMono.variable} ${poetsenOne.variable} ${salsa.variable} ${prompt.variable}  h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
         <ClientConfig />
-        <Navbar />
+        <ClientOnlyNavbar />
         <DiceBackground />
         {children}
       </body>
