@@ -504,7 +504,7 @@ export default function Dashboard({
         <Button
           func={() => setIsViewMoreOpen(true)}
           text="View more"
-          className="text-nowrap w-fit self-center font-salsa text-white bg-black font-bold px-6 py-2 rounded-lg drop-shadow-md/30 text-lg"
+          className="text-nowrap w-fit text-sm self-center font-salsa text-white bg-black font-bold px-6 py-2 rounded-lg drop-shadow-md/30 text-lg"
         />
 
         <ViewMoreModal
