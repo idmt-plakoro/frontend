@@ -1,5 +1,6 @@
 "use client";
-import { getAuthAccount, GetAuthAccountResponse } from "@/src/api/generated";
+import { GetAuthAccountResponse } from "@/src/api/generated";
+import { getAuthAccountCached } from "@/libs/authCache";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -23,7 +24,7 @@ export default function NavBar() {
 
   useEffect(() => {
     try {
-      getAuthAccount().then((res) => {
+      getAuthAccountCached().then((res) => {
         if (res.data?.success) {
           setUser(res.data.data);
         }

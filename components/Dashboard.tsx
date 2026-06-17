@@ -24,6 +24,7 @@ import SkillModal from "./Modals/SkillModal";
 import ShareModal from "./Modals/ShareModal";
 import { canShare, encodeConfig } from "@/libs/share";
 import { GetApiExampleTypesResponse } from "@/src/api/generated";
+import { getAuthAccountCached } from "@/libs/authCache";
 import { useTranslation } from "react-i18next";
 
 client.setConfig({
@@ -35,6 +36,7 @@ export default function Dashboard({
 }: {
   children?: React.ReactNode;
 }) {
+  const [user, setUser] = useState<GetAuthAccountResponse["data"] | null>(null);
   const { t } = useTranslation();
 
   
@@ -94,6 +96,13 @@ export default function Dashboard({
       const data = resType.data?.data;
       if (data) {
         setTypes(data);
+      }
+    });
+
+    getAuthAccountCached().then((resAuthAccount) => {
+      const data = resAuthAccount.data?.data;
+      if (data) {
+        setUser(data);
       }
     });
   }, []);

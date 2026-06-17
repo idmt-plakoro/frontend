@@ -5,7 +5,7 @@ import { getAuthAccountCached } from "@/libs/authCache";
 import ProfileModal from "./Modals/ProfileModal";
 import EditProfileModal from "./Modals/EditProfileModal";
 
-export default function UserData() {
+export default function Profile() {
   const [user, setUser] = useState<GetAuthAccountResponse["data"] | null>(null);
   const [openEdit, setOpenEdit] = useState(false);
 
