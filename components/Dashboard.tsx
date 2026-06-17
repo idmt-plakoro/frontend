@@ -19,7 +19,7 @@ import {
   STORAGE_KEYS,
 } from "@/libs/storage";
 import ErrorModal from "./Modals/ErrorModal";
-import { validateDiceConfig, calculateDiceProbability } from "@/libs/calculate";
+import { validateDiceConfig, calculateCardProbability } from "@/libs/calculate";
 import SkillModal from "./Modals/SkillModal";
 import ShareModal from "./Modals/ShareModal";
 import { canShare, encodeConfig } from "@/libs/share";
@@ -77,9 +77,7 @@ export default function Dashboard({
   const [errorMessage, setErrorMessage] = useState<string>("");
 
   // Probability Calculation State
-  const [calculationResults, setCalculationResults] = useState<any[] | null>(
-    null,
-  );
+  const [cardChances, setCardChances] = useState<Record<number, number>>({});
 
   // Share Modal State
   const [isShareModalOpen, setIsShareModalOpen] = useState<boolean>(false);
@@ -221,6 +219,7 @@ export default function Dashboard({
   const handleChangePokemon = (newId: number) => {
     setPokemonId(newId); // พอสั่งเปลี่ยน ID ปุ๊บ useEffect ข้างบนจะทำงานอัตโนมัติทันที!
     setSavedSkillIds([]);
+    setCardChances({});
   };
 
   const handleOpenModal = (rowName: string) => {
@@ -242,6 +241,15 @@ export default function Dashboard({
   const handleConfirmSkills = (newSkillSave: number[]) => {
     setSavedSkillIds(newSkillSave); // รับค่า Array ID มาแทนที่อันเดิม
     console.log("Skills saved to array:", newSkillSave);
+    setCardChances((prev) => {
+      const updated: Record<number, number> = {};
+      newSkillSave.forEach((id) => {
+        if (id in prev) {
+          updated[id] = prev[id];
+        }
+      });
+      return updated;
+    });
   };
 
   // 🌟 ฟังก์ชันคำนวณหลังกดปุ่ม Calculate
@@ -257,13 +265,27 @@ export default function Dashboard({
       return;
     }
 
-    const results = calculateDiceProbability(
-      diceData,
-      firstTurn,
-      banDice.row,
-      faceTypesList,
+    // Calculate probabilities for each card
+    const normalType = types?.find(
+      (t) => t.enName === "Normal" || t.thName === "ไร้สี",
     );
-    setCalculationResults(results);
+    const normalTypeId = normalType?.id ?? 11;
+
+    const chances: Record<number, number> = {};
+    savedSkillIds.forEach((id) => {
+      const card = cards.find((c) => c.id === id);
+      if (card) {
+        chances[id] = calculateCardProbability(
+          card,
+          diceData,
+          firstTurn,
+          banDice.row,
+          faceTypesList,
+          normalTypeId,
+        );
+      }
+    });
+    setCardChances(chances);
   };
 
   const handleShare = () => {
@@ -419,50 +441,12 @@ export default function Dashboard({
           </button>
         </div>
 
+        {/* Skill Cards */}
         {savedSkillIds?.map((id) => {
           const card = cards.find((c) => c.id === id);
-          return <CardBox key={id} card={card} type={types} />;
+          const chance = cardChances[id] ?? 0;
+          return <CardBox key={id} card={card} type={types} chance={chance} />;
         })}
-
-        {/* Probability Calculation Results Output */}
-        {calculationResults && (
-          <div className="bg-[#1a1a1a] text-white p-6 rounded-2xl border-2 border-yellow-400/80 shadow-[4px_4px_0_0_rgba(250,204,21,0.5)] flex flex-col gap-4 animate-fadeIn">
-            <div className="flex justify-between items-center border-b border-white/20 pb-3">
-              <h3 className="text-lg font-bold text-yellow-400 tracking-wide font-salsa">
-                Roll Probabilities (
-                {firstTurn
-                  ? `2 Dice - First Turn (Banned ${banDice.row})`
-                  : "3 Dice"}
-                )
-              </h3>
-              <button
-                onClick={() => setCalculationResults(null)}
-                className="text-white hover:text-red-400 text-sm font-bold uppercase transition"
-              >
-                Clear Results
-              </button>
-            </div>
-
-            <div className="overflow-x-auto">
-              <pre className="font-mono text-[13px] leading-relaxed select-text bg-black/40 p-4 rounded-xl max-h-87.5 overflow-y-auto whitespace-pre scrolling-touch">
-                {(() => {
-                  const col1 = "Outcome Combinations";
-                  const col2 = "Combos";
-                  const col3 = "Probability";
-                  const col4 = "Cumulative";
-
-                  let output = `${col1.padEnd(42)} | ${col2.padStart(6)} | ${col3.padStart(11)} | ${col4.padStart(11)}\n`;
-                  output += `${"-".repeat(42)}-+-${"-".repeat(6)}-+-${"-".repeat(11)}-+-${"-".repeat(11)}\n`;
-
-                  calculationResults.forEach((res) => {
-                    output += `${res.comboKey.padEnd(42)} | ${res.combos.toString().padStart(6)} | ${res.probability.padStart(11)} | ${res.cumulative.padStart(11)}\n`;
-                  });
-                  return output;
-                })()}
-              </pre>
-            </div>
-          </div>
-        )}
 
         {children}
 
@@ -480,6 +464,7 @@ export default function Dashboard({
               dice2: [null, null, null, null, null, null],
               dice3: [null, null, null, null, null, null],
             });
+            setCardChances({});
             console.log(
               "Dice set has been reset to default due to same pokemon re-selection.",
             );

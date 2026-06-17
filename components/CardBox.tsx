@@ -61,13 +61,16 @@ export default function CardBox({
           <img src="/thumb-up.svg" className="w-7 h-7 -rotate-15" />
         </div>
       )}
-      {card?.imageUrl && (
-        <img
-          src={card.imageUrl}
-          alt={card.name?.en || card.name?.th || "Skill Card"}
-          className="w-40 object-contain rounded-md "
-        />
-      )}
+      <div className="flex flex-col">
+        {card?.imageUrl && (
+          <img
+            src={card.imageUrl}
+            alt={card.name?.en || card.name?.th || "Skill Card"}
+            className="w-40 object-contain rounded-md "
+          />
+        )}
+        <p className="text-center">{card?.name?.en || card?.name?.th}</p>
+      </div>
       <div className="flex flex-row gap-2 min-w-50">
         {card?.energyCosts.flatMap((cost, costIndex) => {
           const quantity = cost.quantity ?? 0;
