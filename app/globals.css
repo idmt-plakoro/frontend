@@ -8,10 +8,10 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans), sans-serif;
   --font-mono: var(--font-geist-mono);
   --font-poetsen: var(--font-poetsen-one), sans-serif;
   --font-salsa: var(--font-salsa), sans-serif;
+  --font-sans: var(--font-geist-sans), var(--font-prompt), sans-serif;
 }
 
 
@@ -22,7 +22,7 @@ html {
 body {
   background-color: #ffffff;
   color: #171717;
-  font-family: var(--font-geist-sans), sans-serif;
+  font-family: var(--font-sans);
   margin-top: 50px;
 }
 

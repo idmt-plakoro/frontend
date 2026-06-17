@@ -1,5 +1,6 @@
 import React from "react";
 import DiceDisplayRow from "./DiceDisplayRow";
+import { useTranslation } from "react-i18next";
 
 interface DiceCustomizationProps {
   diceData: {
@@ -22,6 +23,7 @@ export default function DiceCustomization({
   faceTypesList,
   onEditClick,
 }: DiceCustomizationProps) {
+  const { t } = useTranslation();
   return (
     <div className="flex-1 min-h-37.5 bg-[#1e1e1e] text-white rounded-xl p-4 flex flex-col justify-between">
       <div className="w-full mb-4">
@@ -58,7 +60,7 @@ export default function DiceCustomization({
             </svg>
           </div>
           <h3 className="text-2xl font-black tracking-wide italic">
-            Dice Cuztomization
+            {t("title.diceCuztomization")}
           </h3>
         </div>
         <div className="h-0.5 bg-white w-full opacity-90"></div>

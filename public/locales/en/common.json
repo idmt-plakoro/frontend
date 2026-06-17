@@ -16,9 +16,9 @@
     "continue":"Continue"
   },
   "pokemonInfo":{
-    "hp":"HP :",
-    "element":"Element :",
-    "weakness":"Weakness :",
+    "hp":"HP",
+    "element":"Element",
+    "weakness":"Weakness",
     "loading":"Loading Image..."
   },
   "type": {
@@ -40,6 +40,8 @@
     },
   "modal":{
     "resetWarning":"Select same pokemon will reset your dice set are you sure?"
-    
+  },
+  "title":{
+    "diceCuztomization":"Dice Cuztomization"
   }
 }
