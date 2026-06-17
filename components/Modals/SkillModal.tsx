@@ -6,45 +6,16 @@ import { typecolor, typeIcon } from "@/constants/TypeColor";
 import { typeIdToName } from "@/constants/TypeIdToName";
 import Face from "../Face";
 import { directions } from "@/constants/directions";
+import { SkillCard } from "../CardBox";
 
 // --- Interfaces & Enums ---
 export enum Direction {
-  Upright = 'upright',
-  FaceUp = 'faceup',
-  UpsideDown = 'upsideDown',
-  FaceDown = 'facedown',
-  LeftSide = 'leftside',
-  RightSide = 'rightside'
-}
-
-export interface energyCost {
-  typeId: number;
-  quantity: number;
-}
-
-export interface effect {
-  ability: {
-    en: string;
-    th: string;
-  };
-  directions: Direction[];
-}
-
-export interface SkillCard {
-  id: number;
-  typeId: number;
-  damage: number;
-  name: {
-    en: string;
-    th: string;
-  };
-  fightingAbility:{
-    en: string;
-    th: string;
-  };
-  energyCosts: energyCost[];
-  effects: effect[];
-  imageUrl?: string | null;
+  Upright = "upright",
+  FaceUp = "faceup",
+  UpsideDown = "upsideDown",
+  FaceDown = "facedown",
+  LeftSide = "leftside",
+  RightSide = "rightside",
 }
 
 interface SkillModalProps {
@@ -66,11 +37,9 @@ export default function SkillModal({
   const [hoveredSkill, setHoveredSkill] = useState<SkillCard | null>(null);
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
 
-  console.log('ข้อมูลใน skillCards :', skillCards);
-
   useEffect(() => {
     if (isOpen) {
-      setSelectedSkills([...oldSkillSave]);
+      setSelectedSkills(Array.isArray(oldSkillSave) ? [...oldSkillSave] : []);
       setHoveredSkill(null);
     }
   }, [isOpen, oldSkillSave]);
@@ -95,7 +64,6 @@ export default function SkillModal({
   return (
     <div className="fixed inset-0 bg-[black]/70 z-[100] flex items-center justify-center p-4">
       <div className="bg-[#040404]/80 text-white p-6 rounded-xl max-w-2xl w-full border border-zinc-800 shadow-2xl relative flex flex-col gap-4 h-[85vh] max-h-[750px]">
-        
         {/* Header */}
         <div className="flex items-center justify-between border-b border-zinc-800 pb-4">
           <div className="flex items-center gap-3">
@@ -106,40 +74,69 @@ export default function SkillModal({
               <h2 className="text-xl font-bold tracking-wide">Select Skill</h2>
               <p className="text-xs font-medium text-zinc-500">
                 Select 5 skills (
-                <span className={isSelectionComplete ? "text-green-400 font-bold" : "text-yellow-400"}>
+                <span
+                  className={
+                    isSelectionComplete
+                      ? "text-green-400 font-bold"
+                      : "text-yellow-400"
+                  }
+                >
                   {selectedSkills.length}
                 </span>
                 /5)
               </p>
             </div>
           </div>
-          <button onClick={onClose} className="text-zinc-500 hover:text-white text-xl p-1">✕</button>
+          <button
+            onClick={onClose}
+            className="text-zinc-500 hover:text-white text-xl p-1"
+          >
+            ✕
+          </button>
         </div>
 
         {/* List Grid */}
-        <div className="flex-1 overflow-y-auto bg-[#CDCDCD]/30 rounded-xl p-4 min-h-0 relative" onMouseMove={handleMouseMove}>
+        <div
+          className="flex-1 overflow-y-auto bg-[#CDCDCD]/30 rounded-xl p-4 min-h-0 relative"
+          onMouseMove={handleMouseMove}
+        >
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
             {skillCards.map((skill) => {
               const isSelected = selectedSkills.includes(skill.id);
               return (
-                <div key={skill.id} className="relative cursor-pointer group"
+                <div
+                  key={skill.id}
+                  className="relative cursor-pointer group"
                   onClick={() => handleToggleSkill(skill.id)}
                   onMouseEnter={() => setHoveredSkill(skill)}
-                  onMouseLeave={() => setHoveredSkill(null)}>
-                  
-                  <div className={`w-full aspect-[16/10] rounded-lg overflow-hidden border-2 transition-all duration-150 bg-zinc-800 flex flex-col items-center justify-center p-3 relative ${
-                      isSelected ? "border-red-500 scale-95" : "border-zinc-700 hover:border-yellow-500"
-                  }`}>
+                  onMouseLeave={() => setHoveredSkill(null)}
+                >
+                  <div
+                    className={`w-full aspect-[16/10] rounded-lg overflow-hidden border-2 transition-all duration-150 bg-zinc-800 flex flex-col items-center justify-center p-3 relative ${
+                      isSelected
+                        ? "border-red-500 scale-95"
+                        : "border-zinc-700 hover:border-yellow-500"
+                    }`}
+                  >
                     {skill.imageUrl ? (
-                      <Image src={skill.imageUrl} alt={skill.name?.en || ""} fill className="object-cover" />
+                      <Image
+                        src={skill.imageUrl}
+                        alt={skill.name?.en || ""}
+                        fill
+                        className="object-cover"
+                      />
                     ) : (
                       <div className="text-center w-full h-full flex flex-col justify-center bg-gradient-to-br from-zinc-700 to-zinc-900 rounded">
-                        <p className="font-bold text-sm text-yellow-400 tracking-wide px-2 line-clamp-1">{skill.name?.en}</p>
-                        <p className="text-[10px] text-zinc-400 mt-1">{skill.name?.th}</p>
+                        <p className="font-bold text-sm text-yellow-400 tracking-wide px-2 line-clamp-1">
+                          {skill.name?.en}
+                        </p>
+                        <p className="text-[10px] text-zinc-400 mt-1">
+                          {skill.name?.th}
+                        </p>
                       </div>
                     )}
                   </div>
-                  
+
                   {isSelected && (
                     <div className="absolute -top-2 -right-2 w-6 h-6 bg-red-600 rounded-full border-2 border-white flex items-center justify-center shadow-lg">
                       <span className="w-3 h-[3px] bg-white rounded-full"></span>
@@ -153,19 +150,24 @@ export default function SkillModal({
 
         {/* Footer */}
         <div className="flex justify-center gap-4 pt-2">
-          <button onClick={() => setSelectedSkills([])} className="px-8 py-2 bg-zinc-800 text-white font-black rounded-lg text-sm border border-zinc-700 hover:bg-zinc-700">Clear</button>
-          
-          <button 
+          <button
+            onClick={() => setSelectedSkills([])}
+            className="px-8 py-2 bg-zinc-800 text-white font-black rounded-lg text-sm border border-zinc-700 hover:bg-zinc-700"
+          >
+            Clear
+          </button>
+
+          <button
             disabled={!isSelectionComplete}
-            onClick={() => { 
+            onClick={() => {
               if (isSelectionComplete) {
-                onConfirm(selectedSkills); 
-                onClose(); 
+                onConfirm(selectedSkills);
+                onClose();
               }
-            }} 
+            }}
             className={`px-8 py-2 font-black rounded-lg text-sm transition-all duration-200 ${
-              isSelectionComplete 
-                ? "bg-[#ffcc00] text-black hover:bg-yellow-400 cursor-pointer shadow-lg active:scale-95" 
+              isSelectionComplete
+                ? "bg-[#ffcc00] text-black hover:bg-yellow-400 cursor-pointer shadow-lg active:scale-95"
                 : "bg-zinc-800 text-zinc-500 border border-zinc-700/60 cursor-not-allowed opacity-50"
             }`}
           >
@@ -175,111 +177,140 @@ export default function SkillModal({
       </div>
 
       {/* Floating Panel (เมื่อ Hover บนการ์ดสกิล) */}
-      {hoveredSkill && (() => {
-        const typeName = typeIdToName[hoveredSkill.typeId as keyof typeof typeIdToName] || 'Normal';
-        const currentTypeColor = typecolor[typeName as keyof typeof typecolor] || "#ffffff";
-        
-        // 🌟 🔄 ระบบคำนวณพื้นที่หน้าจอ Real-time ป้องกันกล่องข้อมูลตกจอ
-        const isClient = typeof window !== 'undefined';
-        const screenWidth = isClient ? window.innerWidth : 1920;
-        const screenHeight = isClient ? window.innerHeight : 1080;
+      {hoveredSkill &&
+        (() => {
+          const typeName =
+            typeIdToName[hoveredSkill.typeId as keyof typeof typeIdToName] ||
+            "Normal";
+          const currentTypeColor =
+            typecolor[typeName as keyof typeof typecolor] || "#ffffff";
 
-        // เช็คว่าเมาส์อยู่ครึ่งล่างของจอ หรือชิดขอบขวาเกินไปหรือไม่
-        const shouldFlipY = mousePos.y > screenHeight * 0.55;
-        const shouldFlipX = mousePos.x > screenWidth - 360; // 360 คือขนาดความกว้างกล่อง + ระยะเผื่อปลอดภัย
+          // 🌟 🔄 ระบบคำนวณพื้นที่หน้าจอ Real-time ป้องกันกล่องข้อมูลตกจอ
+          const isClient = typeof window !== "undefined";
+          const screenWidth = isClient ? window.innerWidth : 1920;
+          const screenHeight = isClient ? window.innerHeight : 1080;
 
-        // กำหนดตำแหน่งพิกัดและ transform พลิกด้านกล่องข้อมูลอัตโนมัติ
-        const topPosition = shouldFlipY ? mousePos.y - 15 : mousePos.y + 15;
-        const leftPosition = shouldFlipX ? mousePos.x - 15 : mousePos.x + 15;
-        const transformStyle = `${shouldFlipY ? "translateY(-100%)" : ""} ${shouldFlipX ? "translateX(-100%)" : ""}`.trim();
+          // เช็คว่าเมาส์อยู่ครึ่งล่างของจอ หรือชิดขอบขวาเกินไปหรือไม่
+          const shouldFlipY = mousePos.y > screenHeight * 0.55;
+          const shouldFlipX = mousePos.x > screenWidth - 360; // 360 คือขนาดความกว้างกล่อง + ระยะเผื่อปลอดภัย
 
-        return (
-          <div
-            className="fixed pointer-events-none z-[110] bg-[#000000]/60 backdrop-blur-md border border-zinc-700 p-4 shadow-2xl rounded-lg min-w-[280px] max-w-[340px] text-xs flex flex-col gap-2.5 text-zinc-200 transition-transform duration-75"
-            style={{ 
-              top: topPosition, 
-              left: leftPosition,
-              transform: transformStyle || undefined 
-            }}
-          >
-            <h3 className="text-sm font-bold text-white border-b border-zinc-700 pb-1.5">
-              Skill Name : {hoveredSkill.name?.en || 'Unknown'} 
-            </h3>
-            <p>
-              <span className="text-zinc-400 font-medium">Element : </span>
-              <span className="font-bold uppercase tracking-wider" style={{ color: currentTypeColor }}>
-                {typeName}
-              </span>
-            </p>
-            <p>
-              <span className="text-zinc-400 font-medium">Damage : </span>
-              <span className="text-white font-bold">{hoveredSkill.damage} unit </span>
-            </p>
-            
-            {(hoveredSkill.fightingAbility?.en || hoveredSkill?.fightingAbility?.th) ? (
+          // กำหนดตำแหน่งพิกัดและ transform พลิกด้านกล่องข้อมูลอัตโนมัติ
+          const topPosition = shouldFlipY ? mousePos.y - 15 : mousePos.y + 15;
+          const leftPosition = shouldFlipX ? mousePos.x - 15 : mousePos.x + 15;
+          const transformStyle =
+            `${shouldFlipY ? "translateY(-100%)" : ""} ${shouldFlipX ? "translateX(-100%)" : ""}`.trim();
+
+          return (
+            <div
+              className="fixed pointer-events-none z-[110] bg-[#000000]/60 backdrop-blur-md border border-zinc-700 p-4 shadow-2xl rounded-lg min-w-[280px] max-w-[340px] text-xs flex flex-col gap-2.5 text-zinc-200 transition-transform duration-75"
+              style={{
+                top: topPosition,
+                left: leftPosition,
+                transform: transformStyle || undefined,
+              }}
+            >
+              <h3 className="text-sm font-bold text-white border-b border-zinc-700 pb-1.5">
+                Skill Name : {hoveredSkill.name?.en || "Unknown"}
+              </h3>
               <p>
-                <span className="text-zinc-400 font-medium">Ability : </span>
-                <span className="text-white font-bold">{(hoveredSkill?.fightingAbility.en || hoveredSkill?.fightingAbility.th)}</span>
+                <span className="text-zinc-400 font-medium">Element : </span>
+                <span
+                  className="font-bold uppercase tracking-wider"
+                  style={{ color: currentTypeColor }}
+                >
+                  {typeName}
+                </span>
               </p>
-            ) : null}
-            
-            {/* วนลูปแยกการแสดงผลตามก้อนบรรทัดของ Effect */}
-            <div className="flex flex-col gap-2 border-t border-zinc-800 pt-2">
-              <span className="text-zinc-400 font-medium">Ability Effect :</span>
-              {hoveredSkill.effects?.map((eff, index) => (
-                <div key={index} className="bg-zinc-900/60 border border-zinc-800 p-2 rounded-md flex flex-col gap-1.5">
-                  <div className="flex flex-wrap gap-1">
-                    {eff.directions?.map((dir, i) => {
-                      const matchedKey = Object.keys(directions).find(
-                        (key) => key.toLowerCase() === dir.toLowerCase()
-                      );
-                      const imgPath = matchedKey 
-                        ? directions[matchedKey as keyof typeof directions] 
-                        : `/directions/${dir.toLowerCase()}.png`;
+              <p>
+                <span className="text-zinc-400 font-medium">Damage : </span>
+                <span className="text-white font-bold">
+                  {hoveredSkill.damage} unit{" "}
+                </span>
+              </p>
 
-                      return (
-                        <div key={i} className="w-5 h-5 flex items-center justify-center rounded bg-zinc-800 border border-zinc-700 overflow-hidden shadow-inner" title={dir}>
-                          <Image 
-                            src={imgPath} 
-                            alt={dir} 
-                            width={18} 
-                            height={18}
-                            className="object-contain"
+              {hoveredSkill.fightingAbility?.en ||
+              hoveredSkill?.fightingAbility?.th ? (
+                <p>
+                  <span className="text-zinc-400 font-medium">Ability : </span>
+                  <span className="text-white font-bold">
+                    {hoveredSkill?.fightingAbility.en ||
+                      hoveredSkill?.fightingAbility.th}
+                  </span>
+                </p>
+              ) : null}
+
+              {/* วนลูปแยกการแสดงผลตามก้อนบรรทัดของ Effect */}
+              <div className="flex flex-col gap-2 border-t border-zinc-800 pt-2">
+                <span className="text-zinc-400 font-medium">
+                  Ability Effect :
+                </span>
+                {hoveredSkill.effects?.map((eff, index) => (
+                  <div
+                    key={index}
+                    className="bg-zinc-900/60 border border-zinc-800 p-2 rounded-md flex flex-col gap-1.5"
+                  >
+                    <div className="flex flex-wrap gap-1">
+                      {eff.directions?.map((dir, i) => {
+                        const matchedKey = Object.keys(directions).find(
+                          (key) => key.toLowerCase() === dir.toLowerCase(),
+                        );
+                        const imgPath = matchedKey
+                          ? directions[matchedKey as keyof typeof directions]
+                          : `/directions/${dir.toLowerCase()}.png`;
+
+                        return (
+                          <div
+                            key={i}
+                            className="w-5 h-5 flex items-center justify-center rounded bg-zinc-800 border border-zinc-700 overflow-hidden shadow-inner"
+                            title={dir}
+                          >
+                            <Image
+                              src={imgPath}
+                              alt={dir}
+                              width={18}
+                              height={18}
+                              className="object-contain"
+                            />
+                          </div>
+                        );
+                      })}
+                    </div>
+                    <p className="text-zinc-300 leading-normal font-light">
+                      {eff.ability?.en || eff.ability?.th || "-"}
+                    </p>
+                  </div>
+                ))}
+              </div>
+
+              {/* ค่าคอสพลังงาน */}
+              <div className="flex items-center gap-2 border-t border-zinc-700/80 pt-2 mt-0.5">
+                <span className="text-zinc-400 font-medium">Energy Cost :</span>
+                <div className="flex flex-wrap gap-1">
+                  {hoveredSkill.energyCosts?.map((cost, idx) => {
+                    const costTypeName =
+                      typeIdToName[cost.typeId as keyof typeof typeIdToName] ||
+                      "Normal";
+                    const costIconPath =
+                      typeIcon[costTypeName as keyof typeof typeIcon] ||
+                      "/typeIcons/Normal.png";
+
+                    return Array.from({ length: cost.quantity || 0 }).map(
+                      (_, i) => (
+                        <div key={`${idx}-${i}`} className="w-5 h-5">
+                          <Face
+                            imageUrl1={costIconPath}
+                            name1={costTypeName}
+                            className="w-full h-full border-none shadow-sm rounded-md !p-0"
                           />
                         </div>
-                      );
-                    })}
-                  </div>
-                  <p className="text-zinc-300 leading-normal font-light">
-                    {eff.ability?.en || eff.ability?.th || "-"}
-                  </p>
+                      ),
+                    );
+                  })}
                 </div>
-              ))}
-            </div>
-            
-            {/* ค่าคอสพลังงาน */}
-            <div className="flex items-center gap-2 border-t border-zinc-700/80 pt-2 mt-0.5">
-              <span className="text-zinc-400 font-medium">Energy Cost :</span>
-              <div className="flex flex-wrap gap-1">
-                {hoveredSkill.energyCosts?.map((cost, idx) => {
-                  const costTypeName = typeIdToName[cost.typeId as keyof typeof typeIdToName] || 'Normal';
-                  const costIconPath = typeIcon[costTypeName as keyof typeof typeIcon] || "/typeIcons/Normal.png";
-                  
-                  return Array.from({ length: cost.quantity || 0 }).map((_, i) => (
-                    <div key={`${idx}-${i}`} className="w-5 h-5">
-                      <Face 
-                        imageUrl1={costIconPath}
-                        name1={costTypeName}
-                        className="w-full h-full border-none shadow-sm rounded-md !p-0"
-                      />
-                    </div>
-                  ));
-                })}
               </div>
             </div>
-          </div>
-        );
-      })()}
+          );
+        })()}
     </div>
   );
 }

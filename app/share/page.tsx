@@ -34,9 +34,9 @@ function ShareContent() {
     setLocalStorageItem("plakoro_first_turn", firstTurn);
     setLocalStorageItem("plakoro_ban_dice", banDice);
 
-    // Redirect to root dashboard page
-    router.replace("/");
-  }, [searchParams, router]);
+    // Redirect to root dashboard page with a hard reload to ensure state updates
+    window.location.replace("/");
+  }, [searchParams]);
 
   if (error) {
     return (

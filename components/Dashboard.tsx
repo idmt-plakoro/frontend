@@ -3,9 +3,11 @@
 import React, { useEffect, useState } from "react";
 import PokemonProfile from "./PokemonProfile";
 import PokemonSidebar from "./PokemonSidebar";
+import CardBox, { SkillCard } from "./CardBox";
 import {
   getApiPokemonByPokemonId,
   getApiFaceTypes,
+  getApiExampleTypes,
 } from "@/src/api/generated/sdk.gen";
 import ElementCount from "./ElementCount";
 import { client } from "@/src/api/generated/client.gen";
@@ -21,7 +23,7 @@ import { validateDiceConfig, calculateDiceProbability } from "@/libs/calculate";
 import SkillModal from "./Modals/SkillModal";
 import ShareModal from "./Modals/ShareModal";
 import { canShare, encodeConfig } from "@/libs/share";
-
+import { GetApiExampleTypesResponse } from "@/src/api/generated";
 
 client.setConfig({
   baseUrl: "http://localhost:3000",
@@ -35,6 +37,7 @@ export default function Dashboard({
   const [pokemonId, setPokemonId] = useState<number>(1);
 
   const [pokemonInfo, setPokemonInfo] = useState<any>(null);
+  const [cards, setCards] = useState<SkillCard[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [faceTypesList, setFaceTypesList] = useState<any[]>([]);
 
@@ -56,7 +59,7 @@ export default function Dashboard({
   // State สำหรับจำว่ากำลังกดแก้ไขลูกเต๋าแถวไหนอยู่ (dice1, dice2, หรือ dice3)
   const [selectedDiceRow, setSelectedDiceRow] = useState<string | null>(null);
 
-// 🌟 State สำหรับ Skill Modal
+  // 🌟 State สำหรับ Skill Modal
   const [isSkillModalOpen, setIsSkillModalOpen] = useState<boolean>(false);
   const [savedSkillIds, setSavedSkillIds] = useState<number[]>([]); // เก็บ int array 5 ช่อง
 
@@ -73,17 +76,28 @@ export default function Dashboard({
   const [errorTitle, setErrorTitle] = useState<string>("");
   const [errorMessage, setErrorMessage] = useState<string>("");
 
-  
-
   // Probability Calculation State
-  const [calculationResults, setCalculationResults] = useState<any[] | null>(null);
+  const [calculationResults, setCalculationResults] = useState<any[] | null>(
+    null,
+  );
 
   // Share Modal State
   const [isShareModalOpen, setIsShareModalOpen] = useState<boolean>(false);
   const [shareUrl, setShareUrl] = useState<string>("");
 
+  const [types, setTypes] = useState<GetApiExampleTypesResponse["data"]>([]);
 
   useEffect(() => {
+    getApiExampleTypes().then((resType) => {
+      const data = resType.data?.data;
+      if (data) {
+        setTypes(data);
+      }
+    });
+  }, []);
+
+  useEffect(() => {
+    let active = true;
     async function fetchNewPokemon() {
       setLoading(true);
       try {
@@ -93,15 +107,23 @@ export default function Dashboard({
             pokemonId: pokemonId,
           },
         });
-        setPokemonInfo(response.data?.data);
+        if (active) {
+          setCards(response.data?.data?.skillCards || []);
+          setPokemonInfo(response.data?.data);
+        }
       } catch (error) {
         console.error("Failed to fetch pokemon data:", error);
       } finally {
-        setLoading(false);
+        if (active) {
+          setLoading(false);
+        }
       }
     }
 
     fetchNewPokemon();
+    return () => {
+      active = false;
+    };
   }, [pokemonId]);
 
   useEffect(() => {
@@ -128,9 +150,14 @@ export default function Dashboard({
     if (savedPokemonId) {
       setPokemonId(savedPokemonId);
     }
-    const savedSkills = getLocalStorageItem(STORAGE_KEYS.CURRENT_SKILL, null);
-    if (savedSkills) {
-      setSavedSkillIds(savedSkills);
+    const savedSkills = getLocalStorageItem<any>(
+      STORAGE_KEYS.CURRENT_SKILL,
+      null,
+    );
+    if (Array.isArray(savedSkills)) {
+      setSavedSkillIds(savedSkills.filter((id: any) => typeof id === "number"));
+    } else {
+      setSavedSkillIds([]);
     }
     const savedFirstTurn = getLocalStorageItem("plakoro_first_turn", null);
     if (savedFirstTurn !== null) {
@@ -174,6 +201,22 @@ export default function Dashboard({
     }
   }, [banDice, isDiceLoaded]);
 
+  // 🌟 Sanitize savedSkillIds when pokemonInfo changes to prevent stale skill IDs from another Pokemon
+  useEffect(() => {
+    if (
+      pokemonInfo &&
+      pokemonInfo.id === pokemonId &&
+      pokemonInfo.skillCards &&
+      savedSkillIds.length > 0
+    ) {
+      const validIds = savedSkillIds.filter((id) =>
+        pokemonInfo.skillCards.some((card: any) => card.id === id),
+      );
+      if (validIds.length !== savedSkillIds.length) {
+        setSavedSkillIds(validIds);
+      }
+    }
+  }, [pokemonInfo, pokemonId, savedSkillIds]);
 
   const handleChangePokemon = (newId: number) => {
     setPokemonId(newId); // พอสั่งเปลี่ยน ID ปุ๊บ useEffect ข้างบนจะทำงานอัตโนมัติทันที!
@@ -201,15 +244,15 @@ export default function Dashboard({
     console.log("Skills saved to array:", newSkillSave);
   };
 
-  
-
   // 🌟 ฟังก์ชันคำนวณหลังกดปุ่ม Calculate
   const handleCalculate = () => {
     console.log("--- Starting Calculation Process ---");
     const isValid = validateDiceConfig(diceData);
     if (!isValid) {
       setErrorTitle("Incomplete Dice Configuration");
-      setErrorMessage("Please make sure all 3 dice have 6 faces configured before calculating.");
+      setErrorMessage(
+        "Please make sure all 3 dice have 6 faces configured before calculating.",
+      );
       setIsErrorOpen(true);
       return;
     }
@@ -218,7 +261,7 @@ export default function Dashboard({
       diceData,
       firstTurn,
       banDice.row,
-      faceTypesList
+      faceTypesList,
     );
     setCalculationResults(results);
   };
@@ -227,7 +270,9 @@ export default function Dashboard({
     const check = canShare(diceData);
     if (!check.canShare) {
       setErrorTitle("Cannot Share");
-      setErrorMessage(check.reason || "Please complete configuration before sharing.");
+      setErrorMessage(
+        check.reason || "Please complete configuration before sharing.",
+      );
       setIsErrorOpen(true);
       return;
     }
@@ -325,7 +370,7 @@ export default function Dashboard({
           <SkillModal
             isOpen={isSkillModalOpen}
             onClose={() => setIsSkillModalOpen(false)}
-            skillCards={pokemonInfo?.skillCards}
+            skillCards={cards}
             oldSkillSave={savedSkillIds} // ส่ง array ID ที่จำไว้กลับเข้าไป
             onConfirm={handleConfirmSkills} // รอรับ array ID อันใหม่
           />
@@ -335,7 +380,6 @@ export default function Dashboard({
             shareUrl={shareUrl}
           />
         </div>
-
 
         {/* Controls (Add Skill, First Turn Toggle, Calculate) */}
         <div className="flex items-center justify-between border-t border-b border-gray-200 py-4">
@@ -369,13 +413,57 @@ export default function Dashboard({
 
           <button
             onClick={handleCalculate}
-            className="bg-black text-white text-xs font-black px-7 py-2 rounded-full border border-black hover:bg-neutral-800 transition active:scale-95 shadow-md uppercase tracking-wider"
+            className="bg-black text-white text-xs font-black px-7 py-2 rounded-full border border-black hover:bg-neutral-800 transition active:scale-95 shadow-md tracking-wider"
           >
             Calculate
           </button>
         </div>
 
-        {/* Skill Cards List  */}
+        {savedSkillIds?.map((id) => {
+          const card = cards.find((c) => c.id === id);
+          return <CardBox key={id} card={card} type={types} />;
+        })}
+
+        {/* Probability Calculation Results Output */}
+        {calculationResults && (
+          <div className="bg-[#1a1a1a] text-white p-6 rounded-2xl border-2 border-yellow-400/80 shadow-[4px_4px_0_0_rgba(250,204,21,0.5)] flex flex-col gap-4 animate-fadeIn">
+            <div className="flex justify-between items-center border-b border-white/20 pb-3">
+              <h3 className="text-lg font-bold text-yellow-400 tracking-wide font-salsa">
+                Roll Probabilities (
+                {firstTurn
+                  ? `2 Dice - First Turn (Banned ${banDice.row})`
+                  : "3 Dice"}
+                )
+              </h3>
+              <button
+                onClick={() => setCalculationResults(null)}
+                className="text-white hover:text-red-400 text-sm font-bold uppercase transition"
+              >
+                Clear Results
+              </button>
+            </div>
+
+            <div className="overflow-x-auto">
+              <pre className="font-mono text-[13px] leading-relaxed select-text bg-black/40 p-4 rounded-xl max-h-87.5 overflow-y-auto whitespace-pre scrolling-touch">
+                {(() => {
+                  const col1 = "Outcome Combinations";
+                  const col2 = "Combos";
+                  const col3 = "Probability";
+                  const col4 = "Cumulative";
+
+                  let output = `${col1.padEnd(42)} | ${col2.padStart(6)} | ${col3.padStart(11)} | ${col4.padStart(11)}\n`;
+                  output += `${"-".repeat(42)}-+-${"-".repeat(6)}-+-${"-".repeat(11)}-+-${"-".repeat(11)}\n`;
+
+                  calculationResults.forEach((res) => {
+                    output += `${res.comboKey.padEnd(42)} | ${res.combos.toString().padStart(6)} | ${res.probability.padStart(11)} | ${res.cumulative.padStart(11)}\n`;
+                  });
+                  return output;
+                })()}
+              </pre>
+            </div>
+          </div>
+        )}
+
         {children}
 
         <PokemonSidebar
@@ -387,15 +475,15 @@ export default function Dashboard({
             setSavedSkillIds([]);
             // 🌟 เงื่อนไขถ้าสั่งรีเซ็ตลูกเต๋า (กรณีเลือกตัวละครเดิมซ้ำแล้วกด Continue)
 
-              setDiceData({
-                dice1: [null, null, null, null, null, null],
-                dice2: [null, null, null, null, null, null],
-                dice3: [null, null, null, null, null, null],
-              });
-              console.log(
-                "Dice set has been reset to default due to same pokemon re-selection.",
-              );
-            
+            setDiceData({
+              dice1: [null, null, null, null, null, null],
+              dice2: [null, null, null, null, null, null],
+              dice3: [null, null, null, null, null, null],
+            });
+            console.log(
+              "Dice set has been reset to default due to same pokemon re-selection.",
+            );
+
             setIsSidebarOpen(false);
           }}
         />

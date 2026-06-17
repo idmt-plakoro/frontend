@@ -1,7 +1,7 @@
 import { directions } from "@/constants/directions";
 import Face from "./Face";
 
-export interface skillCard {
+export interface SkillCard {
   id: number;
   name: {
     en?: string | null | undefined;
@@ -31,10 +31,9 @@ export interface skillCard {
 
 interface CardBoxProps {
   func?: React.MouseEventHandler<HTMLButtonElement>;
-  card?: skillCard | null;
+  card?: SkillCard | null;
   disabled?: boolean;
   className?: string;
-  recommended?: boolean;
   type?: Array<{
     id: number;
     enName?: string | null;
@@ -49,10 +48,10 @@ export default function CardBox({
   card,
   disabled = false,
   className,
-  recommended,
   type,
   chance,
 }: CardBoxProps) {
+  const recommended = chance! >= 50 || false;
   return (
     <div
       className={`font-salsa relative w-full p-4 h-40 bg-white drop-shadow-md/20 rounded-md flex flex-row justify-between items-center gap-2 ${recommended ? "ring-5 ring-yellow-300" : ""} ${className}`}
@@ -73,7 +72,9 @@ export default function CardBox({
         {card?.energyCosts.flatMap((cost, costIndex) => {
           const quantity = cost.quantity ?? 0;
           const faces = [];
-          const typeInfo = type?.find((t) => t.id === cost.typeId);
+          const typeInfo = Array.isArray(type)
+            ? type.find((t) => t.id === cost.typeId)
+            : undefined;
 
           for (let i = 0; i < quantity; i++) {
             if (typeInfo) {
