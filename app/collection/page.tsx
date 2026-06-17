@@ -3,6 +3,7 @@
 
 import React, { useState, useEffect, useCallback } from "react";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import {
   getApiSlots,
   getApiPokemonList,
@@ -10,6 +11,7 @@ import {
   getApiFaceTypes,
 } from "@/src/api/generated";
 import Face from "@/components/Face";
+import { setLocalStorageItem, STORAGE_KEYS } from "@/libs/storage";
 
 // ─── Type Styles (mirrors PokemonSidebar) ───────────────────────────────────
 const TYPE_STYLES: Record<
@@ -176,12 +178,14 @@ function SlotCard({
   faceTypesList,
   deleteMode,
   onDeleteClick,
+  onClick,
 }: {
   slot: SlotData;
   pokemon?: PokemonInfo;
   faceTypesList: any[];
   deleteMode: boolean;
   onDeleteClick: (slotNumber: number) => void;
+  onClick: () => void;
 }) {
   const isEmpty =
     !pokemon ||
@@ -198,7 +202,10 @@ function SlotCard({
     : null;
 
   return (
-    <div className="bg-[#1a1a1a] rounded-2xl border border-white/10 overflow-hidden transition-all duration-200 hover:border-white/20">
+    <div 
+      onClick={onClick}
+      className={`bg-[#1a1a1a] rounded-2xl border border-white/10 overflow-hidden transition-all duration-200 hover:border-white/20 ${!deleteMode ? 'cursor-pointer hover:bg-neutral-800/80 active:scale-[0.99]' : ''}`}
+    >
       {/* Header */}
       <div className="flex items-center justify-between px-4 pt-3 pb-2 border-b border-white/10">
         <span className="text-white font-bold text-sm tracking-wide">
@@ -207,7 +214,10 @@ function SlotCard({
         </span>
         {deleteMode && (
           <button
-            onClick={() => onDeleteClick(slot.slotNumber)}
+            onClick={(e) => {
+              e.stopPropagation();
+              onDeleteClick(slot.slotNumber);
+            }}
             className="ml-3 bg-red-600 hover:bg-red-500 active:scale-95 text-white text-xs font-black px-3 py-1 rounded-lg transition-all shadow-md"
           >
             🗑 Delete
@@ -362,6 +372,7 @@ function ConfirmDeleteModal({
 
 // ─── Main Page ────────────────────────────────────────────────────────────────
 export default function CollectionPage() {
+  const router = useRouter();
   const [slots, setSlots] = useState<SlotData[]>([]);
   const [pokemonMap, setPokemonMap] = useState<Record<number, PokemonInfo>>({});
   const [faceTypesList, setFaceTypesList] = useState<any[]>([]);
@@ -375,6 +386,21 @@ export default function CollectionPage() {
     slotName?: string | null;
   } | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
+
+  const handleSlotClick = (slot: SlotData) => {
+    if (deleteMode) return;
+
+    setLocalStorageItem(STORAGE_KEYS.POKEMON_ID, slot.pokemonId);
+    setLocalStorageItem(STORAGE_KEYS.DICE_DATA, {
+      dice1: slot.dice1,
+      dice2: slot.dice2,
+      dice3: slot.dice3,
+    });
+    setLocalStorageItem(STORAGE_KEYS.CURRENT_SKILL, slot.skills || []);
+    setLocalStorageItem(STORAGE_KEYS.SLOT_NAME, slot.slotName || "Plakoro Slot");
+
+    router.push("/");
+  };
 
   // ── fetch data ──────────────────────────────────────────────────────────────
   const fetchAll = useCallback(async () => {
@@ -548,6 +574,7 @@ export default function CollectionPage() {
                 faceTypesList={faceTypesList}
                 deleteMode={deleteMode}
                 onDeleteClick={handleDeleteClick}
+                onClick={() => handleSlotClick(slot)}
               />
             ))
           )}

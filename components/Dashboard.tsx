@@ -8,6 +8,7 @@ import {
   getApiPokemonByPokemonId,
   getApiFaceTypes,
   getApiExampleTypes,
+  getApiPresetsByPokemonId,
 } from "@/src/api/generated/sdk.gen";
 import ElementCount from "./ElementCount";
 import { client } from "@/src/api/generated/client.gen";
@@ -185,6 +186,7 @@ export default function Dashboard({
     } else {
       setSavedSlotName("Plakoro Slot");
     }
+    setIsDiceLoaded(true);
   }, []);
 
   // Save changes only after initial load from localStorage is complete
@@ -217,6 +219,12 @@ export default function Dashboard({
       setLocalStorageItem("plakoro_ban_dice", banDice);
     }
   }, [banDice, isDiceLoaded]);
+
+  useEffect(() => {
+    if (isDiceLoaded && savedSlotName !== null) {
+      setLocalStorageItem(STORAGE_KEYS.SLOT_NAME, savedSlotName);
+    }
+  }, [savedSlotName, isDiceLoaded]);
 
   // 🌟 Sanitize savedSkillIds when pokemonInfo changes to prevent stale skill IDs from another Pokemon
   useEffect(() => {
@@ -522,22 +530,53 @@ export default function Dashboard({
           isOpen={isSidebarOpen}
           onClose={() => setIsSidebarOpen(false)}
           currentPokemonId={pokemonId} // 🌟 ส่ง ID ปัจจุบันไปตรวจสอบความซ้ำซ้อน
-          onSelectPokemon={(newId, shouldReset) => {
+          onSelectPokemon={async (newId, shouldReset) => {
             setPokemonId(newId);
-            setSavedSkillIds([]);
-            // 🌟 เงื่อนไขถ้าสั่งรีเซ็ตลูกเต๋า (กรณีเลือกตัวละครเดิมซ้ำแล้วกด Continue)
-
-            setDiceData({
-              dice1: [null, null, null, null, null, null],
-              dice2: [null, null, null, null, null, null],
-              dice3: [null, null, null, null, null, null],
-            });
             setCardChances({});
-            console.log(
-              "Dice set has been reset to default due to same pokemon re-selection.",
-            );
-
+            setSavedSlotName("Pokemon Set");
             setIsSidebarOpen(false);
+
+            try {
+              const response = await getApiPresetsByPokemonId({
+                path: { pokemonId: newId },
+              });
+              if (
+                response.data?.success &&
+                response.data?.data &&
+                response.data.data.length > 0
+              ) {
+                const preset = response.data.data[0];
+                const d1 = preset.dice1.map((d) => d.faceTypeId);
+                const d2 = preset.dice2.map((d) => d.faceTypeId);
+                const d3 = preset.dice3.map((d) => d.faceTypeId);
+                setDiceData({
+                  dice1: d1,
+                  dice2: d2,
+                  dice3: d3,
+                });
+                const skillIds = (preset.skillCards || []).map(
+                  (s) => s.skillCardId,
+                );
+                setSavedSkillIds(skillIds);
+                console.log(
+                  "Dice set and skills loaded from preset for Pokemon ID:",
+                  newId,
+                );
+              } else {
+                throw new Error("No presets found for this Pokemon ID");
+              }
+            } catch (error) {
+              console.warn(
+                "Failed to load presets, falling back to empty dice/skills:",
+                error,
+              );
+              setDiceData({
+                dice1: [null, null, null, null, null, null],
+                dice2: [null, null, null, null, null, null],
+                dice3: [null, null, null, null, null, null],
+              });
+              setSavedSkillIds([]);
+            }
           }}
         />
       </div>
