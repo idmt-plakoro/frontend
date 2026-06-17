@@ -19,8 +19,17 @@ export default function NavBar() {
   // 🌟 ฟังก์ชันเปลี่ยนภาษาสำหรับ Dropdown
   const changeLanguage = (lang: string) => {
     i18n.changeLanguage(lang);
-    setIsLangMenuOpen(false); // เปลี่ยนภาษาเสร็จให้ปิดเมนู
+    localStorage.setItem('plakoro_lang', lang); // persist preference
+    setIsLangMenuOpen(false);
   };
+
+  // Restore saved language preference after hydration (client-only)
+  useEffect(() => {
+    const savedLang = localStorage.getItem('plakoro_lang');
+    if (savedLang && savedLang !== i18n.language) {
+      i18n.changeLanguage(savedLang);
+    }
+  }, [i18n]);
 
   useEffect(() => {
     try {

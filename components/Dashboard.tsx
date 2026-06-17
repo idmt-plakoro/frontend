@@ -23,7 +23,11 @@ import { validateDiceConfig, calculateCardProbability } from "@/libs/calculate";
 import SkillModal from "./Modals/SkillModal";
 import ShareModal from "./Modals/ShareModal";
 import { canShare, encodeConfig } from "@/libs/share";
-import { GetApiExampleTypesResponse } from "@/src/api/generated";
+import {
+  GetApiExampleTypesResponse,
+  GetAuthAccountResponse,
+} from "@/src/api/generated";
+import SaveModal from "./Modals/SaveModal";
 import { getAuthAccountCached } from "@/libs/authCache";
 import { useTranslation } from "react-i18next";
 
@@ -46,6 +50,7 @@ export default function Dashboard({
   const [cards, setCards] = useState<SkillCard[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [faceTypesList, setFaceTypesList] = useState<any[]>([]);
+  const [savedSlotName, setSavedSlotName] = useState<string | null>(null);
 
   const [isSidebarOpen, setIsSidebarOpen] = useState<boolean>(false);
 
@@ -90,6 +95,8 @@ export default function Dashboard({
   const [shareUrl, setShareUrl] = useState<string>("");
 
   const [types, setTypes] = useState<GetApiExampleTypesResponse["data"]>([]);
+
+  const [isSaveModalOpen, setIsSaveModalOpen] = useState(false);
 
   useEffect(() => {
     getApiExampleTypes().then((resType) => {
@@ -170,15 +177,12 @@ export default function Dashboard({
     } else {
       setSavedSkillIds([]);
     }
-    const savedFirstTurn = getLocalStorageItem("plakoro_first_turn", null);
-    if (savedFirstTurn !== null) {
-      setFirstTurn(savedFirstTurn);
+    const savedName = getLocalStorageItem(STORAGE_KEYS.SLOT_NAME, null);
+    if (savedName) {
+      setSavedSlotName(savedName);
+    } else {
+      setSavedSlotName("Plakoro Slot");
     }
-    const savedBanDice = getLocalStorageItem("plakoro_ban_dice", null);
-    if (savedBanDice) {
-      setBanDice(savedBanDice);
-    }
-    setIsDiceLoaded(true);
   }, []);
 
   // Save changes only after initial load from localStorage is complete
@@ -325,6 +329,27 @@ export default function Dashboard({
     setIsShareModalOpen(true);
   };
 
+  const handleSave = () => {
+    if (user == null) {
+      setErrorTitle("Please login first");
+      setErrorMessage("Please login before saving your dice configuration.");
+      setIsErrorOpen(true);
+      return;
+    }
+
+    const isValid = validateDiceConfig(diceData);
+    if (!isValid) {
+      setErrorTitle("Incomplete Dice Configuration");
+      setErrorMessage(
+        "Please make sure all 3 dice have 6 faces configured before calculating.",
+      );
+      setIsErrorOpen(true);
+      return;
+    }
+
+    setIsSaveModalOpen(true);
+  };
+
   return (
     // Background ลายลูกเต๋า (สมมติว่าเป็นสีเทาอ่อนไปก่อน)
     <div className="min-h-screen p-8 bg-gray-200 flex justify-center">
@@ -332,8 +357,8 @@ export default function Dashboard({
       <div className="z-2 bg-white w-full max-w-6xl rounded-3xl shadow-2xl p-8 flex flex-col gap-8">
         {/* Header (Title + Share/Save Button) */}
         <div className="flex items-center justify-between">
-          <h1 className="text-2xl font-black bg-[#1a1a1a] text-yellow-300 px-6 py-2 rounded-full border-2 border-yellow-300 shadow-[4px_4px_0_0_rgba(250,204,21,1)]">
-            Plakoro First Dice set ({pokemonInfo?.name?.en})
+          <h1 className="text-3xl font-salsa font-black bg-[#1a1a1a] text-yellow-300 px-6 py-2 rounded-full border-2 border-yellow-300 shadow-[4px_4px_0_0_rgba(250,204,21,1)]">
+            {savedSlotName} ({pokemonInfo?.name?.en})
           </h1>
           <div className="flex gap-4 font-salsa">
             <button
@@ -342,7 +367,10 @@ export default function Dashboard({
             >
               {t("button.share")}
             </button>
-            <button className="bg-yellow-400 font-bold px-6 py-2 rounded-lg hover:bg-yellow-500 transition">
+            <button
+              className="bg-yellow-300 font-bold px-6 py-2 rounded-lg hover:bg-yellow-400 transition drop-shadow-md/30 text-lg"
+              onClick={handleSave}
+            >
               {t("button.save")}
             </button>
           </div>
@@ -399,6 +427,18 @@ export default function Dashboard({
             content={errorMessage}
             isOpen={isErrorOpen}
             onClose={() => setIsErrorOpen(false)}
+          />
+          <SaveModal
+            isOpen={isSaveModalOpen}
+            onClose={() => setIsSaveModalOpen(false)}
+            onSave={(slotName) => setSavedSlotName(slotName)}
+            user={user}
+            data={{
+              pokemonName: pokemonInfo?.name?.en,
+              pokemonId: pokemonId,
+              diceData,
+              savedSkillIds,
+            }}
           />
 
           {/* 🌟 เรียกใช้ SkillModal ตรงนี้ */}

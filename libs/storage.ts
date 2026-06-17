@@ -5,6 +5,7 @@ export const STORAGE_KEYS = {
   POKEMON_ID: "plakoro_pokemon_id",
   DICE_DATA: "plakoro_dice_data",
   CURRENT_SKILL: "plakoro_current_skill",
+  SLOT_NAME: "plakoro_slot_name",
 };
 
 // Safe wrapper for localStorage access in Next.js SSR environment
