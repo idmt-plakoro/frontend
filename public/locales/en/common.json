@@ -18,7 +18,10 @@
     "viewMore":"View more",
     "close":"Close",
     "copy":"Copy",
-    "copied":"Copied!"
+    "copied":"Copied!",
+    "logout": "Log-out",
+    "edit":"Edit",
+    "saving":"Saving..."
   },
   "pokemonInfo":{
     "pokemon":"Pokémon",
@@ -86,7 +89,9 @@
   },
   "slot":{
     "empty":"Empty",
-    "title":"Save This Customization"
+    "title":"Save This Customization",
+    "chooseSlot":"Choose Slot To Save",
+    "name": "Name"
   },
   "error":{
     "title":{
@@ -98,6 +103,20 @@
       "share":"Please complete configuration before sharing.",
       "loginBeforeSave":"Please login before saving your dice configuration.",
       "dice":"Please make sure all 3 dice have 6 faces configured before calculating." 
+    }
+  },
+  "profile": {
+    "title": "Profile",
+    "subtitle": "User Profile",
+    "avatar":"Avatar",
+    "name": "Name",
+    "email": "Email",
+    "createdAt": "Created At",
+    "lastModified": "Last Modified",
+    "edit":{
+      "subtitle":"Choose avatar and name",
+      "choose":"Choose your avatar",
+      "enterName":"Enter your name"
     }
   }
 }

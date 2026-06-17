@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { GetAuthAccountResponse, putAuthAccount } from "@/src/api/generated";
 import Modal from "./Modal";
 import Button from "../Button";
+import { useTranslation } from "react-i18next";
 
 const AVATARS = [
   { name: "Pikachu", file: "Pikachu.png", bgColor: "#FFF5C3" },
@@ -20,6 +21,8 @@ export default function EditProfileModal({
   user: GetAuthAccountResponse["data"] | null;
   onClose?: () => void;
 }) {
+  const {t} = useTranslation();
+
   const [currentIndex, setCurrentIndex] = useState(0);
   const [displayName, setDisplayName] = useState("");
   const [isSaving, setIsSaving] = useState(false);
@@ -86,10 +89,10 @@ export default function EditProfileModal({
       <div className="flex flex-col items-center select-none font-salsa w-full py-2">
         {/* Title Section */}
         <h2 className="text-3xl font-normal self-start ml-4 tracking-wide text-white mt-1">
-          Profile
+          {t("profile.title")}
         </h2>
         <p className="text-md text-gray-300 self-start ml-4 opacity-80 mt-1">
-          Choose avatar and name
+          {t("profile.edit.subtitle")}
         </p>
 
         {/* Divider */}
@@ -97,7 +100,7 @@ export default function EditProfileModal({
 
         {/* Choose Avatar Header */}
         <p className="text-lg italic text-gray-300 mb-6 mt-2">
-          Choose your avatar
+          {t("profile.edit.choose")}
         </p>
 
         {/* Avatar Carousel Row */}
@@ -171,13 +174,13 @@ export default function EditProfileModal({
 
         {/* Name Input Section */}
         <div className="flex items-center gap-4 mt-10 mb-8">
-          <span className="text-xl font-normal text-white/70">Name :</span>
+          <span className="text-xl font-normal text-white/70">{t("profile.name")} :</span>
           <input
             type="text"
             value={displayName}
             onChange={(e) => setDisplayName(e.target.value)}
             className="bg-white text-black text-lg font-medium py-2 px-6 rounded-full w-60 shadow-[inset_0_2px_4px_rgba(0,0,0,0.25)] focus:outline-none focus:ring-2 focus:ring-yellow-400 transition"
-            placeholder="Enter your name"
+            placeholder={t("profile.edit.enterName")}
             maxLength={20}
           />
         </div>
@@ -185,10 +188,10 @@ export default function EditProfileModal({
         {/* Action Button Section */}
         <div className="flex justify-end w-full px-4 mt-4">
           <Button
-            text={isSaving ? "Saving..." : "Confirm"}
+            text={isSaving ? `${t("button.saving")}` : `${t("button.confirm")}`}
             func={handleConfirm}
             disabled={isSaving}
-            className="bg-[#fdd835] hover:bg-[#fbc02d] text-black font-bold text-lg rounded-xl shadow-md py-1.5 px-6"
+            className="bg-[#fdd835] hover:bg-[#fbc02d] w-auto text-black font-bold text-lg rounded-xl shadow-md py-1.5 px-6"
           />
         </div>
       </div>

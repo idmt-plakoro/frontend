@@ -143,7 +143,7 @@ export default function SaveModal({
           </p>
         </div>
         <div className="flex gap-2">
-          <p className="self-center text-start text-md">Name</p>
+          <p className="self-center text-start text-md">{t("slot.name")}</p>
           <input
             type="text"
             className="bg-white rounded-full text-black px-2"
@@ -151,7 +151,7 @@ export default function SaveModal({
             onChange={(e) => setName(e.target.value)}
           />
         </div>
-        <p className="self-center text-start text-md">Choose Slot To Save</p>
+        <p className="self-center text-start text-md">{t("slot.chooseSlot")}</p>
         <div className="grid grid-row-5 justify-center gap-1 text-black px-2">
           {Array.from({ length: 5 }, (_, i) => {
             const slotNumber = i + 1;

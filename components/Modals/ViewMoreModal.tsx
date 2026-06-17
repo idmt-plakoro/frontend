@@ -28,11 +28,12 @@ export default function ViewMoreModal({
   types = [],
   pokemonName,
 }: ViewMoreModalProps) {
+  const {t,i18n} = useTranslation();
+  
   if (!isOpen) return null;
 
   const hasCalculated = Object.keys(cardChances).length > 0;
 
-  const {t,i18n} = useTranslation();
   return (
     <div
       className="fixed inset-0 bg-black/50 z-[100] flex items-center justify-center p-4"
