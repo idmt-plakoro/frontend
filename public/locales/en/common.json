@@ -14,7 +14,8 @@
     "confirm":"Confirm",
     "cancel":"Cancel",
     "continue":"Continue",
-    "clear":"Clear"
+    "clear":"Clear",
+    "viewMore":"View more"
   },
   "pokemonInfo":{
     "hp":"HP",
@@ -54,5 +55,15 @@
       "account":"Account",
     "title":"Sign-in / Login",
     "guest":"Continue as guest"
+  },
+  "card":{
+    "chance":"Chance",
+    "viewMoreModal": {
+        "title": "Skill Probability Detail",
+        "hasCalculated": "Probability of every skill",
+        "noCalculated": "Press Calculate first to see probabilities",
+        "noCards": "No skill cards found",
+        "back": "Back to home"
+    }
   }
 }

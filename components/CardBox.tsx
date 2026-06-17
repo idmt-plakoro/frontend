@@ -1,5 +1,6 @@
 import { directions } from "@/constants/directions";
 import Face from "./Face";
+import { useTranslation } from "react-i18next";
 
 export interface SkillCard {
   id: number;
@@ -51,6 +52,7 @@ export default function CardBox({
   type,
   chance,
 }: CardBoxProps) {
+  const {t,i18n} = useTranslation();
   const recommended = chance! >= 50 || false;
   return (
     <div
@@ -69,7 +71,9 @@ export default function CardBox({
             className="w-40 object-contain rounded-md "
           />
         )}
-        <p className="text-center">{card?.name?.en || card?.name?.th}</p>
+        <p className="text-center">
+          {i18n.language === "th" && card?.name?.th ? card.name.th : card?.name?.en}
+        </p>
       </div>
       <div className="flex flex-row gap-2 min-w-50">
         {card?.energyCosts.flatMap((cost, costIndex) => {
@@ -125,7 +129,9 @@ export default function CardBox({
               </div>
               <div className="flex-1 min-w-0 py-1 px-3 m-1 bg-[#9a9999] rounded-full">
                 <div className="w-full text-nowrap overflow-x-auto no-scrollbar mask-fade flex flex-row">
-                  <span className="text-white">{effect.ability.en}</span>
+                  <span className="text-white">
+                    {i18n.language === "th" && effect.ability.th ? effect.ability.th : effect.ability.en}
+                  </span>
                   <div className="w-6 shrink-0" />
                 </div>
               </div>
@@ -138,7 +144,7 @@ export default function CardBox({
       <div className="w-1 h-[85%] bg-[#999999]"></div>
 
       <div className="flex flex-col h-[85%] justify-center items-center rounded-xl aspect-square bg-[#757575]">
-        <span className="text-xl text-white">Chance</span>
+        <span className="text-xl text-white">{t("card.chance")}</span>
         <span className="text-2xl text-white">{chance}%</span>
       </div>
     </div>

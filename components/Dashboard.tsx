@@ -503,7 +503,7 @@ export default function Dashboard({
 
         <Button
           func={() => setIsViewMoreOpen(true)}
-          text="View more"
+          text={t("button.viewMore")}
           className="text-nowrap w-fit text-sm self-center font-salsa text-white bg-black font-bold px-6 py-2 rounded-lg drop-shadow-md/30 text-lg"
         />
 
@@ -513,7 +513,7 @@ export default function Dashboard({
           cards={cards}
           cardChances={cardChances}
           types={types ?? []}
-          pokemonName={pokemonInfo?.name?.en}
+          pokemonName={pokemonInfo?.name}
         />
 
         {children}

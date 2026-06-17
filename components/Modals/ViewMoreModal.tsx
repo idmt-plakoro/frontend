@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslation } from "react-i18next";
 import CardBox, { SkillCard } from "../CardBox";
 
 interface ViewMoreModalProps {
@@ -13,7 +14,10 @@ interface ViewMoreModalProps {
     thName?: string | null;
     typeImage?: string | null;
   }>;
-  pokemonName?: string;
+  pokemonName?: {
+    en: string;
+    th: string;
+  };
 }
 
 export default function ViewMoreModal({
@@ -28,6 +32,8 @@ export default function ViewMoreModal({
 
   const hasCalculated = Object.keys(cardChances).length > 0;
 
+  const {t,i18n} = useTranslation();
+  console.log('this',pokemonName)
   return (
     <div
       className="fixed inset-0 bg-black/50 z-[100] flex items-center justify-center p-4"
@@ -41,13 +47,17 @@ export default function ViewMoreModal({
         {/* Header */}
         <div className="px-8 pt-8 pb-4 border-b border-gray-100">
           <h2 className="text-3xl font-black font-salsa text-gray-900">
-            Skill Probability Detail
+            {t("card.viewMoreModal.title")}
           </h2>
           <p className="text-sm text-gray-400 mt-1 font-salsa">
             {hasCalculated
-              ? "Probability of every skill"
-              : "Press Calculate first to see probabilities"}
-            {pokemonName ? ` · ${pokemonName}` : ""}
+              ? `${t("card.viewMoreModal.hasCalculated")}`
+              : `${t("card.viewMoreModal.noCalculated")}`}
+            {pokemonName && (
+              <span className="ml-1">
+                · {i18n.language === "th" && pokemonName.th ? pokemonName.th : pokemonName.en}
+              </span>
+            )}
           </p>
         </div>
 
@@ -56,7 +66,7 @@ export default function ViewMoreModal({
           {cards.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-16 text-gray-400">
               <span className="text-5xl mb-3">🃏</span>
-              <p className="font-salsa text-lg">No skill cards found</p>
+              <p className="font-salsa text-lg">{t("card.viewMoreModal.noCards")}</p>
             </div>
           ) : (
             cards.map((card) => {
@@ -79,7 +89,7 @@ export default function ViewMoreModal({
             onClick={onClose}
             className="font-salsa font-bold bg-black text-white px-10 py-2 rounded-full hover:bg-neutral-800 transition active:scale-95 shadow-md tracking-wide"
           >
-            Back to home
+            {t("card.viewMoreModal.back")}
           </button>
         </div>
       </div>
