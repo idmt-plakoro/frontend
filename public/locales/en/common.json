@@ -49,5 +49,10 @@
   "elementCount":{
     "title":"Element Count",
     "noElements":"No elements selected"
+  },
+  "login":{
+      "account":"Account",
+    "title":"Sign-in / Login",
+    "guest":"Continue as guest"
   }
 }

@@ -2,18 +2,20 @@
 
 import { useRouter } from "next/navigation";
 import Modal from "./Modal";
+import { useTranslation } from "react-i18next";
 
 interface LoginModalProps {
   isOpen: boolean;
 }
 
 export default function LoginModal({ isOpen }: LoginModalProps) {
+  const {t} = useTranslation();
   const router = useRouter();
   return (
     <Modal isOpen={isOpen} onClose={() => router.push("/")} noBackground={true}>
-      <p className="pl-4 self-center text-left text-2xl">Account</p>
+      <p className="pl-4 self-center text-left text-2xl">{t("login.account")}</p>
       <p className="pl-4 self-center text-left text-md opacity-60">
-        Sign-in / Login
+        {t("login.title")}
       </p>
       <div className="flex items-center justify-center text-center m-2">
         <div className="bg-white opacity-60 w-[95%] h-px" />
@@ -46,7 +48,7 @@ export default function LoginModal({ isOpen }: LoginModalProps) {
           className="text-white opacity-60 underline cursor-pointer"
           onClick={() => router.push("/")}
         >
-          Continue as guest
+          {t("login.guest")}
         </p>
       </div>
     </Modal>
