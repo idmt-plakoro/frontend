@@ -5,6 +5,7 @@ import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { getApiPokemonList, GetApiPokemonListResponse } from '@/src/api/generated';
 import Face from './Face';
+import { useTranslation } from "react-i18next";
 
 interface SidebarProps {
   isOpen: boolean;
@@ -29,6 +30,8 @@ const TYPE_STYLES: Record<number, { label: string; bg: string; text: string; car
 };
 
 export default function PokemonSidebar({ isOpen, onClose, currentPokemonId, onSelectPokemon }: SidebarProps) {
+  const { t, i18n } = useTranslation();
+
   const [allPokemon, setAllPokemon] = useState<GetApiPokemonListResponse>();
   const [loading, setLoading] = useState<boolean>(true);
   const [searchTerm, setSearchTerm] = useState<string>('');
@@ -99,6 +102,13 @@ export default function PokemonSidebar({ isOpen, onClose, currentPokemonId, onSe
     return s.length > 0 ? s : '/img/Unknown_Pokemon.png';
   };
 
+  const getDisplayPokemonName = (pokemon: any) => {
+    if (i18n.language === 'th' && pokemon.thPokemonName) {
+      return String(pokemon.thPokemonName);
+    }
+    return String(pokemon.enPokemonName || 'Unknown');
+  };
+
   return (
     <>
       {/* Background Overlay */}
@@ -125,7 +135,7 @@ export default function PokemonSidebar({ isOpen, onClose, currentPokemonId, onSe
           <div className="relative w-full">
             <input 
               type="text"
-              placeholder="Hinted search text"
+              placeholder={t("sidebar.searchHint")}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="w-full bg-[#e9e6ed] text-neutral-800 placeholder-neutral-500 pl-5 pr-12 py-3 rounded-full text-sm font-medium focus:outline-none transition-all"
@@ -152,7 +162,7 @@ export default function PokemonSidebar({ isOpen, onClose, currentPokemonId, onSe
                       : `${style.bg} text-white opacity-90 hover:opacity-100`
                   }`}
                 >
-                  {style.label}
+                  {t(`type.${style.label}`, style.label)}
                 </button>
               );
             })}
@@ -160,7 +170,7 @@ export default function PokemonSidebar({ isOpen, onClose, currentPokemonId, onSe
         </div>
 
         {/* 📱 รายชื่อโปเกมอน Grid 3 คอลัมน์ ดีไซน์กล่องมนขอบขาวคลีน */}
-        <div className="flex-1 overflow-y-auto pt-2 pr-3 pb-24 [&::-webkit-scrollbar]:w-1.5 
+        <div className="flex-1 overflow-y-auto pt-2 pl-2 pr-3 pb-24 [&::-webkit-scrollbar]:w-1.5 
           [&::-webkit-scrollbar-track]:bg-transparent 
           [&::-webkit-scrollbar-thumb]:bg-[#007AFF]
           [&::-webkit-scrollbar-thumb]:rounded-full 
@@ -172,7 +182,7 @@ export default function PokemonSidebar({ isOpen, onClose, currentPokemonId, onSe
               ))}
             </div>
           ) : filteredPokemon.length === 0 ? (
-            <div className="text-center text-sm text-neutral-500 py-12">No Pokemon found</div>
+            <div className="text-center text-sm text-neutral-500 py-12">{t("sidebar.notFound")}</div>
           ) : (
             <div className="grid grid-cols-3 gap-4">
               {filteredPokemon.map((pokemon) => {
@@ -208,7 +218,7 @@ export default function PokemonSidebar({ isOpen, onClose, currentPokemonId, onSe
                     {/* แถบป้ายชื่อด้านล่างมนตามขอบด้านล่างและใช้สีพาสเทลเฉพาะตัวตามภาพ */}
                     <div className={`w-full ${cardStyle.cardLabelBg} py-2 px-1 flex items-center justify-center`}>
                       <span className={`text-[11px] font-bold ${cardStyle.text} truncate w-full px-0.5 tracking-tight`}>
-                        {String(pokemon.enPokemonName || 'Unknown')}
+                        {getDisplayPokemonName(pokemon)}
                       </span>
                     </div>
                   </div>
@@ -232,7 +242,7 @@ export default function PokemonSidebar({ isOpen, onClose, currentPokemonId, onSe
             disabled={!tempSelectedId}
             className="w-[200px] bg-[#facc15] hover:bg-[#eab308] active:scale-[0.99] disabled:bg-neutral-700 disabled:text-neutral-500 text-black font-black text-sm py-3 rounded-xl shadow-lg transition-all border-b-4 border-yellow-700 tracking-wider uppercase"
           >
-            Confirm
+            {t("button.confirm")}
           </button>
         </div>
 
@@ -255,10 +265,12 @@ export default function PokemonSidebar({ isOpen, onClose, currentPokemonId, onSe
             {/* โซนข้อมูลตัวละคร */}
             <div className="flex-1 flex flex-col gap-0.5 text-xs">
               <div className="font-black text-sm text-yellow-400 uppercase tracking-wide truncate max-w-[150px]">
-                {hoveredPokemon.enPokemonName}
+                {i18n.language === 'th' ? (hoveredPokemon.thPokemonName || hoveredPokemon.enPokemonName) : hoveredPokemon.enPokemonName}
               </div>
+
+              {/* ชื่ออีกภาษานึง th-en (ลบได้ถ้าไม่เอา) */}
               <div className="text-neutral-400 text-[10px] truncate max-w-[150px] mb-2">
-                {hoveredPokemon.thPokemonName || 'ไม่มีชื่อไทย'}
+                {i18n.language === 'th' ? hoveredPokemon.enPokemonName : (hoveredPokemon.thPokemonName || 'ไม่มีชื่อไทย')}
               </div>
 
               {/* เรียงข้อมูล ธาตุ -> HP -> จุดอ่อน แบบแนวตั้ง */}
@@ -266,7 +278,7 @@ export default function PokemonSidebar({ isOpen, onClose, currentPokemonId, onSe
                 
                 {/* 1. ธาตุ (Element) */}
                 <div className="flex items-center gap-1.5">
-                  <span className="text-neutral-400 font-bold whitespace-nowrap">Element :</span>
+                  <span className="text-neutral-400 font-bold whitespace-nowrap">{t("pokemonInfo.element")} :</span>
                   {hoveredPokemon.typeId ? (
                     <div className="w-5 h-5 ml-1">
                       <Face 
@@ -282,13 +294,13 @@ export default function PokemonSidebar({ isOpen, onClose, currentPokemonId, onSe
 
                 {/* 2. HP */}
                 <div className="flex items-center gap-1.5">
-                  <span className="text-neutral-400 font-bold whitespace-nowrap">HP :</span>
+                  <span className="text-neutral-400 font-bold whitespace-nowrap">{t("pokemonInfo.hp")} :</span>
                   <span className="font-extrabold text-white text-sm">{hoveredPokemon.hp ?? 'N/A'}</span>
                 </div>
 
                 {/* 3. จุดอ่อน (Weakness) */}
                 <div className="flex items-center gap-1.5">
-                  <span className="text-neutral-400 font-bold whitespace-nowrap">Weakness :</span>
+                  <span className="text-neutral-400 font-bold whitespace-nowrap">{t("pokemonInfo.weakness")} :</span>
                   {/* รองรับทั้ง weaknessType หรือ weaknessId เผื่อ API ส่งมาชื่อต่างกัน */}
                   {hoveredPokemon.weaknessTypeId ? (
                     <div className="w-5 h-5 ml-1">
@@ -317,7 +329,7 @@ export default function PokemonSidebar({ isOpen, onClose, currentPokemonId, onSe
             
             {/* ข้อความแจ้งเตือน: ตัวอักษรสีขาวนวล ฟอนต์หนาปานกลาง จัดกึ่งกลาง */}
             <p className="text-white/90 text-lg sm:text-xl font-medium tracking-wide text-center leading-relaxed mb-6 select-none max-w-xs sm:max-w-sm">
-              Select same pokemon will reset your dice set are you sure?
+              {t("modal.resetWarning")}
             </p>
 
             {/* โซนปุ่มกดแบบคู่ในแนวนอน */}
@@ -327,7 +339,7 @@ export default function PokemonSidebar({ isOpen, onClose, currentPokemonId, onSe
                 onClick={() => setShowWarningModal(false)}
                 className="bg-[#222222] hover:bg-[#2c2c2c] active:scale-95 text-white font-black text-sm sm:text-base px-6 py-2 rounded-xl border border-neutral-800 shadow-md transition-all tracking-wider"
               >
-                Cancel
+                {t("button.cancel")}
               </button>
               
               {/* ปุ่ม Continue */}
@@ -338,7 +350,7 @@ export default function PokemonSidebar({ isOpen, onClose, currentPokemonId, onSe
                 }}
                 className="bg-[#222222] hover:bg-[#2c2c2c] active:scale-95 text-white font-black text-sm sm:text-base px-6 py-2 rounded-xl border border-neutral-800 shadow-md transition-all tracking-wider"
               >
-                Continue
+                {t("button.continue")}
               </button>
             </div>
 

@@ -24,6 +24,7 @@ import SkillModal from "./Modals/SkillModal";
 import ShareModal from "./Modals/ShareModal";
 import { canShare, encodeConfig } from "@/libs/share";
 import { GetApiExampleTypesResponse } from "@/src/api/generated";
+import { useTranslation } from "react-i18next";
 
 client.setConfig({
   baseUrl: "http://localhost:3000",
@@ -34,6 +35,9 @@ export default function Dashboard({
 }: {
   children?: React.ReactNode;
 }) {
+  const { t } = useTranslation();
+
+  
   const [pokemonId, setPokemonId] = useState<number>(1);
 
   const [pokemonInfo, setPokemonInfo] = useState<any>(null);
@@ -327,10 +331,10 @@ export default function Dashboard({
               onClick={handleShare}
               className="bg-yellow-200 font-bold px-6 py-2 rounded-lg hover:bg-yellow-300 transition drop-shadow-md/30 text-lg"
             >
-              Share
+              {t("button.share")}
             </button>
-            <button className="bg-yellow-300 font-bold px-6 py-2 rounded-lg hover:bg-yellow-400 transition drop-shadow-md/30 text-lg">
-              Save
+            <button className="bg-yellow-400 font-bold px-6 py-2 rounded-lg hover:bg-yellow-500 transition">
+              {t("button.save")}
             </button>
           </div>
         </div>
@@ -409,12 +413,14 @@ export default function Dashboard({
             onClick={() => setIsSkillModalOpen(true)}
             className="bg-black text-white text-md font-black px-6 py-2 rounded-full border border-black hover:bg-neutral-800 transition active:scale-95 drop-shadow-md/30"
           >
-            Add Skill +
+            {t("button.addSkill+")}
           </button>
 
           {/* First Turn Toggle (ทำแบบง่ายๆ ด้วย Checkbox + CSS ไปก่อน) */}
-          <div className="bg-black text-white px-5 py-1.5 rounded-full flex items-center gap-3 border border-black select-none drop-shadow-md/30">
-            <span className="font-black italic tracking-wide">First Turn</span>
+          <div className="bg-black text-white px-5 py-1.5 rounded-full flex items-center gap-3 shadow-md border border-black select-none">
+            <span className="text-xs font-black italic tracking-wide">
+              {t("button.firstTurn")}
+            </span>
 
             {/* สวิตช์แอนิเมชันเปิด-ปิดแบบเลื่อนสมูท */}
             <button
@@ -435,7 +441,7 @@ export default function Dashboard({
             onClick={handleCalculate}
             className="bg-black text-white font-black px-7 py-2 rounded-full border border-black hover:bg-neutral-800 transition active:scale-95 shadow-md tracking-wider drop-shadow-md/30"
           >
-            Calculate
+            {t("button.calculate")}
           </button>
         </div>
 

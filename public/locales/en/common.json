@@ -1,0 +1,45 @@
+{
+  "nav": {
+    "help": "Help",
+    "home": "Home",
+    "collection": "Collection",
+    "login": "Sign-up/Sign-in"
+  },
+  "button":{
+    "share":"Share",
+    "save":"Save",
+    "addSkill+":"Add Skill +",
+    "firstTurn":"First Turn",
+    "calculate":"Calculate",
+    "confirm":"Confirm",
+    "cancel":"Cancel",
+    "continue":"Continue"
+  },
+  "pokemonInfo":{
+    "hp":"HP :",
+    "element":"Element :",
+    "weakness":"Weakness :",
+    "loading":"Loading Image..."
+  },
+  "type": {
+    "Grass": "Grass",
+    "Fire": "Fire",
+    "Water": "Water",
+    "Electric": "Electric",
+    "Psychic": "Psychic",
+    "Fighting": "Fighting",
+    "Dark": "Dark",
+    "Steel": "Steel",
+    "Dragon": "Dragon",
+    "Flying": "Flying",
+    "Normal": "Normal"
+  },
+  "sidebar":{
+    "searchHint":"Hinted search text",
+    "notFound":"No Pokemon found"
+    },
+  "modal":{
+    "resetWarning":"Select same pokemon will reset your dice set are you sure?"
+    
+  }
+}

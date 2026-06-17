@@ -2,6 +2,7 @@ import Image from 'next/image';
 import Face from './Face'; // 🌟 อย่าลืม import Face component เข้ามาด้วยนะครับ
 import { useEffect, useState } from 'react';
 import { getApiFaceTypes } from '@/src/api/generated';
+import { useTranslation } from 'react-i18next';
 
 interface ProfileProps {
   ImgSrc: string;
@@ -19,7 +20,7 @@ const getTypeName = (id: number): string => {
 };
 
 export default function PokemonProfile({ImgSrc,HP,Type,WeaknessType}:ProfileProps) {
-
+  const { t } = useTranslation();
 return (
     <div className="relative w-full h-80 bg-white  rounded-2xl overflow-hidden flex flex-col ">
       
@@ -49,7 +50,7 @@ return (
             />
           </div>
         ) : (
-          <div className="text-gray-400 text-xs font-bold animate-pulse">Loading Image...</div>
+          <div className="text-gray-400 text-xs font-bold animate-pulse">{t("pokemonInfo.loading")}</div>
         )}
       </div>
 
@@ -59,10 +60,10 @@ return (
         {/* ฝั่งซ้าย: ข้อความ HP และ Weakness เรียงต่อกันแนวตั้ง */}
         <div className="flex flex-col gap-1 font-black tracking-wider text-[#FFE600]">
             <div>
-            HP : {HP ?? 0}
+            {t("pokemonInfo.hp")} : {HP ?? 0}
             </div>
             <div className="flex items-center gap-1">
-            Weakness :
+            {t("pokemonInfo.weakness")} :
             </div>
         </div>
 

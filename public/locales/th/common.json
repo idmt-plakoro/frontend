@@ -1,0 +1,45 @@
+{
+  "nav": {
+    "help": "ช่วยเหลือ",
+    "home": "หน้าแรก",
+    "collection": "คอลเลกชัน",
+    "login": "เข้าสู่ระบบ/สมัคร"
+  },
+  "button":{
+    "share":"แชร์",
+    "save":"บันทึก",
+    "addSkill+":"เพิ่มสกิล +",
+    "firstTurn":"เทิร์นแรก",
+    "calculate":"คำนวณ",
+    "confirm":"ยืนยัน",
+    "cancel":"ยกเลิก",
+    "continue":"ดำเนินการต่อ"
+  },
+  "pokemonInfo":{
+    "hp":"HP",
+    "element":"ธาตุ",
+    "weakness":"จุดอ่อน",
+    "loading":"กำลังโหลดรูปภาพ..."
+  },
+  "type": {
+    "Grass": "พืช",
+    "Fire": "ไฟ",
+    "Water": "น้ำ",
+    "Electric": "สายฟ้า",
+    "Psychic": "พลังจิต",
+    "Fighting": "ต่อสู้",
+    "Dark": "ความมืด",
+    "Steel": "โลหะ",
+    "Dragon": "มังกร",
+    "Flying": "บิน",
+    "Normal": "ไร้สี"
+  },
+  "sidebar":{
+    "searchHint":"พิมพ์คำค้นหาที่ต้องการ...",
+    "notFound":"ไม่พบโปเกมอน"
+  },
+  "modal":{
+    "resetWarning":"เลือกโปเกมอนตัวเดิมจะทำการรีเซ็ตหน้าลูกเต๋า คุณแน่ใจหรือไม่?"
+    
+  }
+}
