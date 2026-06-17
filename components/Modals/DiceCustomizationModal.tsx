@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import Face from "@/components/Face";
 import Button from "../Button";
+import { useTranslation } from "react-i18next";
 
 interface DiceCustomizationModalProps {
   isOpen: boolean;
@@ -30,6 +31,8 @@ export default function DiceCustomizationModal({
   faceTypesList = [],
   onSave,
 }: DiceCustomizationModalProps) {
+
+  const {t} = useTranslation();
   // Current 6 faces being edited
   const [tempFaces, setTempFaces] = useState<(number | null)[]>([]);
   // Currently selected face index (0-5 matching tempFaces)
@@ -216,10 +219,10 @@ export default function DiceCustomizationModal({
             </div>
             <div>
               <h2 className="text-2xl font-black tracking-wider">
-                Dice Customization
+                {t("diceCuztomization.title")}
               </h2>
               <p className="text-lg text-gray-400">
-                Select 6 elements from the list ({rowName})
+                {t("diceCuztomization.description")} ({rowName})
               </p>
             </div>
           </div>

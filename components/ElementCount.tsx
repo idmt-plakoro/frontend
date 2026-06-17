@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { getApiFaceTypes } from "@/src/api/generated";
 import Face from "./Face";
+import { useTranslation } from "react-i18next";
 
 interface ElementCountProps {
   diceData: {
@@ -12,6 +13,7 @@ interface ElementCountProps {
 }
 
 export default function ElementCount({ diceData }: ElementCountProps) {
+  const { t } = useTranslation();
   const { dice1, dice2, dice3 } = diceData;
   const [faceTypesList, setFaceTypesList] = useState<any[]>([]);
 
@@ -99,10 +101,10 @@ export default function ElementCount({ diceData }: ElementCountProps) {
     .slice(0, 3);
 
   return (
-    <div className="w-full md:w-75 h-full bg-[#2a2a2a] text-white rounded-2xl p-4 border-2 border-black shadow-[2px_2px_0_0_rgba(0,0,0,0.2)]/20 flex flex-col">
+    <div className="w-full md:w-75 h-full bg-[#1E1E1E] text-white rounded-2xl p-4 border-2 border-black shadow-[2px_2px_0_0_rgba(0,0,0,0.2)]/20 flex flex-col">
       {/* ส่วนหัวข้อชื่อกรอบ */}
       <h3 className="text-xl font-black italic text-center tracking-wide uppercase">
-        Element Count
+        {t("elementCount.title")}
       </h3>
 
       {/* เส้นแบ่งเลเยอร์ตามดีไซน์ */}
@@ -111,6 +113,7 @@ export default function ElementCount({ diceData }: ElementCountProps) {
       {/* รายการแสดงผล Top 3 */}
       <div className="flex-1 flex flex-col justify-center gap-4 py-2">
         {topElements.map((element) => {
+          const localizedName = t(`type.${element.name}`);
           return (
             <div
               key={element.id}
@@ -132,7 +135,7 @@ export default function ElementCount({ diceData }: ElementCountProps) {
 
               {/* ข้อความชื่อธาตุตัวหนาพิเศษ */}
               <span className="text-xl font-black tracking-wide italic">
-                {element.name}
+                {localizedName}
               </span>
             </div>
           );
@@ -141,6 +144,7 @@ export default function ElementCount({ diceData }: ElementCountProps) {
         {/* ตัวดักสเตตัสเผื่อกรณีไม่มีข้อมูลเต๋าอยู่ในระบบเลย */}
         {topElements.length === 0 && (
           <div className="text-center text-xs text-gray-500 py-6 font-bold">
+            {t("elementCount.noElements")}
             No elements selected
           </div>
         )}

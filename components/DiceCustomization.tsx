@@ -60,7 +60,7 @@ export default function DiceCustomization({
             </svg>
           </div>
           <h3 className="text-2xl font-black tracking-wide italic">
-            {t("title.diceCuztomization")}
+            {t("diceCuztomization.title")}
           </h3>
         </div>
         <div className="h-0.5 bg-white w-full opacity-90"></div>

@@ -41,7 +41,12 @@
   "modal":{
     "resetWarning":"Select same pokemon will reset your dice set are you sure?"
   },
-  "title":{
-    "diceCuztomization":"Dice Cuztomization"
+  "diceCuztomization":{
+    "title":"Dice Cuztomization",
+    "description":"Select 6 elements from the list"
+  },
+  "elementCount":{
+    "title":"Element Count",
+    "noElements":"No elements selected"
   }
 }

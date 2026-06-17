@@ -32,7 +32,7 @@
     "Steel": "โลหะ",
     "Dragon": "มังกร",
     "Flying": "บิน",
-    "Normal": "ไร้สี"
+    "Normal": "ปกติ"
   },
   "sidebar":{
     "searchHint":"พิมพ์คำค้นหาที่ต้องการ...",
@@ -41,7 +41,12 @@
   "modal":{
     "resetWarning":"เลือกโปเกมอนตัวเดิมจะทำการรีเซ็ตหน้าลูกเต๋า คุณแน่ใจหรือไม่?"
   },
-  "title":{
-    "diceCuztomization":"ปรับแต่งลูกเต๋า"
+  "diceCuztomization":{
+    "title":"ปรับแต่งลูกเต๋า",
+    "description":"เลือกหน้าลูกเต๋า 6 หน้าจากในลิสต์"
+  },
+  "elementCount":{
+    "title":"จำนวนธาตุ",
+    "noElements":"ไม่มีธาตุที่เลือก"
   }
 }
