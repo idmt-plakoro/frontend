@@ -147,7 +147,7 @@ export default function PokemonSidebar({ isOpen, onClose, currentPokemonId, onSe
           </div>
 
           {/* แถบฟิลเตอร์เม็ดยาหลากสี */}
-          <div className="flex flex-wrap gap-x-2 gap-y-2 max-h-[104px] overflow-y-auto p-1 scrollbar-none">
+          <div className="flex flex-wrap gap-x-2 gap-y-2 max-h-[104px] overflow-y-auto p-1 scrollbar-none font-salsa">
             <button
               onClick={() => setSelectedType(null)}
               className={`px-4 py-1.5 rounded-full text-xs font-black tracking-wide italic transition-all ${
@@ -244,11 +244,12 @@ export default function PokemonSidebar({ isOpen, onClose, currentPokemonId, onSe
         </div>
 
         {/* ปุ่มกดบันทึกยืนยันข้อมูล */}
-        <div className="absolute bottom-0 left-0 right-0 p-5 bg-gradient-to-t from-[#111111] via-[#111111]/95 to-transparent pt-8">
+        {/* 🟢 เพิ่ม flex justify-end เพื่อดันปุ่มไปทางขวาสุด */}
+        <div className="absolute bottom-0 left-0 right-0 p-5 bg-gradient-to-t from-[#111111] via-[#111111]/95 to-transparent pt-8 flex justify-end">
           <button
             onClick={handleConfirmSelection}
             disabled={!tempSelectedId}
-            className="w-[200px] bg-[#facc15] hover:bg-[#eab308] active:scale-[0.99] disabled:bg-neutral-700 disabled:text-neutral-500 text-black font-black text-sm py-3 rounded-xl shadow-lg transition-all border-b-4 border-yellow-700 tracking-wider uppercase"
+            className="w-auto pr-8 pl-8 bg-[#FFDE09] hover:bg-[#eab308] active:scale-[0.99] disabled:bg-neutral-700 disabled:text-neutral-500 text-black font-black text-sm py-3 rounded-xl shadow-lg transition-all border-b-4 border-yellow-700 tracking-wider font-black font-salsa"
           >
             {t("button.confirm")}
           </button>
@@ -260,7 +261,7 @@ export default function PokemonSidebar({ isOpen, onClose, currentPokemonId, onSe
       {hoveredPokemon && (
         <div 
           style={{ top: mousePos.y, left: mousePos.x }}
-          className="fixed pointer-events-none z-[100] bg-neutral-900/60 border border-neutral-700 rounded-xl p-3 shadow-2xl flex flex-col justify-center min-w-[220px] max-w-[280px] animate-fadeIn"
+          className="fixed pointer-events-none z-[100] bg-neutral-900/80 border border-neutral-700 rounded-xl p-3 shadow-2xl flex flex-col justify-center min-w-[220px] max-w-[280px] animate-fadeIn"
         >
           <div className="flex items-start gap-4">
             {/* โซนรูปภาพโปเกมอน */}

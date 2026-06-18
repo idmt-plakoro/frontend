@@ -76,7 +76,7 @@ export default function SkillModal({
   const isSelectionComplete = selectedSkills.length === 5;
 
   return (
-    <div className="fixed inset-0 bg-[black]/70 z-[100] flex items-center justify-center p-4">
+    <div className="fixed inset-0 bg-[black]/70 z-[100] flex items-center justify-center p-4 font-salsa">
       <div className="bg-[#040404]/80 text-white p-6 rounded-xl max-w-2xl w-full border border-zinc-800 shadow-2xl relative flex flex-col gap-4 h-[85vh] max-h-[750px]">
         {/* Header */}
         <div className="flex items-center justify-between border-b border-zinc-800 pb-4">

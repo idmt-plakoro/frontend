@@ -87,9 +87,9 @@
       "unknown": "ไม่ทราบชื่อ"
     },
     "skillName": "ชื่อสกิล",
-    "ability": "ความสามารถ",
-    "abilityEffect": "ผลของความสามารถ",
-    "energyCost": "ใช้พลังงาน"  
+    "ability": "เอฟเฟกต์",
+    "abilityEffect": "เอฟเฟกต์เพิ่มเติม",
+    "energyCost": "ค่าคอสพลังงาน"  
   },
   "slot":{
     "empty":"ว่าง",

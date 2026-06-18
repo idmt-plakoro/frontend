@@ -87,8 +87,8 @@
       "unknown": "Unknown"
     },
     "skillName": "Skill Name",
-    "ability": "Ability",
-    "abilityEffect": "Ability Effect",
+    "ability": "Effect",
+    "abilityEffect": "Additional Effect",
     "energyCost": "Energy Cost" 
   },
   "slot":{
