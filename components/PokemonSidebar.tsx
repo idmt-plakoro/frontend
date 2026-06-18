@@ -149,6 +149,16 @@ export default function PokemonSidebar({ isOpen, onClose, currentPokemonId, onSe
 
           {/* แถบฟิลเตอร์เม็ดยาหลากสี (ลบปุ่ม ALL ออกตามภาพ) */}
           <div className="flex flex-wrap gap-x-2 gap-y-2 max-h-[104px] overflow-y-auto pr-1 scrollbar-none pl-1 pt-1">
+            <button
+              onClick={() => setSelectedType(null)}
+              className={`px-4 py-1.5 rounded-full text-xs font-black tracking-wide italic transition-all ${
+                selectedType === null 
+                  ? "bg-[#8A38F5] text-white ring-2 ring-white scale-105 shadow-md" 
+                  : "bg-[#8A38F5] text-white opacity-80 hover:opacity-100"
+              }`}
+            >
+              {t("type.all")}
+            </button>
             {typeIds.map((typeId) => {
               const style = TYPE_STYLES[typeId] || { label: `Type ${typeId}`, bg: 'bg-neutral-500' };
               const isSelected = selectedType === typeId;

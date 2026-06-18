@@ -12,6 +12,7 @@ import {
 } from "@/src/api/generated";
 import Face from "@/components/Face";
 import { setLocalStorageItem, STORAGE_KEYS } from "@/libs/storage";
+import { useTranslation } from "react-i18next";
 
 // ─── Type Styles (mirrors PokemonSidebar) ───────────────────────────────────
 const TYPE_STYLES: Record<
@@ -187,6 +188,7 @@ function SlotCard({
   onDeleteClick: (slotNumber: number) => void;
   onClick: () => void;
 }) {
+  const { t } = useTranslation();
   const isEmpty =
     !pokemon ||
     (slot.dice1.every((v) => !v) &&
@@ -209,8 +211,8 @@ function SlotCard({
       {/* Header */}
       <div className="flex items-center justify-between px-4 pt-3 pb-2 border-b border-white/10">
         <span className="text-white font-bold text-sm tracking-wide">
-          SetName : {slot.slotName || "Untitled"}{" "}
-          <span className="text-white/50">(Slot{slot.slotNumber})</span>
+          {t("slot.setName")} : {slot.slotName || "Untitled"}{" "}
+          <span className="text-white/50">{t("slot.slotNumber", {number: `${slot.slotNumber}`})}</span>
         </span>
         {deleteMode && (
           <button
@@ -220,7 +222,7 @@ function SlotCard({
             }}
             className="ml-3 bg-red-600 hover:bg-red-500 active:scale-95 text-white text-xs font-black px-3 py-1 rounded-lg transition-all shadow-md"
           >
-            🗑 Delete
+            🗑 {t("button.delete")}
           </button>
         )}
       </div>
@@ -283,7 +285,7 @@ function SlotCard({
           {formattedDate ? (
             <div className="bg-[#2e2e2e] border border-white/10 rounded-xl px-3 py-2 text-center">
               <p className="text-white/40 text-[10px] font-medium uppercase tracking-widest">
-                Latest Update
+                {t("slot.latestUpdate")}
               </p>
               <p className="text-white text-xs font-bold mt-0.5">
                 {formattedDate}
@@ -291,7 +293,7 @@ function SlotCard({
             </div>
           ) : (
             <div className="bg-[#2e2e2e] border border-dashed border-white/10 rounded-xl px-3 py-2 text-center">
-              <p className="text-white/20 text-[10px]">No date</p>
+              <p className="text-white/20 text-[10px]">{t("slot.noDate")}</p>
             </div>
           )}
         </div>
@@ -314,6 +316,7 @@ function ConfirmDeleteModal({
   onCancel: () => void;
   isDeleting: boolean;
 }) {
+  const { t } = useTranslation();
   return (
     <div className="fixed inset-0 bg-black/75 z-50 flex items-center justify-center p-4 backdrop-blur-sm animate-fadeIn">
       <div className="bg-[#1e1e1e] rounded-[28px] max-w-sm w-full border border-red-500/30 p-8 shadow-2xl flex flex-col items-center gap-6">
@@ -338,13 +341,13 @@ function ConfirmDeleteModal({
 
         {/* Text */}
         <div className="text-center">
-          <h2 className="text-white text-xl font-black mb-2">Delete Slot?</h2>
+          <h2 className="text-white text-xl font-black mb-2">{t("collection.deleteModal.title")}</h2>
           <p className="text-white/60 text-sm leading-relaxed">
-            Are you sure you want to delete{" "}
+            {t("collection.deleteModal.confirmDialog1")}{" "}
             <span className="text-white font-bold">
               {slotName || `Slot ${slotNumber}`}
             </span>
-            ? This action cannot be undone.
+            {t("collection.deleteModal.confirmDialog2")}
           </p>
         </div>
 
@@ -355,14 +358,14 @@ function ConfirmDeleteModal({
             disabled={isDeleting}
             className="flex-1 bg-[#2e2e2e] hover:bg-[#3a3a3a] text-white font-bold py-3 rounded-xl border border-white/10 transition-all active:scale-95"
           >
-            Cancel
+            {t("button.cancel")}
           </button>
           <button
             onClick={onConfirm}
             disabled={isDeleting}
             className="flex-1 bg-red-600 hover:bg-red-500 text-white font-black py-3 rounded-xl transition-all active:scale-95 shadow-lg disabled:opacity-60"
           >
-            {isDeleting ? "Deleting…" : "Delete"}
+            {isDeleting ? t("button.deleting") : t("button.delete")}
           </button>
         </div>
       </div>
@@ -372,6 +375,7 @@ function ConfirmDeleteModal({
 
 // ─── Main Page ────────────────────────────────────────────────────────────────
 export default function CollectionPage() {
+  const { t } = useTranslation();
   const router = useRouter();
   const [slots, setSlots] = useState<SlotData[]>([]);
   const [pokemonMap, setPokemonMap] = useState<Record<number, PokemonInfo>>({});
@@ -488,10 +492,10 @@ export default function CollectionPage() {
           </div>
           <div>
             <h1 className="text-3xl font-black text-[#1a1a1a] leading-tight font-salsa">
-              Collection
+              {t("collection.title")}
             </h1>
             <p className="text-gray-500 text-sm font-medium mt-0.5">
-              Saved Items
+              {t("collection.subtitle")}
             </p>
           </div>
         </div>
@@ -507,7 +511,7 @@ export default function CollectionPage() {
                 : "bg-[#1a1a1a] text-white opacity-70 hover:opacity-100"
             }`}
           >
-            ALL
+            {t("type.all")}
           </button>
 
           {TYPE_FILTER_ORDER.map((typeId) => {
@@ -530,7 +534,7 @@ export default function CollectionPage() {
                   color: style.text,
                 }}
               >
-                {style.label}
+                {t(`type.${style.label}`)}
               </button>
             );
           })}
@@ -561,8 +565,9 @@ export default function CollectionPage() {
               </svg>
               <p className="font-medium text-sm">
                 {selectedType !== null
-                  ? `No saved slots for ${TYPE_STYLES[selectedType]?.label ?? ""} type`
-                  : "No saved slots yet"}
+                  ? t("collection.no_slots_by_type", { type: t(`type.${TYPE_STYLES[selectedType]?.label ?? "None"}`)})
+                  : t("collection.noSlot")}
+                  
               </p>
             </div>
           ) : (
@@ -590,7 +595,7 @@ export default function CollectionPage() {
                 : "bg-[#1a1a1a] text-white hover:bg-neutral-800"
             }`}
           >
-            {deleteMode ? "✓ Done" : "Delete"}
+            {deleteMode ? `✓ ${t("button.done")}` : `${t("button.delete")}`}
           </button>
         </div>
       </div>

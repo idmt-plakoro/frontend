@@ -222,7 +222,7 @@ export default function DiceCustomizationModal({
                 {t("diceCuztomization.title")}
               </h2>
               <p className="text-lg text-gray-400">
-                {t("diceCuztomization.description")} ({rowName})
+                {t("diceCuztomization.description", {rowName: `${rowName}`})}
               </p>
             </div>
           </div>
