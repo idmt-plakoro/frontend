@@ -138,5 +138,44 @@
       "confirmDialog1":"Are you sure you want to delete",
       "confirmDialog2":"? This action cannot be undone."
     }
+  },"dice_guide": {
+    "title": "How to Dice",
+    "subtitle": "How to Cuztomize the Dice",
+    "topic":"Dice Customization Guide",
+    "description": "This window allows you to customize your dice's abilities to match your playstyle. Here are the details:",
+    "components": {
+      "title":"Component",
+      "topic":{
+        "dice_name": "Dice Name",
+        "custom_area": "Customization Area (Left)",
+        "axis_face": "Dice Axis (2 slots)",
+        "fill_face": "Fill Slots (4 slots)",
+        "library": "Dice Face Library (Right)",
+        "buttons": {
+          "controlButton":"Control Buttons",
+          "clear": "Clear",
+          "save": "Save"
+        }
+      },
+      "description":{
+        "dice_name": "Displayed at the top to indicate which dice set you are currently customizing (e.g., Dice A).",
+        "custom_area": "Displays a mock-up dice and the slots for inserting dice faces.",
+        "axis_face": "The square slots located at the top and bottom of the dice.",
+        "fill_face": "The gray slots on the left and right sides of the dice (2 on each side).",
+        "library": "A panel showing the available dice faces you can select. (The list will update based on the type of slot selected).",
+        "buttons": {
+          "clear": "Removes all dice faces from every slot.",
+          "save": "Confirms and applies your current configuration."
+        }
+      }
+    },
+    "steps": {
+      "title":"Customization Steps",
+      "step1": "Select a Slot: Click on any empty slot around the dice (Axis or Fill slots). Once selected, a white border will appear to indicate the active status.",
+      "step2": "Select a Dice Face: Click on your desired dice face from the library on the right to insert it into the selected slot.",
+      "step3": "Edit / Remove: * If you want to change a dice face, simply click on a new face from the right panel.",
+      "step3_1":"If you want to remove a dice face from a specific slot, click the cross (x) button at the top right corner of that slot.",
+      "step4": "Confirm Settings: Once you have finished arranging the dice faces, click the \"Save\" button to apply them."
+    }
   }
 }

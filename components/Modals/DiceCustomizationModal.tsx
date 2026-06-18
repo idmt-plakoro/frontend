@@ -5,6 +5,7 @@ import Image from "next/image";
 import Face from "@/components/Face";
 import Button from "../Button";
 import { useTranslation } from "react-i18next";
+import DiceHelpModal from "./DiceHelpModal";
 
 interface DiceCustomizationModalProps {
   isOpen: boolean;
@@ -37,6 +38,8 @@ export default function DiceCustomizationModal({
   const [tempFaces, setTempFaces] = useState<(number | null)[]>([]);
   // Currently selected face index (0-5 matching tempFaces)
   const [activeFaceIndex, setActiveFaceIndex] = useState<number>(0);
+
+  const [isHelpOpen, setIsHelpOpen] = useState(false);
 
   // Initialize state
   useEffect(() => {
@@ -323,8 +326,15 @@ export default function DiceCustomizationModal({
           </div>
 
           {/* Right Selector grid */}
-          <div className="bg-linear-to-b from-black/70 to-white/50 p-4 rounded-3xl m-1 w-fit shrink-0">
-            <div className="grid grid-cols-4 gap-4">
+          <div className="bg-linear-to-b from-black/70 to-white/50 p-4 rounded-3xl m-1 w-fit shrink-0 relative">
+            <button 
+              onClick={() => setIsHelpOpen(true)}
+              className="absolute top-3 right-3 w-6 h-6 bg-[#1a1a1a] rounded-full flex items-center justify-center border border-white/80 hover:scale-110 transition-transform z-40 shadow-md cursor-pointer"
+              title="Help"
+            >
+              <span className="text-white font-bold text-xs leading-none">?</span>
+            </button>
+            <div className="grid grid-cols-4 gap-4 pt-6">
               {gridElements.map((choice, idx) => {
                 if (!choice) {
                   return (
@@ -378,6 +388,7 @@ export default function DiceCustomizationModal({
           />
         </div>
       </div>
+      <DiceHelpModal isOpen={isHelpOpen} onClose={() => setIsHelpOpen(false)} />
     </div>
   );
 }
