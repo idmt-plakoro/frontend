@@ -119,19 +119,18 @@ export default function PokemonSidebar({ isOpen, onClose, currentPokemonId, onSe
         }`}
       />
 
-      {/* แถบสไลด์ด้านซ้าย - เปลี่ยนเป็นสีดำสนิทลื่นไหลตามภาพ */}
+      {/* แถบสไลด์ด้านซ้าย */}
       <div className={`fixed inset-y-0 left-0 w-full max-w-[440px] bg-[#121212]/50 border-r border-neutral-900 text-white z-50 flex flex-col p-6 shadow-2xl transition-transform duration-300 ease-in-out transform ${
         isOpen ? 'translate-x-0' : '-translate-x-full'
       }`}>
         
-        {/* ปุ่มกากบาทปิด (✕) ย้ายไปมุมขวาบนสุด ไม่มี Text หัวข้อกวนใจ */}
+        {/* ปุ่มกากบาทปิด (✕) */}
         <div className="flex justify-end mb-4 pt-[40px]">
           <button onClick={onClose} className="text-white/90 hover:text-white transition-colors p-1 text-2xl font-light">✕</button>
         </div>
 
         {/* 🔍 ส่วนค้นหาและฟิลเตอร์เม็ดยา */}
         <div className="flex flex-col gap-4 mb-6">
-          {/* Input ค้นหาใช้สีม่วง/เทาพาสเทลอ่อนตามต้นฉบับ */}
           <div className="relative w-full">
             <input 
               type="text"
@@ -147,8 +146,8 @@ export default function PokemonSidebar({ isOpen, onClose, currentPokemonId, onSe
             </div>
           </div>
 
-          {/* แถบฟิลเตอร์เม็ดยาหลากสี (ลบปุ่ม ALL ออกตามภาพ) */}
-          <div className="flex flex-wrap gap-x-2 gap-y-2 max-h-[104px] overflow-y-auto pr-1 scrollbar-none pl-1 pt-1">
+          {/* แถบฟิลเตอร์เม็ดยาหลากสี */}
+          <div className="flex flex-wrap gap-x-2 gap-y-2 max-h-[104px] overflow-y-auto p-1 scrollbar-none">
             <button
               onClick={() => setSelectedType(null)}
               className={`px-4 py-1.5 rounded-full text-xs font-black tracking-wide italic transition-all ${
@@ -206,14 +205,13 @@ export default function PokemonSidebar({ isOpen, onClose, currentPokemonId, onSe
                     onMouseEnter={() => setHoveredPokemon(pokemon)} 
                     onMouseLeave={() => setHoveredPokemon(null)}
                     onMouseMove={handleMouseMove}
-                    // การ์ดพื้นหลังขาวล้วน มนกว้าง `rounded-2xl` ตามภาพต้นฉบับ
                     className={`bg-white rounded-2xl overflow-hidden flex flex-col items-center justify-between text-center aspect-[3/4] w-full cursor-pointer transition-all group ${
                       isSelected 
                         ? 'ring-4 ring-yellow-400 scale-[1.03]' 
                         : 'hover:scale-[1.02] border border-transparent'
                     }`}
                   >
-                    {/* พื้นที่โชว์รูปภาพสีขาวสะอาดตา */}
+                    {/* พื้นที่โชว์รูปภาพสีขาว */}
                     <div className="relative w-full flex-1 flex items-center justify-center p-3">
                         <div className="relative w-full h-full max-h-[75px]">
                           <Image 
@@ -225,7 +223,7 @@ export default function PokemonSidebar({ isOpen, onClose, currentPokemonId, onSe
                         </div>
                     </div>
                     
-                    {/* แถบป้ายชื่อด้านล่างมนตามขอบด้านล่างและใช้สีพาสเทลเฉพาะตัวตามภาพ */}
+                    {/* แถบป้ายชื่อ*/}
                     <div className={`w-full ${cardStyle.cardLabelBg} py-2 px-1 flex items-center justify-center`}>
                       <span className={`text-[11px] font-bold ${cardStyle.text} truncate w-full px-0.5 tracking-tight`}>
                         {getDisplayPokemonName(pokemon)}
@@ -245,7 +243,7 @@ export default function PokemonSidebar({ isOpen, onClose, currentPokemonId, onSe
           )}
         </div>
 
-        {/* 🟡 ปุ่มกดบันทึกยืนยันข้อมูล */}
+        {/* ปุ่มกดบันทึกยืนยันข้อมูล */}
         <div className="absolute bottom-0 left-0 right-0 p-5 bg-gradient-to-t from-[#111111] via-[#111111]/95 to-transparent pt-8">
           <button
             onClick={handleConfirmSelection}
@@ -331,13 +329,12 @@ export default function PokemonSidebar({ isOpen, onClose, currentPokemonId, onSe
         </div>
       )}
 
-      {/* ⚠️ [WARNING RESET MODAL] ปรับดีไซน์ตามภาพใหม่เป๊ะๆ */}
+      {/* [WARNING RESET MODAL] ปรับดีไซน์ตามภาพใหม่เป๊ะๆ */}
       {showWarningModal && (
         <div className="fixed inset-0 bg-black/75 z-[60] flex items-center justify-center p-4 backdrop-blur-xs animate-fadeIn">
-          {/* ตัวกล่องหลัก: สีเทาเข้ม, ขอบมนมนมาก, ขอบเส้นสีเหลืองทองบาง */}
           <div className="bg-[#444444] rounded-[32px] max-w-md w-full border border-yellow-400 p-8 shadow-2xl flex flex-col items-center justify-center">
             
-            {/* ข้อความแจ้งเตือน: ตัวอักษรสีขาวนวล ฟอนต์หนาปานกลาง จัดกึ่งกลาง */}
+            {/* ข้อความแจ้งเตือน: ตัวอักษรสีขาว ฟอนต์หนาปานกลาง จัดกึ่งกลาง */}
             <p className="text-white/90 text-lg sm:text-xl font-medium tracking-wide text-center leading-relaxed mb-6 select-none max-w-xs sm:max-w-sm">
               {t("modal.resetWarning")}
             </p>

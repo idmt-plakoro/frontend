@@ -82,8 +82,14 @@ export default function SkillModal({
         <div className="flex items-center justify-between border-b border-zinc-800 pb-4">
           <div className="flex items-center gap-3">
             <div className="w-9 h-9 rounded-full bg-[#1e1e1e] border border-zinc-700 flex items-center justify-center">
-              <span className="text-sm">🎲</span>
-            </div>
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" className="w-[40px] h-[40px]">
+                  <g transform="translate(-2, 2)">
+                    <path d="M30 32 L51 26 L74 33 L52 41 Z" fill="#EAEAEA" />
+                    <path d="M52 41 L74 33 L73 58 L51 70 L51 40.5 Z" fill="#B2B2B2" />
+                    <path d="M30 32 L52 41 L51 70 L32 60.2 L30 32.5 Z" fill="#CECECE" />
+                  </g>
+                </svg>
+              </div>
             <div>
               <h2 className="text-xl font-bold tracking-wide">{t("skill.modal.title")}</h2>
               <p className="text-xs font-medium text-zinc-500">

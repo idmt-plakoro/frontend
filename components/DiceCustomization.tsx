@@ -1,6 +1,8 @@
 import React from "react";
 import DiceDisplayRow from "./DiceDisplayRow";
 import { useTranslation } from "react-i18next";
+import Image from "next/image";
+
 
 interface DiceCustomizationProps {
   diceData: {
@@ -30,34 +32,13 @@ export default function DiceCustomization({
         <div className="flex items-center gap-3 mb-2">
           {/* ไอคอนสี่เหลี่ยมในวงกลมสีเหลือง */}
           <div className="w-9 h-9 rounded-full border-[3px] border-yellow-400 bg-[#1e1e1e] flex items-center justify-center shrink-0 shadow-md">
-            {/* ตัวกล่องลูกบาศก์ 3 มิติ (Isometric Cube SVG) */}
-            <svg
-              viewBox="0 0 24 24"
-              className="w-6 h-6 text-neutral-400"
-              fill="currentColor"
-            >
-              {/* ด้านบนของลูกบาศก์ (Top Face) - สีเทาอ่อน */}
-              <path
-                d="M12 2L2 7l10 5 10-5-10-5z"
-                fill="#b3b3b3"
-                stroke="#1a1a1a"
-                strokeWidth="1"
+            <Image
+                src="/Dice.png"
+                alt="Dice"
+                width={25}
+                height={25}
+                className="pl-[1px] pt-[1px] object-contain"
               />
-              {/* ด้านซ้าย (Left Face) - สีเทากลาง */}
-              <path
-                d="M2 7v10l10 5V12L2 7z"
-                fill="#8c8c8c"
-                stroke="#1a1a1a"
-                strokeWidth="1"
-              />
-              {/* ด้านขวา (Right Face) - สีเทาเข้ม */}
-              <path
-                d="M12 12v10l10-5V7L12 12z"
-                fill="#666666"
-                stroke="#1a1a1a"
-                strokeWidth="1"
-              />
-            </svg>
           </div>
           <h3 className="text-2xl font-black tracking-wide italic">
             {t("diceCuztomization.title")}
