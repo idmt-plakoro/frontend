@@ -56,14 +56,14 @@ export default function CardBox({
   const recommended = chance! >= 50 || false;
   return (
     <div
-      className={`font-salsa relative w-full p-4 h-40 bg-white drop-shadow-md/20 rounded-md flex flex-row justify-between items-center gap-2 ${recommended ? "ring-5 ring-yellow-300" : ""} ${className}`}
+      className={`font-salsa relative w-full p-4 h-auto md:h-40 bg-white drop-shadow-md/20 rounded-md flex flex-col md:flex-row justify-between items-center gap-4 ${recommended ? "ring-5 ring-yellow-300" : ""} ${className}`}
     >
       {recommended && (
         <div className="absolute -top-3 -left-3 w-10 h-10 bg-yellow-300 rounded-full drop-shadow-lg/20 flex items-center justify-center">
           <img src="/thumb-up.svg" className="w-7 h-7 -rotate-15" />
         </div>
       )}
-      <div className="flex flex-col">
+      <div className="flex flex-col items-center">
         {card?.imageUrl && (
           <img
             src={card.imageUrl}
@@ -71,11 +71,11 @@ export default function CardBox({
             className="w-40 object-contain rounded-md "
           />
         )}
-        <p className="text-center">
+        <p className="text-center font-bold">
           {i18n.language === "th" && card?.name?.th ? card.name.th : card?.name?.en}
         </p>
       </div>
-      <div className="flex flex-row gap-2 min-w-50">
+      <div className="flex flex-row flex-wrap gap-2 justify-center md:justify-start min-w-0 md:min-w-50">
         {card?.energyCosts.flatMap((cost, costIndex) => {
           const quantity = cost.quantity ?? 0;
           const faces = [];
@@ -109,7 +109,7 @@ export default function CardBox({
           return faces;
         })}
       </div>
-      <div className="flex flex-col flex-1 min-w-0">
+      <div className="flex flex-col w-full md:flex-1 min-w-0">
         {card?.effects.flatMap((effect, effectIndex) => {
           const effects = [];
 
@@ -118,7 +118,7 @@ export default function CardBox({
               key={effectIndex}
               className="flex flex-row flex-1 min-w-0 items-center gap-1"
             >
-              <div className="flex flew-row gap-0.5 min-w-23">
+              <div className="flex flex-row gap-0.5 min-w-23">
                 {effect.directions?.map((direction, directionIndex) => (
                   <img
                     key={directionIndex}
@@ -141,9 +141,10 @@ export default function CardBox({
         })}
       </div>
 
-      <div className="w-1 h-[85%] bg-[#999999]"></div>
+      <div className="hidden md:block w-1 h-[85%] bg-[#999999]"></div>
+      <div className="block md:hidden w-[85%] h-px bg-[#999999] my-1"></div>
 
-      <div className="flex flex-col h-[85%] justify-center items-center rounded-xl aspect-square bg-[#757575]">
+      <div className="w-full md:w-auto md:h-[85%] flex flex-col justify-center items-center rounded-xl md:aspect-square bg-[#757575] py-4 md:py-0 px-6 md:px-0">
         <span className="text-xl text-white">{t("card.chance")}</span>
         <span className="text-2xl text-white">{chance}%</span>
       </div>

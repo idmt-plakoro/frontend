@@ -228,7 +228,7 @@ function SlotCard({
       </div>
 
       {/* Body */}
-      <div className="flex items-center justify-between gap-4 p-4">
+      <div className="flex flex-col sm:flex-row items-center justify-between gap-4 p-4">
         {/* Pokemon image */}
         <div className="relative w-30 h-30 shrink-0 bg-white/5 rounded-xl border border-white/10 flex items-center justify-center overflow-hidden">
           {isEmpty ? (
@@ -256,7 +256,7 @@ function SlotCard({
         </div>
 
         {/* Dice rows */}
-        <div className="flex flex-col gap-2 flex-1 min-w-0">
+        <div className="flex flex-col gap-2 flex-1 min-w-0 w-full items-center sm:items-start">
           {/* Dice icon + faces row */}
           {(["dice1", "dice2", "dice3"] as const).map((diceKey) => {
             const faces = slot[diceKey] as number[];
@@ -471,8 +471,8 @@ export default function CollectionPage() {
   };
 
   return (
-    <div className="min-h-screen p-6 pt-8 bg-gray-200 flex justify-center">
-      <div className="z-2 bg-white w-full max-w-3xl rounded-3xl shadow-2xl p-8 flex flex-col gap-6">
+    <div className="min-h-screen p-2 sm:p-6 pt-8 bg-gray-200 flex justify-center">
+      <div className="z-2 bg-white w-full max-w-3xl rounded-2xl sm:rounded-3xl shadow-2xl p-4 sm:p-8 flex flex-col gap-6">
         {/* ── Header ── */}
         <div className="flex items-center gap-4 border-b border-gray-200 pb-5">
           {/* Icon */}

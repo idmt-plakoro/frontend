@@ -71,17 +71,17 @@ export default function DiceCustomizationModal({
     {
       label: "1",
       faceIndex: 0,
-      class: "top-[-22px] left-1/2 -translate-x-1/2",
+      class: "top-[-6px] md:top-[-8px] left-1/2 -translate-x-1/2",
     }, // Top     — Fixed
-    { label: "3", faceIndex: 2, class: "top-[38px]  left-[-28px]" }, // Top-Left — Available
-    { label: "4", faceIndex: 3, class: "top-[38px]  right-[-28px]" }, // Top-Right — Available
+    { label: "3", faceIndex: 2, class: "top-[28px] md:top-[38px] left-[-10px] md:left-[-14px]" }, // Top-Left — Available
+    { label: "4", faceIndex: 3, class: "top-[28px] md:top-[38px] right-[-10px] md:right-[-14px]" }, // Top-Right — Available
     {
       label: "2",
       faceIndex: 1,
-      class: "bottom-[-22px] left-1/2 -translate-x-1/2",
+      class: "bottom-[-6px] md:bottom-[-8px] left-1/2 -translate-x-1/2",
     }, // Bottom — Fixed
-    { label: "5", faceIndex: 4, class: "bottom-[38px] left-[-28px]" }, // Bottom-Left — Available
-    { label: "6", faceIndex: 5, class: "bottom-[38px] right-[-28px]" }, // Bottom-Right — Available
+    { label: "5", faceIndex: 4, class: "bottom-[28px] md:bottom-[38px] left-[-10px] md:left-[-14px]" }, // Bottom-Left — Available
+    { label: "6", faceIndex: 5, class: "bottom-[28px] md:bottom-[38px] right-[-10px] md:right-[-14px]" }, // Bottom-Right — Available
   ];
 
   // Helper to map face type ID → props for <Face />
@@ -207,7 +207,7 @@ export default function DiceCustomizationModal({
 
   return (
     <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4 animate-fadeIn">
-      <div className="bg-black/50 text-white p-10 max-w-3xl w-full max-h-[85vh] border border-white shadow-[0_10px_30px_rgba(0,0,0,0.8)] relative font-salsa flex flex-col gap-4">
+      <div className="bg-[#1c1c1c] text-white p-4 sm:p-10 max-w-3xl w-full max-h-[90vh] overflow-y-auto border border-white shadow-[0_10px_30px_rgba(0,0,0,0.8)] relative font-salsa flex flex-col gap-4">
         {/* Header */}
         <div className="flex items-center justify-between rounded-2xl relative">
           <div className="flex items-center gap-3 pl-4">
@@ -241,11 +241,11 @@ export default function DiceCustomizationModal({
         <div className="bg-white/70 h-0.5 w-[90%] self-center" />
 
         {/* Body cube + selector */}
-        <div className="flex flex-col md:flex-row gap-10 items-center justify-center min-h-64 py-2">
+        <div className="flex flex-col md:flex-row gap-6 md:gap-10 items-center justify-center min-h-64 py-2">
           {/* Left Die image with 6 slots positioned around it */}
-          <div className="relative w-64 h-64 flex items-center justify-center shrink-0">
+          <div className="relative w-48 h-48 md:w-64 md:h-64 my-4 mx-6 md:my-6 md:mx-8 flex items-center justify-center shrink-0">
             {/* Dice.png as the die visual */}
-            <div className="relative z-10 w-30 h-30">
+            <div className="relative z-10 w-20 h-20 md:w-30 md:h-30">
               <Image
                 src="/Dice.png"
                 alt="Dice"
@@ -269,7 +269,7 @@ export default function DiceCustomizationModal({
                   onClick={() => setActiveFaceIndex(faceIndex)}
                   type="button"
                   title={`Face ${label} (${isFixed ? "Fixed" : "Available"})`}
-                  className={`absolute z-20 w-14 h-14 rounded-md flex items-center justify-center border-2 transition-all duration-150 ${
+                  className={`absolute z-20 w-10 h-10 md:w-14 md:h-14 rounded-md flex items-center justify-center border-2 transition-all duration-150 ${
                     isSelected ? "border-white" : "border-white/0"
                   } ${pos.class}`}
                 >
@@ -283,14 +283,14 @@ export default function DiceCustomizationModal({
                         imageUrl2={faceInfo.imageUrl2}
                         name2={faceInfo.name2}
                         mixed={faceInfo.mixed}
-                        className="w-[75%] h-[75%] border-none p-2"
+                        className="w-[75%] h-[75%] border-none p-1 md:p-2"
                       />
                     ) : (
                       <svg
                         viewBox="0 0 20 20"
                         xmlns="http://www.w3.org/2000/svg"
                         fill="none"
-                        className="w-5.5 h-5.5"
+                        className="w-4 h-4 md:w-5.5 md:h-5.5"
                       >
                         <g
                           id="SVGRepo_tracerCarrier"
@@ -334,13 +334,13 @@ export default function DiceCustomizationModal({
             >
               <span className="text-white font-bold text-xs leading-none">?</span>
             </button>
-            <div className="grid grid-cols-4 gap-4 pt-6">
+            <div className="grid grid-cols-4 gap-2 md:gap-4 pt-6">
               {gridElements.map((choice, idx) => {
                 if (!choice) {
                   return (
                     <div
                       key={`empty-${idx}`}
-                      className="bg-[#D9D9D9] rounded-xl w-15 h-15 drop-shadow-md/20"
+                      className="bg-[#D9D9D9] rounded-xl w-11 h-11 md:w-15 md:h-15 drop-shadow-md/20"
                     />
                   );
                 }
@@ -357,7 +357,7 @@ export default function DiceCustomizationModal({
                       faceInfo.name1 +
                       (faceInfo.name2 ? ` / ${faceInfo.name2}` : "")
                     }
-                    className="bg-[#D9D9D9] p-1.5 rounded-2xl flex items-center justify-center transition-all border-none hover:scale-105 cursor-pointer w-15 h-15 drop-shadow-md/20"
+                    className="bg-[#D9D9D9] p-1.5 rounded-2xl flex items-center justify-center transition-all border-none hover:scale-105 cursor-pointer w-11 h-11 md:w-15 md:h-15 drop-shadow-md/20"
                   >
                     <Face
                       imageUrl1={faceInfo.imageUrl1}

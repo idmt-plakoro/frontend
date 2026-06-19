@@ -76,14 +76,14 @@ export default function DiceDisplayRow({
       {/* 2. โซนแสดงผลธาตุ 6 ด้านจาก Array */}
       <div className="relative grow">
         <div
-          className={`grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2 transition-opacity duration-200 ${isFaded ? "opacity-30" : "opacity-100"}`}
+          className={`grid grid-cols-6 gap-1.5 transition-opacity duration-200 ${isFaded ? "opacity-30" : "opacity-100"}`}
         >
           {diceFaces.map((faceTypeId, index) => {
             if (faceTypeId === null || faceTypeId === 0) {
               return (
                 <div
                   key={index}
-                  className="w-full min-w-10 max-w-13.75 aspect-square bg-[#222]/30 border border-dashed border-white/20 rounded-md"
+                  className="w-full min-w-0 max-w-13.75 aspect-square bg-[#222]/30 border border-dashed border-white/20 rounded-md"
                 />
               );
             }
@@ -97,7 +97,7 @@ export default function DiceDisplayRow({
                 imageUrl2={faceInfo.imageUrl2}
                 name2={faceInfo.name2}
                 mixed={faceInfo.mixed}
-                className="w-full min-w-10 max-w-13.75 shadow-[inset_0_2px_4px_rgba(255,255,255,0.3),0_4px_6px_rgba(0,0,0,0.2)] border border-slate-100"
+                className="w-full min-w-0 max-w-13.75 shadow-[inset_0_2px_4px_rgba(255,255,255,0.3),0_4px_6px_rgba(0,0,0,0.2)] border border-slate-100"
               />
             );
           })}

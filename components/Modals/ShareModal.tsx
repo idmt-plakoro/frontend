@@ -14,7 +14,7 @@ export default function ShareModal({
   onClose,
   shareUrl,
 }: ShareModalProps) {
-  const {t} = useTranslation();
+  const { t } = useTranslation();
   const [copied, setCopied] = useState(false);
 
   const handleCopy = async () => {
@@ -65,7 +65,7 @@ export default function ShareModal({
         <div className="h-4" />
 
         {/* White Pill Container */}
-        <div className="w-full flex items-center justify-between bg-white rounded-full p-1 border-2 border-white shadow-md">
+        <div className="w-full flex items-center justify-between bg-white rounded-full p-1 border-2 border-white shadow-md flex-col sm:flex-row">
           {/* URL Badge */}
           <div className="bg-[#1a1a1a] text-white text-[11px] md:text-xs font-black tracking-wider px-5 py-2.5 rounded-full select-none shrink-0 min-w-17.5 text-center uppercase drop-shadow-md/20">
             URL

@@ -101,7 +101,7 @@ export default function ElementCount({ diceData }: ElementCountProps) {
     .slice(0, 3);
 
   return (
-    <div className="w-full md:w-75 h-full bg-[#1E1E1E] text-white rounded-2xl p-4 border-2 border-black shadow-[2px_2px_0_0_rgba(0,0,0,0.2)]/20 flex flex-col">
+    <div className="w-full md:w-75 h-auto md:h-full bg-[#1E1E1E] text-white rounded-2xl p-4 border-2 border-black shadow-[2px_2px_0_0_rgba(0,0,0,0.2)]/20 flex flex-col">
       {/* ส่วนหัวข้อชื่อกรอบ */}
       <h3 className="text-xl font-black italic text-center tracking-wide uppercase">
         {t("elementCount.title")}

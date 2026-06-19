@@ -23,8 +23,8 @@ export default function Modal({
             ></div>
           )}
 
-          <div className="relative bg-[#505050] w-[40vw] rounded-2xl z-10 text-white p-4 flew items-center justify-center pointer-events-auto">
-            <div className="">{children}</div>
+          <div className="relative bg-[#505050] w-[90vw] md:w-[40vw] max-w-lg rounded-2xl z-10 text-white p-4 flex flex-col items-center justify-center pointer-events-auto">
+            <div className="w-full">{children}</div>
           </div>
         </div>
       )}

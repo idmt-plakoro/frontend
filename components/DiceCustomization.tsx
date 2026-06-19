@@ -27,7 +27,7 @@ export default function DiceCustomization({
 }: DiceCustomizationProps) {
   const { t } = useTranslation();
   return (
-    <div className="flex-1 min-h-37.5 bg-[#1e1e1e] text-white rounded-xl p-4 flex flex-col justify-between">
+    <div className="w-full md:flex-1 min-h-37.5 bg-[#1e1e1e] text-white rounded-xl p-4 flex flex-col justify-between">
       <div className="w-full mb-4">
         <div className="flex items-center gap-3 mb-2">
           {/* ไอคอนสี่เหลี่ยมในวงกลมสีเหลือง */}

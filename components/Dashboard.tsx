@@ -360,23 +360,23 @@ export default function Dashboard({
 
   return (
     // Background ลายลูกเต๋า (เป็นสีขาว)
-    <div className="min-h-screen p-8 bg-white flex justify-center">
+    <div className="min-h-screen p-2 sm:p-8 bg-white flex justify-center">
       {/* กล่อง Container สีขาวหลัก */}
-      <div className="z-2 bg-white w-full max-w-6xl rounded-3xl shadow-2xl p-8 flex flex-col gap-8">
+      <div className="z-2 bg-white w-full max-w-6xl rounded-2xl sm:rounded-3xl shadow-2xl p-4 sm:p-8 flex flex-col gap-8">
         {/* Header (Title + Share/Save Button) */}
-        <div className="flex items-center justify-between">
-          <h1 className="text-3xl font-salsa font-black bg-[#1a1a1a] text-yellow-300 px-6 py-2 rounded-full border-2 border-yellow-300 shadow-[4px_4px_0_0_rgba(250,204,21,1)]">
+        <div className="flex flex-col sm:flex-row gap-4 items-center justify-between">
+          <h1 className="text-2xl sm:text-3xl font-salsa font-black bg-[#1a1a1a] text-yellow-300 px-6 py-2 rounded-full border-2 border-yellow-300 shadow-[4px_4px_0_0_rgba(250,204,21,1)] text-center sm:text-left">
             {savedSlotName} ({pokemonInfo?.name?.en})
           </h1>
           <div className="flex gap-4 font-salsa">
             <button
               onClick={handleShare}
-              className="bg-yellow-200 font-bold px-6 py-2 rounded-lg hover:bg-yellow-300 transition drop-shadow-md/30 text-lg"
+              className="bg-yellow-200 font-bold px-6 py-2 rounded-lg hover:bg-yellow-300 transition drop-shadow-md/30 text-lg cursor-pointer"
             >
               {t("button.share")}
             </button>
             <button
-              className="bg-yellow-300 font-bold px-6 py-2 rounded-lg hover:bg-yellow-400 transition drop-shadow-md/30 text-lg"
+              className="bg-yellow-300 font-bold px-6 py-2 rounded-lg hover:bg-yellow-400 transition drop-shadow-md/30 text-lg cursor-pointer"
               onClick={handleSave}
             >
               {t("button.save")}
@@ -388,7 +388,7 @@ export default function Dashboard({
         <div className="flex flex-col md:flex-row gap-4 items-stretch justify-between">
           {/* Pokemon Profile */}
           <div
-            className="w-full md:w-55 max-w-62.5 rounded-xl p-2 
+            className="w-full md:w-55 max-w-62.5 mx-auto md:mx-0 rounded-xl p-2 
           flex flex-col items-center justify-center cursor-pointer"
             onClick={(e) => {
               e.stopPropagation();
@@ -465,16 +465,16 @@ export default function Dashboard({
         </div>
 
         {/* Controls (Add Skill, First Turn Toggle, Calculate) */}
-        <div className="flex items-center justify-between py-4 mx-10 font-salsa text-md">
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 py-4 mx-4 sm:mx-10 font-salsa text-md">
           <button
             onClick={() => setIsSkillModalOpen(true)}
-            className="bg-black text-white text-md font-black px-6 py-2 rounded-full border border-black hover:bg-neutral-800 transition active:scale-95 drop-shadow-md/30"
+            className="w-full sm:w-auto bg-black text-white text-md font-black px-6 py-2 rounded-full border border-black hover:bg-neutral-800 transition active:scale-95 drop-shadow-md/30 cursor-pointer text-center"
           >
             {t("button.addSkill+")}
           </button>
 
           {/* First Turn Toggle (ทำแบบง่ายๆ ด้วย Checkbox + CSS ไปก่อน) */}
-          <div className="bg-black text-white px-5 py-1.5 rounded-full flex items-center gap-3 shadow-md border border-black select-none">
+          <div className="w-full sm:w-auto bg-black text-white px-5 py-1.5 rounded-full flex items-center justify-between sm:justify-start gap-3 shadow-md border border-black select-none">
             <span className="text-xs font-black tracking-wide">
               {t("button.firstTurn")}
             </span>
@@ -482,7 +482,7 @@ export default function Dashboard({
             {/* สวิตช์แอนิเมชันเปิด-ปิดแบบเลื่อนสมูท */}
             <button
               onClick={() => setFirstTurn(!firstTurn)}
-              className={`w-11 h-5.5 rounded-full p-0.5 transition-colors duration-300 flex items-center ${
+              className={`w-11 h-5.5 rounded-full p-0.5 transition-colors duration-300 flex items-center cursor-pointer ${
                 firstTurn ? "bg-[#500E5C]" : "bg-[#939393]"
               }`}
             >
@@ -496,7 +496,7 @@ export default function Dashboard({
 
           <button
             onClick={handleCalculate}
-            className="bg-black text-white font-black px-7 py-2 rounded-full border border-black hover:bg-neutral-800 transition active:scale-95 shadow-md tracking-wider drop-shadow-md/30"
+            className="w-full sm:w-auto bg-black text-white font-black px-7 py-2 rounded-full border border-black hover:bg-neutral-800 transition active:scale-95 shadow-md tracking-wider drop-shadow-md/30 cursor-pointer text-center"
           >
             {t("button.calculate")}
           </button>
