@@ -148,8 +148,8 @@
       "topic":{
         "dice_name": "Dice Name",
         "custom_area": "Customization Area (Left)",
-        "axis_face": "Dice Axis (2 slots)",
-        "fill_face": "Fill Slots (4 slots)",
+        "axis_face": "Base Face (2 slots)",
+        "fill_face": "Customizable Face (4 slots)",
         "library": "Dice Face Library (Right)",
         "buttons": {
           "controlButton":"Control Buttons",
@@ -171,11 +171,28 @@
     },
     "steps": {
       "title":"Customization Steps",
-      "step1": "Select a Slot: Click on any empty slot around the dice (Axis or Fill slots). Once selected, a white border will appear to indicate the active status.",
+      "step1": "Select a Slot: Click on any empty slot around the dice (Base or Customizable Faces). Once selected, a white border will appear to indicate the active status.",
       "step2": "Select a Dice Face: Click on your desired dice face from the library on the right to insert it into the selected slot.",
       "step3": "Edit / Remove: * If you want to change a dice face, simply click on a new face from the right panel.",
       "step3_1":"If you want to remove a dice face from a specific slot, click the cross (x) button at the top right corner of that slot.",
       "step4": "Confirm Settings: Once you have finished arranging the dice faces, click the \"Save\" button to apply them."
     }
+  },
+  "help_modal": {
+    "title": "How Calculation works",
+    "subtitle": "How Dice probability of plakoro works",
+    "overview": "This tool <yellow>simulates and calculates the probability (%)</yellow> of your dice faces matching the elemental requirements of your selected skill cards. It allows you to strategically customize your dice sets for maximum efficiency before entering a real match.",
+    "step_title": "How to Use",
+    "step1": "<white>Step 1: Select Your Pokémon</white><br/><highlight>Click on the displayed Pokémon icon</highlight> to change your character. *(Each Pokémon has its own pool of dice faces and skill cards).* ",
+    "step2": "<white>Step 2: Select the Desired Skill Cards</white><br/><highlight>Select 5 skill cards</highlight> to be used in actual gameplay to determine the percentage probability of successfully activating each skill.",
+    "step3": "<white>Step 3: Customize Your Dice</white><br/>You have 3 dice (6 faces each). They have <yellow>\"Base Faces\"</yellow> and <yellow>\"Customizable Faces\"</yellow>. Put your elements on these faces to match your plan.",
+    "step4": "<white>Step 4: Click Calculate</white><br/><highlight>Press the Calculate button</highlight> to start the rolling simulation. The system will process and display your probability rates instantly.",
+    "note_title": "Notes & Important Rules",
+    "note_dice_limit_title": "Limited Dice Faces Pool",
+    "note_dice_limit_desc": "Custom chips are limited. If you put element chips in Dice A, you will have fewer chips left for Dice B and Dice C.",
+    "note_pkg_title": "Dice Pool Depends on Pokémon Set",
+    "note_pkg_desc": "The available pool of dice faces varies according to each Pokémon's package set.",
+    "note_percent_title": "Understanding the % Value",
+    "note_percent_desc": "The displayed percentage represents the efficiency of your current dice setup. It shows a <yellow>...%</yellow> chance of successfully rolling the exact elemental combination needed to activate that specific skill, based on all possible combinations simulated."
   }
 }

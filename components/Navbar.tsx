@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 import { getAvatarUrl } from "@/libs/avatar";
 import { useTranslation } from "react-i18next";
 import "@/libs/i18n"; 
+import CalculationHelpModal from "./Modals/CalculationHelpModal";
 
 export default function NavBar() {
   const router = useRouter();
@@ -15,6 +16,8 @@ export default function NavBar() {
   
   // 🌟 เพิ่ม State สำหรับควบคุมการเปิด/ปิด Dropdown
   const [isLangMenuOpen, setIsLangMenuOpen] = useState(false);
+
+  const [isHelpModalOpen, setIsHelpModalOpen] = useState(false);
 
   const [mounted, setMounted] = useState(false);
 
@@ -49,6 +52,7 @@ export default function NavBar() {
   }, []);
 
   return (
+    <>
     <nav className="fixed top-0 left-0 right-0 flex items-center justify-between h-12.5 z-30 px-6 py-4 bg-[#111111] text-white font-salsa border-b-2 border-[#fdd835]">
       {/* LEFT LOGO */}
       <div
@@ -60,14 +64,18 @@ export default function NavBar() {
 
       {/* RIGHT MENU */}
       <div className="flex items-center space-x-6 text-sm font-medium">
-        <Link href="/" className="group flex items-center gap-2 hover:text-yellow-400" suppressHydrationWarning>
-          <svg width={20} height={20} viewBox="0 0 24 24" fill="none" className="stroke-white group-hover:stroke-yellow-400" xmlns="http://www.w3.org/2000/svg">
-            <path d="M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12Z" strokeWidth="2.4"></path> 
-            <path d="M10.5 8.67709C10.8665 8.26188 11.4027 8 12 8C13.1046 8 14 8.89543 14 10C14 10.9337 13.3601 11.718 12.4949 11.9383C12.2273 12.0064 12 12.2239 12 12.5V12.5V13" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"></path> 
-            <path d="M12 16H12.01" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"></path> 
-          </svg>
-          {t("nav.help")}
-        </Link>
+        <button 
+            onClick={() => setIsHelpModalOpen(true)} 
+            className="group flex items-center gap-2 hover:text-yellow-400 cursor-pointer bg-transparent border-none outline-none font-salsa text-sm font-medium"
+            suppressHydrationWarning
+          >
+            <svg width={20} height={20} viewBox="0 0 24 24" fill="none" className="stroke-white group-hover:stroke-yellow-400" xmlns="http://www.w3.org/2000/svg">
+              <path d="M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12Z" strokeWidth="2.4"></path> 
+              <path d="M10.5 8.67709C10.8665 8.26188 11.4027 8 12 8C13.1046 8 14 8.89543 14 10C14 10.9337 13.3601 11.718 12.4949 11.9383C12.2273 12.0064 12 12.2239 12 12.5V12.5V13" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"></path> 
+              <path d="M12 16H12.01" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"></path> 
+            </svg>
+            {t("nav.help")}
+          </button>
         
         <Link href="/" className="hover:text-yellow-400">
           {t("nav.home")}
@@ -100,13 +108,13 @@ export default function NavBar() {
               <button 
                 onClick={() => changeLanguage("en")}
                 className={`w-full text-left px-4 py-2 hover:bg-[#333333] hover:text-yellow-400 transition-colors ${i18n.language === 'en' ? 'text-yellow-400 bg-[#2a2a2a]' : 'text-white'}`}
-              >
+                >
                 English
               </button>
               <button 
                 onClick={() => changeLanguage("th")}
                 className={`w-full text-left px-4 py-2 hover:bg-[#333333] hover:text-yellow-400 transition-colors ${i18n.language === 'th' ? 'text-yellow-400 bg-[#2a2a2a]' : 'text-white'}`}
-              >
+                >
                 ภาษาไทย
               </button>
             </div>
@@ -135,5 +143,11 @@ export default function NavBar() {
         )}
       </div>
     </nav>
+    <CalculationHelpModal 
+        isOpen={isHelpModalOpen} 
+        onClose={() => setIsHelpModalOpen(false)} 
+      />
+    </>
+    
   );
 }
