@@ -34,10 +34,6 @@ import { getAuthAccountCached } from "@/libs/authCache";
 import { useTranslation } from "react-i18next";
 import Button from "./Button";
 
-client.setConfig({
-  baseUrl: "http://localhost:3000",
-});
-
 export default function Dashboard({
   children,
 }: {

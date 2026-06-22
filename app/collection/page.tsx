@@ -204,15 +204,17 @@ function SlotCard({
     : null;
 
   return (
-    <div 
+    <div
       onClick={onClick}
-      className={`bg-[#1a1a1a] rounded-2xl border border-white/10 overflow-hidden transition-all duration-200 hover:border-white/20 ${!deleteMode ? 'cursor-pointer hover:bg-neutral-800/80 active:scale-[0.99]' : ''}`}
+      className={`bg-[#1E1E1E] rounded-2xl border border-white/10 overflow-hidden transition-all duration-200 hover:border-white/20 flex flex-col ${!deleteMode ? "cursor-pointer hover:bg-neutral-800/80 active:scale-[0.99]" : ""}`}
     >
       {/* Header */}
       <div className="flex items-center justify-between px-4 pt-3 pb-2 border-b border-white/10">
         <span className="text-white font-bold text-sm tracking-wide">
           {t("slot.setName")} : {slot.slotName || "Untitled"}{" "}
-          <span className="text-white/50">{t("slot.slotNumber", {number: `${slot.slotNumber}`})}</span>
+          <span className="text-white/50">
+            {t("slot.slotNumber", { number: `${slot.slotNumber}` })}
+          </span>
         </span>
         {deleteMode && (
           <button
@@ -226,6 +228,7 @@ function SlotCard({
           </button>
         )}
       </div>
+      <div className="w-[90%] h-px bg-white/70 self-center"></div>
 
       {/* Body */}
       <div className="flex flex-col sm:flex-row items-center justify-between gap-4 p-4">
@@ -283,13 +286,9 @@ function SlotCard({
         {/* Date badge */}
         <div className="shrink-0 self-center">
           {formattedDate ? (
-            <div className="bg-[#2e2e2e] border border-white/10 rounded-xl px-3 py-2 text-center">
-              <p className="text-white/40 text-[10px] font-medium uppercase tracking-widest">
-                {t("slot.latestUpdate")}
-              </p>
-              <p className="text-white text-xs font-bold mt-0.5">
-                {formattedDate}
-              </p>
+            <div className="bg-[#757575] border border-white/10 rounded-xl px-3 py-2 text-center font-salsa text-shadow-md">
+              <p className="text-white">{t("slot.latestUpdate")}</p>
+              <p className="text-white font-bold mt-0.5">{formattedDate}</p>
             </div>
           ) : (
             <div className="bg-[#2e2e2e] border border-dashed border-white/10 rounded-xl px-3 py-2 text-center">
@@ -341,7 +340,9 @@ function ConfirmDeleteModal({
 
         {/* Text */}
         <div className="text-center">
-          <h2 className="text-white text-xl font-black mb-2">{t("collection.deleteModal.title")}</h2>
+          <h2 className="text-white text-xl font-black mb-2">
+            {t("collection.deleteModal.title")}
+          </h2>
           <p className="text-white/60 text-sm leading-relaxed">
             {t("collection.deleteModal.confirmDialog1")}{" "}
             <span className="text-white font-bold">
@@ -401,7 +402,10 @@ export default function CollectionPage() {
       dice3: slot.dice3,
     });
     setLocalStorageItem(STORAGE_KEYS.CURRENT_SKILL, slot.skills || []);
-    setLocalStorageItem(STORAGE_KEYS.SLOT_NAME, slot.slotName || "Plakoro Slot");
+    setLocalStorageItem(
+      STORAGE_KEYS.SLOT_NAME,
+      slot.slotName || "Plakoro Slot",
+    );
 
     router.push("/");
   };
@@ -565,9 +569,12 @@ export default function CollectionPage() {
               </svg>
               <p className="font-medium text-sm">
                 {selectedType !== null
-                  ? t("collection.no_slots_by_type", { type: t(`type.${TYPE_STYLES[selectedType]?.label ?? "None"}`)})
+                  ? t("collection.no_slots_by_type", {
+                      type: t(
+                        `type.${TYPE_STYLES[selectedType]?.label ?? "None"}`,
+                      ),
+                    })
                   : t("collection.noSlot")}
-                  
               </p>
             </div>
           ) : (
