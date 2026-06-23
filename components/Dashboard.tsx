@@ -281,9 +281,7 @@ export default function Dashboard({
     const isValid = validateDiceConfig(diceData);
     if (!isValid) {
       setErrorTitle(`${t("error.title.dice")}`);
-      setErrorMessage(
-        `${t("error.message.dice")}`,
-      );
+      setErrorMessage(`${t("error.message.dice")}`);
       setIsErrorOpen(true);
       return;
     }
@@ -310,12 +308,10 @@ export default function Dashboard({
   };
 
   const handleShare = () => {
-    const check = canShare(diceData,t);
+    const check = canShare(diceData, t);
     if (!check.canShare) {
       setErrorTitle(`${t("error.title.share")}`);
-      setErrorMessage(
-        check.reason || `${t("error.message.share")}`,
-      );
+      setErrorMessage(check.reason || `${t("error.message.share")}`);
       setIsErrorOpen(true);
       return;
     }
@@ -344,9 +340,7 @@ export default function Dashboard({
     const isValid = validateDiceConfig(diceData);
     if (!isValid) {
       setErrorTitle(`${t("error.title.dice")}`);
-      setErrorMessage(
-        `${t("error.message.dice")}`,
-      );
+      setErrorMessage(`${t("error.message.dice")}`);
       setIsErrorOpen(true);
       return;
     }
@@ -358,7 +352,7 @@ export default function Dashboard({
     // Background ลายลูกเต๋า (เป็นสีขาว)
     <div className="min-h-screen p-2 sm:p-8 bg-white flex justify-center">
       {/* กล่อง Container สีขาวหลัก */}
-      <div className="z-2 bg-white w-full max-w-6xl rounded-2xl sm:rounded-3xl shadow-2xl p-4 sm:p-8 flex flex-col gap-8">
+      <div className="sm:bg-white z-2 bg-white/80 w-full max-w-6xl rounded-2xl sm:rounded-3xl shadow-2xl p-4 sm:p-8 flex flex-col gap-8">
         {/* Header (Title + Share/Save Button) */}
         <div className="flex flex-col sm:flex-row gap-4 items-center justify-between">
           <h1 className="text-2xl sm:text-3xl font-salsa font-black bg-[#1a1a1a] text-yellow-300 px-6 py-2 rounded-full border-2 border-yellow-300 shadow-[4px_4px_0_0_rgba(250,204,21,1)] text-center sm:text-left">

@@ -40,6 +40,16 @@ export default function SkillModal({
   const [selectedSkills, setSelectedSkills] = useState<number[]>([]);
   const [hoveredSkill, setHoveredSkill] = useState<SkillCard | null>(null);
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 640);
+    };
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
+  }, []);
 
   useEffect(() => {
     if (isOpen) {
@@ -47,6 +57,24 @@ export default function SkillModal({
       setHoveredSkill(null);
     }
   }, [isOpen, oldSkillSave]);
+
+  useEffect(() => {
+    if (!hoveredSkill) return;
+
+    const handleOutsideClick = (e: MouseEvent | TouchEvent) => {
+      const target = e.target as HTMLElement;
+      if (!target.closest(".skill-card-item") && !target.closest(".detail-panel")) {
+        setHoveredSkill(null);
+      }
+    };
+
+    document.addEventListener("mousedown", handleOutsideClick);
+    document.addEventListener("touchstart", handleOutsideClick);
+    return () => {
+      document.removeEventListener("mousedown", handleOutsideClick);
+      document.removeEventListener("touchstart", handleOutsideClick);
+    };
+  }, [hoveredSkill]);
 
   if (!isOpen) return null;
 
@@ -126,8 +154,19 @@ export default function SkillModal({
               return (
                 <div
                   key={skill.id}
-                  className="relative cursor-pointer group"
-                  onClick={() => handleToggleSkill(skill.id)}
+                  className="relative cursor-pointer group skill-card-item"
+                  onClick={() => {
+                    handleToggleSkill(skill.id);
+                    if (isMobile) {
+                      if (isSelected) {
+                        if (hoveredSkill?.id === skill.id) {
+                          setHoveredSkill(null);
+                        }
+                      } else {
+                        setHoveredSkill(skill);
+                      }
+                    }
+                  }}
                   onMouseEnter={() => setHoveredSkill(skill)}
                   onMouseLeave={() => setHoveredSkill(null)}
                 >
@@ -158,6 +197,32 @@ export default function SkillModal({
                     <div className="absolute -top-2 -right-2 w-6 h-6 bg-red-600 rounded-full border-2 border-white flex items-center justify-center shadow-lg">
                       <span className="w-3 h-[3px] bg-white rounded-full"></span>
                     </div>
+                  )}
+
+                  {isMobile && (
+                    <button
+                      type="button"
+                      className="absolute bottom-1 right-1 w-6 h-6 bg-black/60 rounded-full flex items-center justify-center border border-zinc-600 z-20 shadow-md active:scale-90 transition-transform"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setHoveredSkill(skill);
+                      }}
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        strokeWidth={2.5}
+                        stroke="currentColor"
+                        className="w-3.5 h-3.5 text-zinc-300"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          d="M11.25 11.25l.041-.02a.75.75 0 111.083.985l-.04.02L11 16h1m1-8h.01"
+                        />
+                      </svg>
+                    </button>
                   )}
                 </div>
               );
@@ -212,22 +277,40 @@ export default function SkillModal({
           const shouldFlipX = mousePos.x > screenWidth - 360; // 360 คือขนาดความกว้างกล่อง + ระยะเผื่อปลอดภัย
 
           // กำหนดตำแหน่งพิกัดและ transform พลิกด้านกล่องข้อมูลอัตโนมัติ
-          const topPosition = shouldFlipY ? mousePos.y - 15 : mousePos.y + 15;
-          const leftPosition = shouldFlipX ? mousePos.x - 15 : mousePos.x + 15;
-          const transformStyle =
-            `${shouldFlipY ? "translateY(-100%)" : ""} ${shouldFlipX ? "translateX(-100%)" : ""}`.trim();
+          const topPosition = isMobile ? undefined : (shouldFlipY ? mousePos.y - 15 : mousePos.y + 15);
+          const leftPosition = isMobile ? "16px" : (shouldFlipX ? mousePos.x - 15 : mousePos.x + 15);
+          const rightPosition = isMobile ? "16px" : undefined;
+          const bottomPosition = isMobile ? "16px" : undefined;
+          const transformStyle = isMobile
+            ? undefined
+            : `${shouldFlipY ? "translateY(-100%)" : ""} ${shouldFlipX ? "translateX(-100%)" : ""}`.trim();
 
           return (
             <div
-              className="fixed pointer-events-none z-[110] bg-[#000000]/60 backdrop-blur-xs border border-zinc-700 p-4 shadow-2xl rounded-lg min-w-[280px] max-w-[340px] text-xs flex flex-col gap-2.5 text-zinc-200 transition-transform duration-75"
+              className={`fixed z-[110] bg-[#040404]/95 backdrop-blur-md border border-zinc-700 p-4 shadow-2xl rounded-lg text-xs flex flex-col gap-2.5 text-zinc-200 detail-panel ${
+                isMobile
+                  ? "pointer-events-auto max-h-[35vh] overflow-y-auto"
+                  : "pointer-events-none min-w-[280px] max-w-[340px] transition-transform duration-75"
+              }`}
               style={{
                 top: topPosition,
                 left: leftPosition,
+                right: rightPosition,
+                bottom: bottomPosition,
                 transform: transformStyle || undefined,
               }}
             >
-              <h3 className="text-sm font-bold text-white border-b border-zinc-700 pb-1.5">
+              <h3 className="text-sm font-bold text-white border-b border-zinc-700 pb-1.5 pr-6 relative">
                 {t("skill.skillName")} : {getLocalizedText(hoveredSkill.name?.en, hoveredSkill.name?.th, t("skill.modal.unknown"))}
+                {isMobile && (
+                  <button
+                    type="button"
+                    onClick={() => setHoveredSkill(null)}
+                    className="absolute -top-1 right-0 text-zinc-400 hover:text-white text-base p-1"
+                  >
+                    ✕
+                  </button>
+                )}
               </h3>
               <p>
                 <span className="text-zinc-400 font-medium">{t("pokemonInfo.element")} : </span>

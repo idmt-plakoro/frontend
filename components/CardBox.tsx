@@ -52,7 +52,7 @@ export default function CardBox({
   type,
   chance,
 }: CardBoxProps) {
-  const {t,i18n} = useTranslation();
+  const { t, i18n } = useTranslation();
   const recommended = chance! >= 50 || false;
   return (
     <div
@@ -72,7 +72,9 @@ export default function CardBox({
           />
         )}
         <p className="text-center font-bold">
-          {i18n.language === "th" && card?.name?.th ? card.name.th : card?.name?.en}
+          {i18n.language === "th" && card?.name?.th
+            ? card.name.th
+            : card?.name?.en}
         </p>
       </div>
       <div className="flex flex-row flex-wrap gap-2 justify-center md:justify-start min-w-0 md:min-w-50">
@@ -127,12 +129,25 @@ export default function CardBox({
                   />
                 ))}
               </div>
-              <div className="flex-1 min-w-0 py-1 px-3 m-1 bg-[#9a9999] rounded-full">
+              <div
+                tabIndex={0}
+                className="flex-1 min-w-0 py-1 px-3 m-1 bg-[#9a9999] rounded-full relative group cursor-help focus:outline-none"
+              >
                 <div className="w-full text-nowrap overflow-x-auto no-scrollbar mask-fade flex flex-row">
                   <span className="text-white">
-                    {i18n.language === "th" && effect.ability.th ? effect.ability.th : effect.ability.en}
+                    {i18n.language === "th" && effect.ability.th
+                      ? effect.ability.th
+                      : effect.ability.en}
                   </span>
                   <div className="w-6 shrink-0" />
+                </div>
+
+                {/* Tooltip to show full text on hover/focus */}
+                <div className="pointer-events-none absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-64 bg-[#040404]/95 border border-zinc-700 text-white text-xs rounded-lg p-2.5 shadow-2xl opacity-0 group-hover:opacity-100 group-focus:opacity-100 transition-opacity duration-150 z-50 whitespace-normal text-center leading-normal">
+                  {i18n.language === "th" && effect.ability.th
+                    ? effect.ability.th
+                    : effect.ability.en}
+                  <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-[#040404]/95" />
                 </div>
               </div>
             </div>,
@@ -144,7 +159,7 @@ export default function CardBox({
       <div className="hidden md:block w-1 h-[85%] bg-[#999999]"></div>
       <div className="block md:hidden w-[85%] h-px bg-[#999999] my-1"></div>
 
-      <div className="w-full md:w-auto md:h-[85%] flex flex-col justify-center items-center rounded-xl md:aspect-square bg-[#757575] py-4 md:py-0 px-6 md:px-0">
+      <div className="w-full md:w-auto md:h-[85%] h-fit flex flex-col justify-center items-center rounded-xl md:aspect-square bg-[#757575] py-4 md:py-0 px-6 md:px-0">
         <span className="text-xl text-white">{t("card.chance")}</span>
         <span className="text-2xl text-white">{chance}%</span>
       </div>
